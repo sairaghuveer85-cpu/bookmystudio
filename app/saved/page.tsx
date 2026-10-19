@@ -1,0 +1,246 @@
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { Breadcrumbs } from '@/components/common/Breadcrumbs';
+import { EmptyState } from '@/components/common/EmptyState';
+import { StudioCard } from '@/components/studios/StudioCard';
+import { LocationCard } from '@/components/locations/LocationCard';
+import { EquipmentCard } from '@/components/equipment/EquipmentCard';
+import { ShareIcon, ArrowRightIcon } from '@/components/ui/Icons';
+import { useMarketplace } from '@/context/MarketplaceContext';
+import { INITIAL_STUDIOS, INITIAL_LOCATIONS, INITIAL_EQUIPMENT } from '@/lib/data';
+
+type SavedTab = 'all' | 'studios' | 'locations' | 'equipment';
+
+export default function SavedPage() {
+  const { bookmarkedIds, toggleBookmark } = useMarketplace();
+  const [activeTab, setActiveTab] = useState<SavedTab>('all');
+  const [copyFeedback, setCopyFeedback] = useState(false);
+
+  // Filter bookmarked items
+  const savedStudios = useMemo(() => {
+    return INITIAL_STUDIOS.filter((s) => bookmarkedIds.includes(s.id));
+  }, [bookmarkedIds]);
+
+  const savedLocations = useMemo(() => {
+    return INITIAL_LOCATIONS.filter((l) => bookmarkedIds.includes(l.id));
+  }, [bookmarkedIds]);
+
+  const savedEquipment = useMemo(() => {
+    return INITIAL_EQUIPMENT.filter((e) => bookmarkedIds.includes(e.id));
+  }, [bookmarkedIds]);
+
+  const totalSavedCount = savedStudios.length + savedLocations.length + savedEquipment.length;
+
+  const handleShareShortlist = () => {
+    setCopyFeedback(true);
+    setTimeout(() => setCopyFeedback(false), 3000);
+  };
+
+  const handleClearAll = () => {
+    bookmarkedIds.forEach((id) => toggleBookmark(id));
+  };
+
+  return (
+    <div className="py-8 bg-white dark:bg-[#101010] min-h-[calc(100vh-140px)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Saved Listings' },
+          ]}
+          className="mb-6"
+        />
+
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-100 dark:border-[#303030]">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
+                PRODUCTION SHORTLIST
+              </span>
+            </div>
+
+            <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5]">
+              Saved Spaces &amp; Equipment
+            </h1>
+
+            <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-[#8A8A8A] max-w-2xl">
+              Compare stages, daylight suites, filming locations, and grip packages shortlisted for your upcoming shoot.
+            </p>
+          </div>
+
+          {/* Share & Clear Actions */}
+          {totalSavedCount > 0 && (
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={handleShareShortlist}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 dark:border-[#303030] bg-white dark:bg-[#181818] hover:bg-slate-50 dark:hover:bg-[#202020] text-slate-700 dark:text-[#F5F5F5] text-xs font-semibold transition-colors cursor-pointer"
+              >
+                <ShareIcon className="w-3.5 h-3.5" />
+                <span>{copyFeedback ? 'Link Copied!' : 'Share Shortlist'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClearAll}
+                className="px-3 py-2 rounded-lg border border-slate-200 dark:border-[#303030] text-slate-500 dark:text-[#8A8A8A] hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/40 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Clear All
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Share Toast Banner */}
+        {copyFeedback && (
+          <div className="mt-4 p-3.5 rounded-xl bg-slate-900 dark:bg-[#202020] text-white border border-transparent dark:border-[#303030] text-xs flex items-center justify-between">
+            <span>Shareable shortlist link copied to clipboard. Ready for client and producer deck review.</span>
+            <span className="text-slate-400 text-[10px] uppercase font-mono">Prototype Demonstration</span>
+          </div>
+        )}
+
+        {totalSavedCount === 0 ? (
+          <div className="mt-12">
+            <EmptyState
+              title="Your Saved Shortlist is Empty"
+              description="You have not bookmarked any production stages, filming locations, or gear packages yet. Click the bookmark icon on any listing card to save it for quick reference."
+              actionLabel="Explore Production Studios"
+              actionHref="/studios"
+            />
+          </div>
+        ) : (
+          <>
+            {/* Filter Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto py-4 border-b border-slate-100 dark:border-[#303030] scrollbar-none">
+              <button
+                type="button"
+                onClick={() => setActiveTab('all')}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  activeTab === 'all'
+                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
+                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                }`}
+              >
+                All Items ({totalSavedCount})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('studios')}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  activeTab === 'studios'
+                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
+                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                }`}
+              >
+                Studios ({savedStudios.length})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('locations')}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  activeTab === 'locations'
+                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
+                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                }`}
+              >
+                Filming Locations ({savedLocations.length})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('equipment')}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  activeTab === 'equipment'
+                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
+                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                }`}
+              >
+                Equipment ({savedEquipment.length})
+              </button>
+            </div>
+
+            {/* List Grids */}
+            <div className="mt-8 space-y-12">
+              {/* Studios */}
+              {(activeTab === 'all' || activeTab === 'studios') && savedStudios.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                      Shortlisted Studios &amp; Stages ({savedStudios.length})
+                    </h2>
+                    <Link
+                      href="/studios"
+                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                    >
+                      <span>Browse More Studios</span>
+                      <ArrowRightIcon className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    {savedStudios.map((studio) => (
+                      <StudioCard key={studio.id} studio={studio} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Locations */}
+              {(activeTab === 'all' || activeTab === 'locations') && savedLocations.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                      Shortlisted Filming Locations ({savedLocations.length})
+                    </h2>
+                    <Link
+                      href="/locations"
+                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                    >
+                      <span>Browse More Locations</span>
+                      <ArrowRightIcon className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    {savedLocations.map((location) => (
+                      <LocationCard key={location.id} location={location} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Equipment */}
+              {(activeTab === 'all' || activeTab === 'equipment') && savedEquipment.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                      Shortlisted Equipment &amp; Packages ({savedEquipment.length})
+                    </h2>
+                    <Link
+                      href="/equipment"
+                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                    >
+                      <span>Browse More Equipment</span>
+                      <ArrowRightIcon className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    {savedEquipment.map((equipment) => (
+                      <EquipmentCard key={equipment.id} equipment={equipment} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+      </div>
+    </div>
+  );
+}
