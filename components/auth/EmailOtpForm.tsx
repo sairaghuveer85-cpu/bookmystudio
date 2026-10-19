@@ -227,7 +227,7 @@ export function EmailOtpForm() {
         <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F5F5] text-center mb-3">
           Enter 6-Digit Verification Code
         </label>
-        <div className="flex items-center justify-center gap-2 sm:gap-3" onPaste={handlePaste}>
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3" onPaste={handlePaste}>
           {digits.map((digit, idx) => (
             <input
               key={idx}
@@ -242,7 +242,7 @@ export function EmailOtpForm() {
               value={digit}
               onChange={(e) => handleDigitChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
-              className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-mono font-bold rounded-xl text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:scale-105 focus:bg-white dark:focus:bg-[#202020] transition-all duration-150 selection:bg-emerald-600 selection:text-white ${
+              className={`w-9 h-11 sm:w-12 sm:h-14 text-center text-base sm:text-xl font-mono font-bold rounded-lg sm:rounded-xl text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:scale-105 focus:bg-white dark:focus:bg-[#202020] transition-all duration-150 selection:bg-emerald-600 selection:text-white ${
                 errorMsg
                   ? 'border-red-400 dark:border-red-600 bg-red-50/30 dark:bg-red-950/20 focus:ring-red-500'
                   : digit

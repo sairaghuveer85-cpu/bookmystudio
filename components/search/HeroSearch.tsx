@@ -111,7 +111,7 @@ export function HeroSearch({
             </div>
 
             {/* Main Hero Headline */}
-            <h1 className="mt-4 text-3xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5] leading-[1.1] animate-slide-up delay-150">
+            <h1 className="mt-4 text-[26px] sm:text-4xl lg:text-[52px] font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5] leading-[1.15] sm:leading-[1.1] animate-slide-up delay-150">
               Find the Perfect Space for Your Next Shoot
             </h1>
 
@@ -271,7 +271,7 @@ export function HeroSearch({
 
               {/* Location Dropdown */}
               {activeDropdown === 'location' && (
-                <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
+                <div className="absolute left-0 mt-2 w-[calc(100vw-2.5rem)] max-w-xs sm:w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
                   <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
                     Select Production Hub
                   </div>
@@ -329,7 +329,7 @@ export function HeroSearch({
 
               {/* Stage Type Dropdown */}
               {activeDropdown === 'stage' && (
-                <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
+                <div className="absolute left-0 mt-2 w-[calc(100vw-2.5rem)] max-w-xs sm:w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
                   <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
                     Select Stage Geometry
                   </div>
@@ -384,7 +384,7 @@ export function HeroSearch({
 
               {/* Shift Dropdown */}
               {activeDropdown === 'date' && (
-                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
+                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-[calc(100vw-2.5rem)] max-w-sm sm:w-80 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
                   <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
                     Select Shoot Shift &amp; Call Sheet Times
                   </div>

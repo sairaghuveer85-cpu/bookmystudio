@@ -37,7 +37,7 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
   const similarLocations = getSimilarLocations(location.id, 3);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
@@ -194,6 +194,29 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
           </div>
         </div>
       )}
+
+      {/* Mobile Sticky Booking Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-4 py-3 bg-white/95 dark:bg-[#121212]/95 backdrop-blur-md border-t border-slate-200 dark:border-[#262626] safe-area-bottom shadow-lg">
+        <div className="flex items-center justify-between gap-4 max-w-md mx-auto">
+          <div>
+            <span className="block text-[10px] uppercase font-bold text-slate-500 dark:text-[#8A8A8A] tracking-wider">
+              10h Standard Day
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-black text-slate-900 dark:text-[#F5F5F5]">
+                ${location.dayRate10h.toLocaleString()}
+              </span>
+              <span className="text-[11px] text-slate-500 dark:text-[#8A8A8A]">/day</span>
+            </div>
+          </div>
+          <a
+            href="#inquiry-form"
+            className="px-5 py-2.5 rounded-full bg-slate-900 dark:bg-emerald-600 text-white text-xs font-bold shadow-sm active:scale-95 transition-all text-center cursor-pointer"
+          >
+            Request Date Hold
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

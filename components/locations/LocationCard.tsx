@@ -45,14 +45,14 @@ export function LocationCard({ location }: LocationCardProps) {
             e.stopPropagation();
             toggleBookmark(location.id);
           }}
-          className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-150 active:scale-80 hover:scale-105 cursor-pointer ${
+          className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-150 active:scale-90 hover:scale-105 cursor-pointer ${
             bookmarked
               ? 'bg-white text-slate-900 shadow-sm'
               : 'bg-black/40 text-white hover:bg-white hover:text-slate-900'
           }`}
           aria-label={bookmarked ? `Remove ${location.name} from saved` : `Save ${location.name} to bookmarks`}
         >
-          <BookmarkIcon filled={bookmarked} className="w-3.5 h-3.5 transition-transform" />
+          <BookmarkIcon filled={bookmarked} className="w-4 h-4 transition-transform" />
         </button>
       </div>
 

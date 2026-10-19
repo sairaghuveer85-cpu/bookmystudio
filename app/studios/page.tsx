@@ -4,6 +4,8 @@ import React, { useState, useMemo } from 'react';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { EmptyState } from '@/components/common/EmptyState';
 import { StudioCard } from '@/components/studios/StudioCard';
+import { MobileFilterSheet } from '@/components/search/MobileFilterSheet';
+import { FilterIcon } from '@/components/ui/Icons';
 import { INITIAL_STUDIOS } from '@/lib/data';
 import { StudioCategory } from '@/lib/types';
 
@@ -14,6 +16,7 @@ export default function StudiosPage() {
   const [driveInOnly, setDriveInOnly] = useState(false);
   const [soundproofOnly, setSoundproofOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'size-desc' | 'rating-desc'>('featured');
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const filteredStudios = useMemo(() => {
     let result = [...INITIAL_STUDIOS];
@@ -77,6 +80,12 @@ export default function StudiosPage() {
     driveInOnly ||
     soundproofOnly;
 
+  const activeFilterCount =
+    (selectedCategory !== 'all' ? 1 : 0) +
+    (camlockOnly ? 1 : 0) +
+    (driveInOnly ? 1 : 0) +
+    (soundproofOnly ? 1 : 0);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Breadcrumb Navigation */}
@@ -99,41 +108,60 @@ export default function StudiosPage() {
       <div className="mt-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           
-          {/* Keyword Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search studios by name, neighborhood, or lighting grid..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-[#303030] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A]"
-            />
-            <svg
-              className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-[#8A8A8A]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          {/* Keyword Search Input + Mobile Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-lg">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search studios by name, neighborhood, or lighting grid..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2.5 min-h-[44px] text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A]"
               />
-            </svg>
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-slate-400 dark:text-[#8A8A8A] hover:text-slate-600 dark:hover:text-[#F5F5F5] text-xs"
+              <svg
+                className="absolute left-3 top-3.5 w-4 h-4 text-slate-400 dark:text-[#8A8A8A]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                ✕
-              </button>
-            )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-2.5 w-6 h-6 flex items-center justify-center text-slate-400 dark:text-[#8A8A8A] hover:text-slate-600 dark:hover:text-[#F5F5F5] text-xs cursor-pointer"
+                  aria-label="Clear search input"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Mobile Filter Sheet Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="md:hidden flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-slate-900 dark:bg-emerald-600 text-white text-xs font-bold shrink-0 shadow-xs cursor-pointer active:scale-95 transition-all"
+              aria-label="Open filter panel"
+            >
+              <FilterIcon className="w-4 h-4" />
+              <span>Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-white text-slate-950 text-[10px] font-extrabold flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
           </div>
 
-          {/* Sort Control */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Desktop Sort Control */}
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <label htmlFor="sortSelect" className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A]">
               Sort By:
             </label>
@@ -141,7 +169,7 @@ export default function StudiosPage() {
               id="sortSelect"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] cursor-pointer"
+              className="px-3 py-2.5 min-h-[44px] text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] cursor-pointer"
             >
               <option value="featured">Featured Hubs</option>
               <option value="price-asc">Price: Low to High</option>
@@ -152,8 +180,8 @@ export default function StudiosPage() {
           </div>
         </div>
 
-        {/* Category Pills & Spec Toggles Row */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        {/* Category Pills & Spec Toggles Row (Horizontally scrollable on mobile) */}
+        <div className="flex overflow-x-auto pb-1 scrollbar-none items-center gap-2 pt-1">
           {/* Category Pills */}
           <button
             type="button"
@@ -290,6 +318,39 @@ export default function StudiosPage() {
           />
         )}
       </div>
+
+      {/* Mobile Filter Bottom Sheet */}
+      <MobileFilterSheet
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        title="Filter Studios & Stages"
+        selectedCategory={selectedCategory}
+        onSelectCategory={(cat) => setSelectedCategory(cat as StudioCategory | 'all')}
+        categories={[
+          { id: 'all', label: 'All Categories' },
+          { id: 'cyclorama', label: 'Cycloramas' },
+          { id: 'soundstage', label: 'Soundstages' },
+          { id: 'daylight', label: 'Daylight Lofts' },
+          { id: 'kitchen', label: 'Kitchen Stages' },
+        ]}
+        sortBy={sortBy}
+        onSelectSortBy={(sort) => setSortBy(sort as typeof sortBy)}
+        sortOptions={[
+          { id: 'featured', label: 'Featured Hubs' },
+          { id: 'price-asc', label: 'Price: Low to High' },
+          { id: 'price-desc', label: 'Price: High to Low' },
+          { id: 'size-desc', label: 'Stage Size: Largest First' },
+          { id: 'rating-desc', label: 'Highest Rated' },
+        ]}
+        camlockOnly={camlockOnly}
+        onToggleCamlock={() => setCamlockOnly(!camlockOnly)}
+        driveInOnly={driveInOnly}
+        onToggleDriveIn={() => setDriveInOnly(!driveInOnly)}
+        soundproofOnly={soundproofOnly}
+        onToggleSoundproof={() => setSoundproofOnly(!soundproofOnly)}
+        onResetFilters={resetAllFilters}
+        totalResultsCount={filteredStudios.length}
+      />
     </div>
   );
 }

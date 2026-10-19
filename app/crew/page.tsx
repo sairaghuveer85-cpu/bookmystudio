@@ -4,6 +4,8 @@ import React, { useState, useMemo } from 'react';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { EmptyState } from '@/components/common/EmptyState';
 import { CrewCard } from '@/components/crew/CrewCard';
+import { MobileFilterSheet } from '@/components/search/MobileFilterSheet';
+import { FilterIcon } from '@/components/ui/Icons';
 import { INITIAL_CREW } from '@/lib/data';
 import { CrewRoleCategory } from '@/lib/types';
 
@@ -11,6 +13,7 @@ export default function CrewPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CrewRoleCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState<'rating-desc' | 'price-asc' | 'price-desc'>('rating-desc');
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const filteredCrew = useMemo(() => {
     let result = [...INITIAL_CREW];
@@ -71,36 +74,55 @@ export default function CrewPage() {
       <div className="mt-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           
-          {/* Keyword Search */}
-          <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search crew by department, union local, gear kit, or credits..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-[#303030] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A]"
-            />
-            <svg
-              className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-[#8A8A8A]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-2.5 text-slate-400 dark:text-[#8A8A8A] hover:text-slate-600 dark:hover:text-[#F5F5F5] text-xs"
+          {/* Keyword Search + Mobile Filter Button */}
+          <div className="flex items-center gap-2 flex-1 max-w-lg">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search crew by department, union local, gear kit, or credits..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2.5 min-h-[44px] text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A]"
+              />
+              <svg
+                className="absolute left-3 top-3.5 w-4 h-4 text-slate-400 dark:text-[#8A8A8A]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                ✕
-              </button>
-            )}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-2.5 w-6 h-6 flex items-center justify-center text-slate-400 dark:text-[#8A8A8A] hover:text-slate-600 dark:hover:text-[#F5F5F5] text-xs cursor-pointer"
+                  aria-label="Clear search input"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Mobile Filter Sheet Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="md:hidden flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-slate-900 dark:bg-emerald-600 text-white text-xs font-bold shrink-0 shadow-xs cursor-pointer active:scale-95 transition-all"
+              aria-label="Open filter panel"
+            >
+              <FilterIcon className="w-4 h-4" />
+              <span>Filters</span>
+              {selectedCategory !== 'all' && (
+                <span className="w-4 h-4 rounded-full bg-white text-slate-950 text-[10px] font-extrabold flex items-center justify-center">
+                  1
+                </span>
+              )}
+            </button>
           </div>
 
-          {/* Sort Select */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Desktop Sort Select */}
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <label htmlFor="crewSortSelect" className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A]">
               Sort By:
             </label>
@@ -108,7 +130,7 @@ export default function CrewPage() {
               id="crewSortSelect"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] cursor-pointer"
+              className="px-3 py-2.5 min-h-[44px] text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] cursor-pointer"
             >
               <option value="rating-desc">Highest Rated Professionals</option>
               <option value="price-asc">Day Rate: Low to High</option>
@@ -117,8 +139,8 @@ export default function CrewPage() {
           </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        {/* Category Pills (Horizontally scrollable on mobile) */}
+        <div className="flex overflow-x-auto pb-1 scrollbar-none items-center gap-2 pt-1">
           <button
             type="button"
             onClick={() => setSelectedCategory('all')}
@@ -201,6 +223,31 @@ export default function CrewPage() {
           />
         )}
       </div>
+
+      {/* Mobile Filter Bottom Sheet */}
+      <MobileFilterSheet
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+        title="Filter Production Crew"
+        selectedCategory={selectedCategory}
+        onSelectCategory={(cat) => setSelectedCategory(cat as CrewRoleCategory | 'all')}
+        categories={[
+          { id: 'all', label: 'All Departments' },
+          { id: 'camera_lighting', label: 'Cinematography & Electric' },
+          { id: 'sound', label: 'Production Audio' },
+          { id: 'production', label: 'Production & AD' },
+          { id: 'art_makeup', label: 'Art Department & Hair/Makeup' },
+        ]}
+        sortBy={sortBy}
+        onSelectSortBy={(sort) => setSortBy(sort as typeof sortBy)}
+        sortOptions={[
+          { id: 'rating-desc', label: 'Highest Rated Professionals' },
+          { id: 'price-asc', label: 'Day Rate: Low to High' },
+          { id: 'price-desc', label: 'Day Rate: High to Low' },
+        ]}
+        onResetFilters={resetAllFilters}
+        totalResultsCount={filteredCrew.length}
+      />
     </div>
   );
 }

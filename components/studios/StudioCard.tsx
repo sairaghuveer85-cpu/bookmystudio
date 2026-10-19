@@ -67,14 +67,14 @@ export function StudioCard({
               e.stopPropagation();
               handleToggle();
             }}
-            className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-80 pointer-events-auto cursor-pointer ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 pointer-events-auto cursor-pointer ${
               isSaved
                 ? 'bg-white text-slate-900 shadow-sm'
                 : 'bg-black/40 text-white hover:bg-white hover:text-slate-900'
             }`}
             aria-label={isSaved ? `Remove ${studio.name} from saved` : `Save ${studio.name} to bookmarks`}
           >
-            <BookmarkIcon filled={isSaved} className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" />
+            <BookmarkIcon filled={isSaved} className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
           </button>
         </div>
       </div>

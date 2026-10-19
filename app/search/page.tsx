@@ -265,7 +265,7 @@ function SearchResultsContent() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search cycloramas, soundstages, union DPs, Arri Alexa, lighting..."
-                className="w-full pl-10 pr-16 py-3 bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-xs sm:text-sm text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#737373] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] transition-all duration-200 shadow-2xs"
+                className="w-full pl-10 pr-16 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#737373] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] transition-all duration-200 shadow-2xs"
               />
               {searchQuery && (
                 <button
@@ -284,7 +284,7 @@ function SearchResultsContent() {
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="w-full pl-9 pr-8 py-3 bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
+                className="w-full pl-9 pr-8 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
               >
                 <option value="">All Production Hubs</option>
                 {LOCATION_OPTIONS.map((loc) => (
@@ -305,7 +305,7 @@ function SearchResultsContent() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="w-full pl-3.5 pr-8 py-3 bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
+                className="w-full pl-3.5 pr-8 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
               >
                 <option value="relevance">Sort: Recommended</option>
                 <option value="rating">Highest Rated</option>

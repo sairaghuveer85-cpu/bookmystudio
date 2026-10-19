@@ -1,16 +1,33 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { MarketplaceProvider } from "@/context/MarketplaceContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#101010" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "BookMyStudio — World-Class Studios & Soundstages for Your Next Shoot",
   description:
     "Instant booking for commercial cycloramas, soundproof stages, natural daylight lofts, and vetted crew across global production hubs.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "BookMyStudio",
+  },
 };
 
 export default function RootLayout({
@@ -34,8 +51,9 @@ export default function RootLayout({
               <Suspense fallback={<div className="h-16 sm:h-20 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]" />}>
                 <Header />
               </Suspense>
-              <div className="flex-1 flex flex-col">{children}</div>
+              <div className="flex-1 flex flex-col pb-16 lg:pb-0">{children}</div>
               <Footer />
+              <MobileBottomNav />
             </AuthProvider>
           </MarketplaceProvider>
         </ThemeProvider>

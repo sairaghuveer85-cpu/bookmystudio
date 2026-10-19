@@ -28,7 +28,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
   };
 
   return (
-    <div className="bg-white dark:bg-[#181818] rounded-2xl border border-slate-200/90 dark:border-[#303030] shadow-sm p-5 sm:p-6 sticky top-24">
+    <div id="inquiry-form" className="bg-white dark:bg-[#181818] rounded-2xl border border-slate-200/90 dark:border-[#303030] shadow-sm p-5 sm:p-6 sticky top-24 scroll-mt-24">
       {submitted ? (
         <div className="py-6 text-center space-y-3 animate-in fade-in duration-200">
           <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200 dark:border-emerald-800/40">
@@ -79,7 +79,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 required
                 value={shootDate}
                 onChange={(e) => setShootDate(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
+                className="w-full px-3 py-2 text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
               />
             </div>
 
@@ -91,7 +91,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 id="shiftSelect"
                 value={shiftHours}
                 onChange={(e) => setShiftHours(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
+                className="w-full px-3 py-2 text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
               >
                 <option value="10">10h Full Production Day (100% Rate)</option>
                 <option value="5">5h Half Day (60% Rate)</option>
@@ -110,7 +110,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 placeholder="e.g. Commercial Brand Campaign"
                 value={productionName}
                 onChange={(e) => setProductionName(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
+                className="w-full px-3 py-2 text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
               />
             </div>
 
@@ -125,7 +125,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 placeholder="producer@agency.com"
                 value={producerEmail}
                 onChange={(e) => setProducerEmail(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
+                className="w-full px-3 py-2 text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#202020] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981]"
               />
             </div>
           </div>

@@ -11,7 +11,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="w-full bg-white dark:bg-[#101010] border-t border-slate-200 dark:border-[#303030] pt-16 pb-12 text-slate-600 dark:text-[#B3B3B3] transition-colors duration-150">
+      <footer className="w-full bg-white dark:bg-[#101010] border-t border-slate-200 dark:border-[#303030] pt-10 sm:pt-16 pb-8 sm:pb-12 text-slate-600 dark:text-[#B3B3B3] transition-colors duration-150">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <ScrollReveal>
@@ -142,11 +142,11 @@ export function Footer() {
           </ScrollReveal>
 
           {/* Bottom Legal & Attribution */}
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 dark:text-[#8A8A8A]">
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 dark:text-[#8A8A8A] text-center sm:text-left">
             <p>
               &copy; 2026 BookMyStudio Inc. All production rights reserved. Architectural, Grip &amp; Stage Marketplace.
             </p>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-5 gap-y-2">
               <button
                 type="button"
                 onClick={() => setIsPolicyOpen(true)}
