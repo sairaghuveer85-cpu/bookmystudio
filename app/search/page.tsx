@@ -16,6 +16,10 @@ import {
   INITIAL_EQUIPMENT,
   LOCATION_OPTIONS,
 } from '@/lib/data';
+import { StudioSpace, FilmingLocation, ProductionCrewMember, EquipmentItem } from '@/lib/types';
+import { marketplaceApi } from '@/lib/api/marketplace';
+import { useLocation } from '@/context/LocationContext';
+import { LocationFilterBanner } from '@/components/location/LocationFilterBanner';
 
 type SearchTab = 'all' | 'studios' | 'locations' | 'crew' | 'equipment';
 type SortOption = 'relevance' | 'price-asc' | 'price-desc' | 'rating';
@@ -27,6 +31,42 @@ function SearchResultsContent() {
   const initialQuery = searchParams.get('q') || '';
   const initialLocation = searchParams.get('location') || '';
   const initialStageType = searchParams.get('stageType') || '';
+
+  const { location, isNeutral } = useLocation();
+
+  const [studios, setStudios] = useState<StudioSpace[]>(INITIAL_STUDIOS);
+  const [filmingLocations, setFilmingLocations] = useState<FilmingLocation[]>(INITIAL_LOCATIONS);
+  const [crewList, setCrewList] = useState<ProductionCrewMember[]>(INITIAL_CREW);
+  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>(INITIAL_EQUIPMENT);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const params: Record<string, string | number> = {};
+    if (!isNeutral && location.coordinates && location.coordinates.length === 2) {
+      params.lng = location.coordinates[0];
+      params.lat = location.coordinates[1];
+    }
+    if (location.radiusKm) {
+      params.radiusKm = location.radiusKm;
+    }
+
+    Promise.all([
+      marketplaceApi.getStudios(params).catch(() => null),
+      marketplaceApi.getLocations(params).catch(() => null),
+      marketplaceApi.getProfessionals(params).catch(() => null),
+      marketplaceApi.getEquipment(params).catch(() => null),
+    ]).then(([sRes, lRes, cRes, eRes]) => {
+      if (isCancelled) return;
+      if (sRes?.success && Array.isArray(sRes.data)) setStudios(sRes.data);
+      if (lRes?.success && Array.isArray(lRes.data)) setFilmingLocations(lRes.data);
+      if (cRes?.success && Array.isArray(cRes.data)) setCrewList(cRes.data);
+      if (eRes?.success && Array.isArray(eRes.data)) setEquipmentList(eRes.data);
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [location.coordinates, location.radiusKm, isNeutral]);
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedLocation, setSelectedLocation] = useState(initialLocation);
@@ -45,7 +85,7 @@ function SearchResultsContent() {
 
   // Filter & Sort Studios
   const matchingStudios = useMemo(() => {
-    const list = INITIAL_STUDIOS.filter((s) => {
+    const list = studios.filter((s) => {
       const q = searchQuery.toLowerCase().trim();
       const matchQuery =
         !q ||
@@ -78,11 +118,11 @@ function SearchResultsContent() {
       return [...list].sort((a, b) => b.rating - a.rating);
     }
     return list;
-  }, [searchQuery, selectedLocation, initialStageType, sortBy]);
+  }, [studios, searchQuery, selectedLocation, initialStageType, sortBy]);
 
   // Filter & Sort Locations
   const matchingLocations = useMemo(() => {
-    const list = INITIAL_LOCATIONS.filter((l) => {
+    const list = filmingLocations.filter((l) => {
       const q = searchQuery.toLowerCase().trim();
       const matchQuery =
         !q ||
@@ -111,11 +151,11 @@ function SearchResultsContent() {
       return [...list].sort((a, b) => b.rating - a.rating);
     }
     return list;
-  }, [searchQuery, selectedLocation, sortBy]);
+  }, [filmingLocations, searchQuery, selectedLocation, sortBy]);
 
   // Filter & Sort Crew
   const matchingCrew = useMemo(() => {
-    const list = INITIAL_CREW.filter((c) => {
+    const list = crewList.filter((c) => {
       const q = searchQuery.toLowerCase().trim();
       const matchQuery =
         !q ||
@@ -143,11 +183,11 @@ function SearchResultsContent() {
       return [...list].sort((a, b) => b.rating - a.rating);
     }
     return list;
-  }, [searchQuery, selectedLocation, sortBy]);
+  }, [crewList, searchQuery, selectedLocation, sortBy]);
 
   // Filter & Sort Equipment
   const matchingEquipment = useMemo(() => {
-    const list = INITIAL_EQUIPMENT.filter((e) => {
+    const list = equipmentList.filter((e) => {
       const q = searchQuery.toLowerCase().trim();
       const matchQuery =
         !q ||
@@ -171,7 +211,7 @@ function SearchResultsContent() {
       return [...list].sort((a, b) => b.rating - a.rating);
     }
     return list;
-  }, [searchQuery, sortBy]);
+  }, [equipmentList, searchQuery, sortBy]);
 
   const totalResultsCount =
     matchingStudios.length +
@@ -219,7 +259,7 @@ function SearchResultsContent() {
   };
 
   return (
-    <div className="py-8 sm:py-10 bg-white dark:bg-[#101010] min-h-[calc(100vh-140px)] transition-colors duration-200">
+    <div className="py-8 sm:py-10 bg-white dark:bg-[#09090B] min-h-[calc(100vh-140px)] transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumb Navigation */}
@@ -231,21 +271,21 @@ function SearchResultsContent() {
         />
 
         {/* Page Header & Controls Bar */}
-        <div className="pb-6 border-b border-slate-200/80 dark:border-[#262626]">
+        <div className="pb-6 border-b border-zinc-200/80 dark:border-zinc-800/80">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-2">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-subtle" />
-                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
                   MARKETPLACE INVENTORY
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5]">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
                 Marketplace Search
               </h1>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#8A8A8A]">
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
               {totalResultsCount === 0
                 ? 'No matching listings found'
                 : `Showing ${totalResultsCount} verified production ${
@@ -254,24 +294,27 @@ function SearchResultsContent() {
             </p>
           </div>
 
+          {/* Location Filter Banner */}
+          <LocationFilterBanner categoryName="Search Results" totalFound={totalResultsCount} className="mt-5" />
+
           {/* Interactive Search & Filter Controls Bar */}
           <div className="mt-6 flex flex-col md:flex-row items-stretch md:items-center gap-3">
             
-            {/* Visually Dominant Search Input */}
+            {/* Search Input */}
             <div className="relative flex-1">
-              <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-[#8A8A8A] pointer-events-none" />
+              <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search cycloramas, soundstages, union DPs, Arri Alexa, lighting..."
-                className="w-full pl-10 pr-16 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#737373] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] transition-all duration-200 shadow-2xs"
+                className="w-full pl-10 pr-16 py-3 min-h-[44px] bg-zinc-50 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all duration-150 shadow-2xs"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-xs text-slate-400 dark:text-[#8A8A8A] hover:text-slate-700 dark:hover:text-[#F5F5F5] rounded cursor-pointer font-medium"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 rounded cursor-pointer font-medium"
                 >
                   Clear
                 </button>
@@ -280,11 +323,11 @@ function SearchResultsContent() {
 
             {/* Location Selector */}
             <div className="relative w-full md:w-60">
-              <LocationPinIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-[#8A8A8A] pointer-events-none" />
+              <LocationPinIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="w-full pl-9 pr-8 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
+                className="w-full pl-9 pr-8 py-3 min-h-[44px] bg-zinc-50 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm font-medium text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-zinc-900 cursor-pointer transition-all duration-150 shadow-2xs appearance-none"
               >
                 <option value="">All Production Hubs</option>
                 {LOCATION_OPTIONS.map((loc) => (
@@ -293,7 +336,7 @@ function SearchResultsContent() {
                   </option>
                 ))}
               </select>
-              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#8A8A8A]">
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 dark:text-zinc-500">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -305,14 +348,14 @@ function SearchResultsContent() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="w-full pl-3.5 pr-8 py-3 min-h-[44px] bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] rounded-xl text-base sm:text-sm font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#202020] cursor-pointer transition-all duration-200 shadow-2xs appearance-none"
+                className="w-full pl-3.5 pr-8 py-3 min-h-[44px] bg-zinc-50 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm font-medium text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-zinc-900 cursor-pointer transition-all duration-150 shadow-2xs appearance-none"
               >
                 <option value="relevance">Sort: Recommended</option>
                 <option value="rating">Highest Rated</option>
                 <option value="price-asc">Day Rate: Low to High</option>
                 <option value="price-desc">Day Rate: High to Low</option>
               </select>
-              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-[#8A8A8A]">
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 dark:text-zinc-500">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -323,14 +366,14 @@ function SearchResultsContent() {
         </div>
 
         {/* Category Filter Tabs with Sliding Indicator */}
-        <div className="py-4 border-b border-slate-200/80 dark:border-[#262626] overflow-x-auto scrollbar-none">
+        <div className="py-4 border-b border-zinc-200/80 dark:border-zinc-800/80 overflow-x-auto scrollbar-none">
           <div
             ref={tabContainerRef}
-            className="relative inline-flex items-center p-1 rounded-full bg-slate-100 dark:bg-[#181818] border border-slate-200/80 dark:border-[#262626]"
+            className="relative inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800"
           >
             {/* Sliding background pill */}
             <div
-              className="absolute rounded-full bg-slate-900 dark:bg-emerald-600 shadow-2xs pointer-events-none transition-all duration-260 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="absolute rounded-full bg-zinc-950 dark:bg-white shadow-2xs pointer-events-none transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{
                 left: 0,
                 transform: `translateX(${tabIndicatorStyle.left}px)`,
@@ -353,8 +396,8 @@ function SearchResultsContent() {
                   onClick={() => setSelectedTab(tab.id)}
                   className={`relative z-10 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                     isSelected
-                      ? 'text-white'
-                      : 'text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
+                      ? 'text-white dark:text-zinc-950 font-bold'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
                   }`}
                 >
                   {tab.label}
@@ -381,13 +424,13 @@ function SearchResultsContent() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                           Production Studios &amp; Soundstages ({matchingStudios.length})
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                       {matchingStudios.map((studio) => (
                         <StudioCard key={studio.id} studio={studio} />
                       ))}
@@ -401,13 +444,13 @@ function SearchResultsContent() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                           Filming Locations ({matchingLocations.length})
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                       {matchingLocations.map((location) => (
                         <LocationCard key={location.id} location={location} />
                       ))}
@@ -421,13 +464,13 @@ function SearchResultsContent() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                           Production Crew &amp; Department Heads ({matchingCrew.length})
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                       {matchingCrew.map((member) => (
                         <CrewCard key={member.id} member={member} />
                       ))}
@@ -441,13 +484,13 @@ function SearchResultsContent() {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                           Equipment &amp; Camera Packages ({matchingEquipment.length})
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                       {matchingEquipment.map((equipment) => (
                         <EquipmentCard key={equipment.id} equipment={equipment} />
                       ))}
@@ -467,9 +510,9 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center text-slate-500">
-          <div className="inline-block w-8 h-8 border-2 border-slate-900 dark:border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center text-zinc-500">
+          <div className="inline-block w-8 h-8 border-2 border-zinc-950 dark:border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
             Searching Marketplace...
           </p>
         </div>

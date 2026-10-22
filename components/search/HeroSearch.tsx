@@ -11,9 +11,8 @@ import {
   ChevronDownIcon,
   ArrowRightIcon,
   ShieldPolicyIcon,
-  StarIcon,
-  CheckCircleIcon,
-  ZapIcon,
+  CheckIcon,
+  SearchIcon,
 } from '@/components/ui/Icons';
 import { LOCATION_OPTIONS, STAGE_TYPE_OPTIONS, SHIFT_OPTIONS } from '@/lib/data';
 
@@ -44,7 +43,7 @@ export function HeroSearch({
   const [activeDropdown, setActiveDropdown] = useState<'location' | 'stage' | 'date' | null>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  // Outside click and Escape key dismissal for search dropdowns
+  // Outside click and Escape key dismissal
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -77,402 +76,373 @@ export function HeroSearch({
   };
 
   const quickFilterOptions = [
-    { key: 'camlockPower', label: '3-Phase Camlock (600A)' },
-    { key: 'driveInAccess', label: 'Drive-in Vehicle Access' },
-    { key: 'stc60Certified', label: 'STC 60+ Certified Sound' },
-    { key: 'northDaylight', label: 'North-Facing Daylight' },
-    { key: 'gripPackageIncluded', label: 'Grip Package Included' },
+    { key: 'camlockPower', label: '600A Camlock' },
+    { key: 'driveInAccess', label: 'Drive-in Bay' },
+    { key: 'stc60Certified', label: 'STC 60+ Soundproof' },
+    { key: 'northDaylight', label: 'North Daylight' },
   ];
 
   return (
-    <section className="relative pt-10 pb-12 sm:pt-16 sm:pb-16 bg-white dark:bg-[#101010] transition-colors duration-150 overflow-hidden">
-      
-      {/* 1. Ambient Background Drifting Blobs (SkillXChange Inspired Motion) */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-5%] w-[480px] h-[480px] bg-emerald-500/8 dark:bg-emerald-500/12 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[540px] h-[540px] bg-emerald-600/5 dark:bg-emerald-400/8 rounded-full blur-3xl animate-blob animation-delay-2000" />
-        <div className="absolute top-[25%] right-[15%] w-[320px] h-[320px] bg-slate-400/8 dark:bg-slate-600/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
-      </div>
-
+    <section className="relative pt-6 pb-12 sm:pt-10 sm:pb-16 bg-white dark:bg-[#09090B] border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-150 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Split Hero: Typography & Staggered Content + Interactive Floating Showcase */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        {/* ========================================================
+           SPLIT HERO COMPOSITION (7 Col Left / 5 Col Right)
+           ======================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Left Column: Heading, Subtitle & Fast Actions (Span 7) */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left z-10">
+          {/* ----------------------------------------------------
+             LEFT COLUMN: Editorial Copy & Rebuilt Search Matrix
+             ---------------------------------------------------- */}
+          <div className="lg:col-span-7 space-y-6">
             
-            {/* Live Status Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold animate-slide-up delay-75">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="uppercase tracking-wider text-[11px] font-bold">
-                140+ Commercial Production Stages
+            {/* Category Eyebrow */}
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-mono">
+                COMMERCIAL PRODUCTION MARKETPLACE
               </span>
             </div>
 
-            {/* Main Hero Headline */}
-            <h1 className="mt-4 text-[26px] sm:text-4xl lg:text-[52px] font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5] leading-[1.15] sm:leading-[1.1] animate-slide-up delay-150">
-              Find the Perfect Space for Your Next Shoot
+            {/* Main Headline with Controlled Rhythm */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-zinc-950 dark:text-white leading-[1.12]">
+              Production Studios &amp; Soundstages.
+              <span className="block text-zinc-400 dark:text-zinc-500 font-bold mt-1">
+                Built for Commercial Wrap.
+              </span>
             </h1>
 
-            {/* Supporting Subtitle */}
-            <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-[#B3B3B3] font-normal leading-relaxed max-w-xl animate-slide-up delay-200">
-              Discover verified cycloramas, soundstages, raw filming locations, union camera crews, and cinema packages with transparent 10-hour shoot day rules.
+            {/* Concise Supporting Explanation */}
+            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-xl font-normal">
+              Direct booking for certified cycloramas, STC 60 soundstages, daylight lofts, and industrial filming locations across New York with transparent 10-hour day rates.
             </p>
 
-            {/* Action Buttons & Social Proof */}
-            <div className="mt-6 flex flex-wrap items-center gap-4 animate-slide-up delay-300">
-              <Link
-                href="/studios"
-                className="px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex items-center gap-2"
-              >
-                <span>Explore Studios</span>
-                <ArrowRightIcon className="w-3.5 h-3.5" />
-              </Link>
+            {/* RE-ENGINEERED SEARCH MATRIX (What · Where · When · Action) */}
+            <div className="pt-2" ref={searchContainerRef}>
+              <div className="p-2 rounded-2xl bg-zinc-100/90 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                  
+                  {/* Field 1: WHAT — Space Type (Span 4) */}
+                  <div className="sm:col-span-4 relative">
+                    <button
+                      type="button"
+                      onClick={() => setActiveDropdown(activeDropdown === 'stage' ? null : 'stage')}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-800/90 hover:bg-zinc-50 dark:hover:bg-zinc-750 transition-colors text-left cursor-pointer border border-zinc-200/80 dark:border-zinc-700 min-h-[44px]"
+                      aria-expanded={activeDropdown === 'stage'}
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-300">
+                        <ArchetypeIcon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[9px] uppercase font-bold tracking-wider text-zinc-400 dark:text-zinc-500">
+                          1. Space Archetype
+                        </span>
+                        <span className="block text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                          {selectedStageType}
+                        </span>
+                      </div>
+                      <ChevronDownIcon className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    </button>
 
-              <Link
-                href="/list-your-studio"
-                className="px-5 py-3 rounded-full border border-slate-300 dark:border-[#303030] hover:bg-slate-100 dark:hover:bg-[#181818] text-slate-800 dark:text-[#F5F5F5] text-xs sm:text-sm font-semibold transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-              >
-                List Your Stage
-              </Link>
+                    {/* Dropdown Options */}
+                    {activeDropdown === 'stage' && (
+                      <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-2 z-50 animate-dropdown-in">
+                        <div className="p-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                          Select Space Category
+                        </div>
+                        {STAGE_TYPE_OPTIONS.map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => {
+                              onSelectStageType(type);
+                              setActiveDropdown(null);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                              selectedStageType === type
+                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400'
+                                : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                            }`}
+                          >
+                            <span>{type}</span>
+                            {selectedStageType === type && <CheckIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-              {/* Trust Badge: COI Included */}
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-[#8A8A8A] pl-1">
-                <span className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                  <ShieldPolicyIcon className="w-3.5 h-3.5" />
+                  {/* Field 2: WHERE — Production Hub (Span 4) */}
+                  <div className="sm:col-span-4 relative">
+                    <button
+                      type="button"
+                      onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white dark:bg-zinc-800/90 hover:bg-zinc-50 dark:hover:bg-zinc-750 transition-colors text-left cursor-pointer border border-zinc-200/80 dark:border-zinc-700 min-h-[44px]"
+                      aria-expanded={activeDropdown === 'location'}
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-300">
+                        <LocationPinIcon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[9px] uppercase font-bold tracking-wider text-zinc-400 dark:text-zinc-500">
+                          2. Market Hub
+                        </span>
+                        <span className="block text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                          {selectedLocation}
+                        </span>
+                      </div>
+                      <ChevronDownIcon className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    </button>
+
+                    {/* Dropdown Options */}
+                    {activeDropdown === 'location' && (
+                      <div className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-2 z-50 animate-dropdown-in">
+                        <div className="p-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                          Select Market Location
+                        </div>
+                        {LOCATION_OPTIONS.map((loc) => (
+                          <button
+                            key={loc}
+                            type="button"
+                            onClick={() => {
+                              onSelectLocation(loc);
+                              setActiveDropdown(null);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                              selectedLocation === loc
+                                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400'
+                                : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                            }`}
+                          >
+                            <span>{loc}</span>
+                            {selectedLocation === loc && <CheckIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Field 3: WHEN & ACTION (Span 4) */}
+                  <div className="sm:col-span-4 flex items-center gap-2">
+                    {/* Shift Dropdown */}
+                    <div className="relative flex-1">
+                      <button
+                        type="button"
+                        onClick={() => setActiveDropdown(activeDropdown === 'date' ? null : 'date')}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white dark:bg-zinc-800/90 hover:bg-zinc-50 dark:hover:bg-zinc-750 transition-colors text-left cursor-pointer border border-zinc-200/80 dark:border-zinc-700 min-h-[44px]"
+                        aria-expanded={activeDropdown === 'date'}
+                      >
+                        <CalendarIcon className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-[9px] uppercase font-bold tracking-wider text-zinc-400 dark:text-zinc-500">
+                            3. Shift
+                          </span>
+                          <span className="block text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                            {selectedShift.label.split(' ')[0]} Shift
+                          </span>
+                        </div>
+                        <ChevronDownIcon className="w-3 h-3 text-zinc-400 shrink-0" />
+                      </button>
+
+                      {/* Dropdown Options */}
+                      {activeDropdown === 'date' && (
+                        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-2 z-50 animate-dropdown-in">
+                          <div className="p-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                            Shoot Day Call Times
+                          </div>
+                          {SHIFT_OPTIONS.map((shift) => (
+                            <button
+                              key={shift.label}
+                              type="button"
+                              onClick={() => {
+                                onSelectShift(shift);
+                                setActiveDropdown(null);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                                selectedShift.label === shift.label
+                                  ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400'
+                                  : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                              }`}
+                            >
+                              <div>
+                                <div>{shift.label}</div>
+                                <div className="text-[10px] text-zinc-400">{shift.times}</div>
+                              </div>
+                              {selectedShift.label === shift.label && <CheckIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Primary Search CTA Button */}
+                    <button
+                      type="button"
+                      onClick={handleSearchClick}
+                      className="px-4 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 min-h-[44px]"
+                      aria-label="Search Stages"
+                    >
+                      <SearchIcon className="w-3.5 h-3.5" />
+                      <span>Search</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Subordinate Quick Technical Filters */}
+              <div className="mt-3 flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mr-1">
+                  Filters:
                 </span>
-                <span className="text-[11px] font-semibold text-slate-700 dark:text-[#B3B3B3]">
-                  $2M Direct Liability Policy Included
+                {quickFilterOptions.map((filter) => {
+                  const active = activeQuickFilters.includes(filter.key);
+                  return (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      onClick={() => onToggleQuickFilter(filter.key)}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer border ${
+                        active
+                          ? 'bg-amber-500 text-white dark:text-zinc-950 font-bold border-amber-600 dark:border-amber-400 shadow-2xs'
+                          : 'bg-white dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-400 border-zinc-200/80 dark:border-zinc-700/80 hover:border-zinc-300 dark:hover:border-zinc-600'
+                      }`}
+                    >
+                      {filter.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Subordinate Insurance & Standard Note */}
+              <div className="mt-3 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <ShieldPolicyIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="text-[11px]">
+                  All bookings include $2,000,000 direct production liability insurance naming host as additional insured.
                 </span>
               </div>
             </div>
 
           </div>
 
-          {/* Right Column: Interactive Floating Showcase (Desktop) (Span 5) */}
-          <div className="lg:col-span-5 relative h-[380px] hidden lg:block select-none">
-            
-            {/* Ambient Radial Highlight */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] bg-gradient-to-tr from-emerald-500/15 to-slate-400/10 dark:from-emerald-500/20 dark:to-slate-800/20 rounded-full blur-3xl pointer-events-none" />
+          {/* ----------------------------------------------------
+             RIGHT COLUMN: Editorial Visual Storytelling Anchor
+             ---------------------------------------------------- */}
+          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+            <div className="relative rounded-3xl overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-zinc-950 shadow-2xl group">
+              
+              {/* Primary High-Resolution Stage Image */}
+              <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-zinc-950">
+                <Image
+                  src="/images/studios/apex-stage-c.svg"
+                  alt="Apex Soundstage 4 with overhead box truss lighting grid"
+                  fill
+                  priority
+                  className="object-cover group-hover:scale-102 transition-transform duration-500"
+                />
+                
+                {/* Subtle gradient vignette for text legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
 
-            {/* Floating Card 1: Studio Highlight (Top Left) */}
-            <div className="absolute top-0 left-2 z-10 animate-float">
-              <Link
-                href="/studios/the-greenpoint-cove"
-                className="block w-64 p-4 rounded-2xl bg-white/90 dark:bg-[#181818]/90 backdrop-blur-md border border-slate-200/90 dark:border-[#303030] shadow-xl hover:shadow-2xl dark:shadow-black/50 transform -rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group"
-              >
-                <div className="relative h-28 w-full rounded-xl overflow-hidden bg-slate-900 mb-3">
-                  <Image
-                    src="/images/studios/greenpoint-cove.svg"
-                    alt="The Greenpoint Cove Studio"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-black/80 text-white backdrop-blur-xs">
-                    DAYLIGHT CYC
+                {/* Top Badge: Certified Commercial Soundstage */}
+                <div className="absolute top-4 left-4 flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-zinc-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30">
+                    STAGE SPECIMEN #04
                   </span>
-                  <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-slate-950">
-                    $175/hr
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
+                    LIVE
                   </span>
                 </div>
-                <h3 className="font-bold text-xs text-slate-900 dark:text-[#F5F5F5] truncate">
-                  The Greenpoint Cove Studio A
-                </h3>
-                <div className="flex items-center gap-1.5 mt-1 text-[10px] text-slate-500 dark:text-[#8A8A8A]">
-                  <ZapIcon className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                  <span>300A 3-Phase · 22ft Steel Grid</span>
-                </div>
-              </Link>
-            </div>
+              </div>
 
-            {/* Floating Card 2: Union Crew Profile (Bottom Right) */}
-            <div className="absolute bottom-2 right-2 z-20 animate-float-alt">
-              <Link
-                href="/crew/marcus-vance-dp"
-                className="block w-60 p-4 rounded-2xl bg-white/90 dark:bg-[#181818]/90 backdrop-blur-md border border-slate-200/90 dark:border-[#303030] shadow-xl hover:shadow-2xl dark:shadow-black/50 transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group"
-              >
-                <div className="flex items-center gap-3 mb-2.5">
-                  <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-slate-900 shrink-0">
-                    <Image
-                      src="/images/crew/marcus-vance.svg"
-                      alt="Marcus Vance"
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <span className="inline-block px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-100 dark:bg-[#262626] text-slate-700 dark:text-slate-300 uppercase">
-                      IATSE 600
-                    </span>
-                    <h4 className="font-bold text-xs text-slate-900 dark:text-[#F5F5F5] truncate mt-0.5">
-                      Marcus Vance
-                    </h4>
-                    <p className="text-[10px] text-slate-500 dark:text-[#8A8A8A] truncate">
-                      Director of Photography
+              {/* Anchored Technical Metadata Card */}
+              <div className="p-4 sm:p-5 bg-zinc-950/95 dark:bg-[#121216]/95 border-t border-zinc-800/80 backdrop-blur-md space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                      Apex Soundstage 4
+                    </h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Long Island City, Queens · STC 60+ Certified Silent
                     </p>
                   </div>
+                  <div className="text-right shrink-0">
+                    <span className="block text-sm sm:text-base font-mono font-extrabold text-amber-400">
+                      $2,800
+                    </span>
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider block">
+                      10h Day Rate
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-[#262626] text-[10px]">
-                  <span className="flex items-center gap-1 text-slate-800 dark:text-[#F5F5F5] font-semibold">
-                    <StarIcon className="w-3 h-3 text-amber-500 fill-amber-500" />
-                    <span>4.98</span>
-                  </span>
-                  <span className="font-extrabold text-slate-900 dark:text-[#F5F5F5]">
-                    $1,650<span className="font-normal text-slate-400">/day</span>
+                {/* Key Technical Specs Pill Row */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800 text-xs">
+                  <div>
+                    <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-bold">
+                      Dimensions
+                    </span>
+                    <span className="font-mono font-semibold text-zinc-200 text-xs">
+                      5,500 sq ft
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-bold">
+                      Rigging Grid
+                    </span>
+                    <span className="font-mono font-semibold text-zinc-200 text-xs">
+                      24&apos; Clear
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-bold">
+                      Power
+                    </span>
+                    <span className="font-mono font-semibold text-zinc-200 text-xs">
+                      600A 3-Phase
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action CTA Link */}
+                <div className="pt-1 flex items-center justify-between text-xs">
+                  <Link
+                    href="/studios/apex-cinema-lot-stage-c"
+                    className="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 transition-colors"
+                  >
+                    <span>Inspect Technical Rigging Specs</span>
+                    <ArrowRightIcon className="w-3.5 h-3.5" />
+                  </Link>
+                  <span className="text-[11px] text-zinc-500">
+                    Drive-in Vehicle Gate
                   </span>
                 </div>
-              </Link>
+              </div>
+
             </div>
 
-            {/* Floating Card 3: Live Shoot Shield Badge (Center Overlay) */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
-              <div className="px-3.5 py-2 rounded-xl bg-slate-900/95 dark:bg-[#202020]/95 text-white backdrop-blur-md border border-white/10 shadow-2xl flex items-center gap-2">
-                <CheckCircleIcon className="w-4 h-4 text-emerald-400" />
-                <span className="text-[11px] font-bold tracking-wide">
-                  COI Endorsement Verified
+            {/* Overlapping Floating Daylight Lofts Thumbnail Pill */}
+            <div className="hidden sm:flex absolute -bottom-4 -left-4 items-center gap-3 p-2.5 pr-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl backdrop-blur-md">
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-zinc-800 shrink-0">
+                <Image
+                  src="/images/studios/greenpoint-cove.svg"
+                  alt="Greenpoint Cyclorama Cove"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <span className="block text-[11px] font-bold text-zinc-950 dark:text-white">
+                  The Greenpoint Cove
+                </span>
+                <span className="block text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">
+                  Seamless 2-Wall Cyc · $1,400/day
                 </span>
               </div>
             </div>
 
           </div>
 
-        </div>
-
-        {/* 2. Floating Segmented Studio Search Bar (Refined Entrance & Transitions) */}
-        <div ref={searchContainerRef} className="mt-10 relative z-30 animate-slide-up delay-400">
-          <div className="bg-white dark:bg-[#181818] rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-[#303030] shadow-[0_12px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgb(0,0,0,0.5)] p-2 sm:p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-[#262626] transition-all">
-            
-            {/* Segment 1: Location & Submarket */}
-            <div className="relative flex-1">
-              <button
-                type="button"
-                onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
-                className="w-full text-left px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full hover:bg-slate-50 dark:hover:bg-[#202020] transition-colors flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
-                aria-expanded={activeDropdown === 'location'}
-                aria-haspopup="listbox"
-              >
-                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#262626] flex items-center justify-center shrink-0 text-slate-700 dark:text-[#F5F5F5]">
-                  <LocationPinIcon className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A]">
-                    LOCATION &amp; SUBMARKET
-                  </span>
-                  <span className="block text-xs sm:text-sm font-semibold text-slate-900 dark:text-[#F5F5F5] truncate">
-                    {selectedLocation}
-                  </span>
-                  <span className="block text-[10px] text-slate-500 dark:text-[#8A8A8A] truncate">
-                    Zone 1 (15-min radius)
-                  </span>
-                </div>
-              </button>
-
-              {/* Location Dropdown */}
-              {activeDropdown === 'location' && (
-                <div className="absolute left-0 mt-2 w-[calc(100vw-2.5rem)] max-w-xs sm:w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
-                  <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
-                    Select Production Hub
-                  </div>
-                  <ul role="listbox">
-                    {LOCATION_OPTIONS.map((loc) => (
-                      <li key={loc}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onSelectLocation(loc);
-                            setActiveDropdown(null);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
-                            selectedLocation === loc
-                              ? 'bg-slate-900 dark:bg-emerald-600 text-white font-semibold'
-                              : 'text-slate-700 dark:text-[#B3B3B3] hover:bg-slate-100 dark:hover:bg-[#202020] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
-                          }`}
-                        >
-                          {loc}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Segment 2: Stage Archetype */}
-            <div className="relative flex-1">
-              <button
-                type="button"
-                onClick={() => setActiveDropdown(activeDropdown === 'stage' ? null : 'stage')}
-                className="w-full text-left px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full hover:bg-slate-50 dark:hover:bg-[#202020] transition-colors flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
-                aria-expanded={activeDropdown === 'stage'}
-                aria-haspopup="listbox"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#262626] flex items-center justify-center shrink-0 text-slate-700 dark:text-[#F5F5F5]">
-                    <ArchetypeIcon className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A]">
-                      STAGE ARCHETYPE
-                    </span>
-                    <span className="block text-xs sm:text-sm font-semibold text-slate-900 dark:text-[#F5F5F5] truncate">
-                      {selectedStageType}
-                    </span>
-                    <span className="block text-[10px] text-slate-500 dark:text-[#8A8A8A] truncate">
-                      Rigging &amp; power included
-                    </span>
-                  </div>
-                </div>
-                <ChevronDownIcon className="w-4 h-4 text-slate-400 dark:text-[#8A8A8A] shrink-0 ml-1" />
-              </button>
-
-              {/* Stage Type Dropdown */}
-              {activeDropdown === 'stage' && (
-                <div className="absolute left-0 mt-2 w-[calc(100vw-2.5rem)] max-w-xs sm:w-72 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
-                  <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
-                    Select Stage Geometry
-                  </div>
-                  <ul role="listbox">
-                    {STAGE_TYPE_OPTIONS.map((type) => (
-                      <li key={type}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onSelectStageType(type);
-                            setActiveDropdown(null);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
-                            selectedStageType === type
-                              ? 'bg-slate-900 dark:bg-emerald-600 text-white font-semibold'
-                              : 'text-slate-700 dark:text-[#B3B3B3] hover:bg-slate-100 dark:hover:bg-[#202020] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Segment 3: Shoot Date & Shift */}
-            <div className="relative flex-1">
-              <button
-                type="button"
-                onClick={() => setActiveDropdown(activeDropdown === 'date' ? null : 'date')}
-                className="w-full text-left px-4 py-3 sm:py-2.5 rounded-xl sm:rounded-full hover:bg-slate-50 dark:hover:bg-[#202020] transition-colors flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
-                aria-expanded={activeDropdown === 'date'}
-                aria-haspopup="listbox"
-              >
-                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#262626] flex items-center justify-center shrink-0 text-slate-700 dark:text-[#F5F5F5]">
-                  <CalendarIcon className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A]">
-                    SHOOT DATE &amp; SHIFT
-                  </span>
-                  <span className="block text-xs sm:text-sm font-semibold text-slate-900 dark:text-[#F5F5F5] truncate">
-                    {selectedShift.label}
-                  </span>
-                  <span className="block text-[10px] text-slate-500 dark:text-[#8A8A8A] truncate">
-                    {selectedShift.times}
-                  </span>
-                </div>
-              </button>
-
-              {/* Shift Dropdown */}
-              {activeDropdown === 'date' && (
-                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-[calc(100vw-2.5rem)] max-w-sm sm:w-80 bg-white dark:bg-[#181818] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#303030] p-2 z-50 animate-scale-in">
-                  <div className="text-[10px] font-bold text-slate-500 dark:text-[#8A8A8A] px-3 py-1.5 uppercase tracking-wider">
-                    Select Shoot Shift &amp; Call Sheet Times
-                  </div>
-                  <ul role="listbox">
-                    {SHIFT_OPTIONS.map((opt) => (
-                      <li key={opt.label}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onSelectShift(opt);
-                            setActiveDropdown(null);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl transition-colors cursor-pointer ${
-                            selectedShift.label === opt.label
-                              ? 'bg-slate-900 dark:bg-emerald-600 text-white'
-                              : 'hover:bg-slate-100 dark:hover:bg-[#202020]'
-                          }`}
-                        >
-                          <div className={`text-xs font-semibold ${selectedShift.label === opt.label ? 'text-white' : 'text-slate-800 dark:text-[#F5F5F5]'}`}>
-                            {opt.label}
-                          </div>
-                          <div className={`text-[10px] ${selectedShift.label === opt.label ? 'text-slate-300 dark:text-emerald-100' : 'text-slate-500 dark:text-[#8A8A8A]'}`}>
-                            {opt.times}
-                          </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Segment 4: Primary Find Studios Action CTA */}
-            <div className="p-1 sm:p-0 sm:pr-1 shrink-0">
-              <button
-                type="button"
-                onClick={handleSearchClick}
-                className="w-full sm:w-auto h-12 sm:h-12 px-6 rounded-xl sm:rounded-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 active:scale-[0.98] cursor-pointer"
-              >
-                <span>Find Your Space</span>
-                <ArrowRightIcon className="w-4 h-4" />
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        {/* 3. Quick Requirement Chips Row (Refined Hover & Active Interactions) */}
-        <div className="mt-5 flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A] mr-1">
-            QUICK FILTERS:
-          </span>
-
-          {quickFilterOptions.map((chip) => {
-            const isActive = activeQuickFilters.includes(chip.key);
-            return (
-              <button
-                key={chip.key}
-                type="button"
-                onClick={() => onToggleQuickFilter(chip.key)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer border hover:-translate-y-0.5 active:translate-y-0 ${
-                  isActive
-                    ? 'bg-slate-900 dark:bg-emerald-600 text-white border-slate-900 dark:border-emerald-600 shadow-2xs'
-                    : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545] hover:bg-slate-50 dark:hover:bg-[#202020] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
-                }`}
-                aria-pressed={isActive}
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    isActive ? 'bg-emerald-400' : 'bg-slate-300 dark:bg-[#454545]'
-                  }`}
-                />
-                <span>{chip.label}</span>
-              </button>
-            );
-          })}
-
-          {activeQuickFilters.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                activeQuickFilters.forEach((key) => onToggleQuickFilter(key));
-              }}
-              className="text-[11px] font-semibold text-slate-500 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] underline ml-2 cursor-pointer transition-colors"
-            >
-              Reset Filters
-            </button>
-          )}
         </div>
 
       </div>

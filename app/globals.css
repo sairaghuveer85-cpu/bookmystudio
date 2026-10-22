@@ -1,49 +1,60 @@
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, [data-theme="dark"], .dark *, [data-theme="dark"] *));
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root {
-  color-scheme: light;
-  --bg-page: #FFFFFF;
-  --bg-page-subtle: #F7F7F7;
-  --bg-surface: #FFFFFF;
-  --bg-surface-secondary: #F3F4F6;
-  --bg-surface-elevated: #FFFFFF;
-  --bg-surface-hover: #F8FAFC;
-  --text-primary: #171717;
-  --text-secondary: #525252;
-  --text-muted: #737373;
-  --border-subtle: #E5E5E5;
-  --border-hover: #D4D4D4;
-  --accent-primary: #059669;
-  --accent-hover: #047857;
-  --accent-subtle: #ECFDF5;
-  --accent-border: #A7F3D0;
-  --status-error: #EF4444;
-  --status-warning: #F59E0B;
-  --status-success: #10B981;
+/* ============================================================
+   BOOKMYSTUDIO — DARK-ONLY DESIGN SYSTEM TOKENS
+   Permanent cinematic soundstage palette (OLED Black, Tungsten Amber)
+   ============================================================ */
+:root,
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-page: #09090B;               /* Deep obsidian soundstage floor */
+  --bg-page-subtle: #0E0E12;        /* Sub-level section backdrop */
+  --bg-surface: #121216;            /* Primary card and panel surface */
+  --bg-surface-secondary: #18181E;  /* Inputs, pill filters, secondary cards */
+  --bg-surface-elevated: #1D1D24;   /* Menus, dialogs, drawers */
+  --bg-surface-hover: #22222B;      /* Interactive hover surface */
+  --text-primary: #FAFAFA;          /* High-contrast crisp white typography */
+  --text-secondary: #A1A1AA;        /* Editorial specs, metadata, subtitles */
+  --text-muted: #71717A;            /* Tertiary captions, helper text */
+  --border-subtle: #27272A;         /* Razor-crisp studio separators */
+  --border-hover: #3F3F46;          /* Focused / active element borders */
+  --accent-primary: #F59E0B;        /* 3200K Luminous Tungsten Amber */
+  --accent-hover: #FBBF24;          /* Warm amber interaction hover */
+  --accent-subtle: #291D0A;         /* Dark amber badge / pill background */
+  --accent-border: #78350F;         /* Subtle amber accent border */
+  --status-error: #EF4444;          /* High-contrast destructive alerts */
+  --status-warning: #F59E0B;        /* Hold warnings, production curfews */
+  --status-success: #10B981;        /* $2M COI & Verified stage seals */
 }
 
-.dark, [data-theme="dark"] {
-  color-scheme: dark;
-  --bg-page: #101010;
-  --bg-page-subtle: #141414;
-  --bg-surface: #181818;
-  --bg-surface-secondary: #202020;
-  --bg-surface-elevated: #262626;
-  --bg-surface-hover: #232323;
-  --text-primary: #F5F5F5;
-  --text-secondary: #B3B3B3;
-  --text-muted: #8A8A8A;
-  --border-subtle: #303030;
-  --border-hover: #454545;
-  --accent-primary: #10B981;
-  --accent-hover: #059669;
-  --accent-subtle: #102820;
-  --accent-border: #164E3D;
-  --status-error: #F87171;
-  --status-warning: #FBBF24;
-  --status-success: #34D399;
+/* ============================================================
+   AUTHENTICATION EXPERIENCE RESILIENT STYLES
+   Permanent dark split-screen layout and inputs
+   ============================================================ */
+.auth-page-container {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.auth-form-panel {
+  background-color: #09090B;
+  color: #FAFAFA;
+}
+
+.auth-input {
+  background-color: #121216;
+  color: #FAFAFA;
+  border-color: #27272A;
+}
+
+.auth-input:focus {
+  background-color: #18181E;
+  border-color: #F59E0B;
 }
 
 @theme inline {
@@ -66,23 +77,19 @@
 }
 
 /* ============================================================
-   COHESIVE MOTION SYSTEM TOKENS
-   - Micro-interactions: 140ms
-   - Buttons / Controls: 180ms
-   - Dropdowns / Popovers: 220ms
-   - Card Hovers: 250ms
-   - Section Reveals: 500ms
-   - Hero Entrances: 650ms
+   PRECISION MOTION TOKENS (Editorial Marketplace Standard)
+   - Micro-interactions: 120ms
+   - Controls / Buttons: 160ms
+   - Menus / Dropdowns: 200ms
+   - Route Transitions: 240ms
+   - Smooth Easing: cubic-bezier(0.16, 1, 0.3, 1)
    ============================================================ */
 :root {
-  --motion-micro: 140ms;
-  --motion-button: 180ms;
-  --motion-dropdown: 220ms;
-  --motion-card: 250ms;
-  --motion-reveal: 500ms;
-  --motion-hero: 650ms;
-  --ease-interface: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+  --motion-micro: 120ms;
+  --motion-control: 160ms;
+  --motion-overlay: 200ms;
+  --motion-route: 240ms;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html,
@@ -98,10 +105,10 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 200ms ease-out, color 200ms ease-out;
+  transition: background-color 180ms ease-out, color 180ms ease-out;
 }
 
-/* Eliminate 300ms mobile tap delay */
+/* Fast touch response */
 button,
 a,
 input,
@@ -110,7 +117,7 @@ textarea {
   touch-action: manipulation;
 }
 
-/* Safe-area insets for notched smartphones & home indicators */
+/* Safe area padding for mobile devices */
 .safe-area-bottom {
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
@@ -118,46 +125,28 @@ textarea {
   padding-top: max(0.75rem, env(safe-area-inset-top));
 }
 
-/* Cohesive theme transition utility */
-.theme-transition {
-  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body, *, *::before, *::after {
-    transition: none !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-/* Custom minimal scrollbar */
+/* Minimalist scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d4d4d8;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a1a1aa;
 }
-
 .dark ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: #27272a;
 }
-
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a4a;
+  background: #3f3f46;
 }
 
-/* Hide scrollbar for category tabs */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -167,170 +156,15 @@ textarea {
 }
 
 /* ============================================================
-   PREMIUM MOTION & INTERACTION SYSTEM (SkillXChange Reference)
+   ARCHITECTURAL MOTION SYSTEM
+   Purpose-driven, no floating blobs or artificial jitter
    ============================================================ */
 
-/* 1. Ambient Background Drifting Blobs */
-@keyframes float-blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(25px, -35px) scale(1.08); }
-  66% { transform: translate(-20px, 18px) scale(0.95); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-.animate-blob {
-  animation: float-blob 9s ease-in-out infinite;
-  will-change: transform;
-}
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* 2. Floating Visual Preview Cards */
-@keyframes float-y {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes float-y-alt {
-  0%, 100% { transform: translateY(0px) rotate(-1deg); }
-  50% { transform: translateY(-14px) rotate(1deg); }
-}
-
-.animate-float {
-  animation: float-y 5.5s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-float-alt {
-  animation: float-y-alt 6.5s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* 3. Text & Card Entrance Animations */
-@keyframes slideUpFade {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideDownFade {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUpFade 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
-}
-
-.animate-slide-down {
-  animation: slideDownFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
-}
-
-.animate-scale-in {
-  animation: scaleFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
-}
-
-/* Entrance Delays */
-.delay-75 { animation-delay: 75ms; }
-.delay-100 { animation-delay: 100ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-
-/* 4. Scroll-Triggered Viewport Reveals */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* 5. Bento Card & Interactive Surfaces */
-.bento-card-interactive {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-.bento-card-interactive:hover {
-  transform: translateY(-4px);
-}
-
-/* Subtle glow badge pulse */
-@keyframes subtle-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.92); }
-}
-
-.animate-pulse-subtle {
-  animation: subtle-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* 6. Mobile Drawer & Overlay Transitions */
-@keyframes slideInFromRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0.8;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-drawer-in {
-  animation: slideInFromRight 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-overlay-in {
-  animation: fadeInOverlay 200ms ease-out forwards;
-}
-
-/* 7. Route & Modal Entrance Transitions */
+/* 1. Page Entrance Transition */
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -339,30 +173,15 @@ textarea {
 }
 
 .animate-page-enter {
-  animation: pageEnter 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageEnter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
 }
 
-@keyframes modalEnter {
+/* 2. Micro-entrance for dropdowns and popovers */
+@keyframes dropdownEnter {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.animate-modal-in {
-  animation: modalEnter 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.97);
+    transform: translateY(-4px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -371,37 +190,285 @@ textarea {
 }
 
 .animate-dropdown-in {
-  animation: dropdownFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: dropdownEnter 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
 }
 
-/* Respect user's reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  .animate-blob,
-  .animate-float,
-  .animate-float-alt,
-  .animate-slide-up,
-  .animate-slide-down,
-  .animate-scale-in,
-  .animate-pulse-subtle,
-  .animate-drawer-in,
-  .animate-overlay-in,
-  .animate-page-enter,
-  .animate-modal-in,
-  .animate-dropdown-in {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
+/* 3. Modal Dialog Entrance */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
   }
-
-  .reveal-on-scroll {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-
-  .bento-card-interactive:hover {
-    transform: none !important;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
+.animate-modal-in {
+  animation: modalEnter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+/* 4. Mobile Drawer Entrance */
+@keyframes drawerSlideRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-drawer-in {
+  animation: drawerSlideRight 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+@keyframes drawerSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-drawer-up {
+  animation: drawerSlideUp 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+@keyframes overlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-overlay-in {
+  animation: overlayFade 200ms ease-out forwards;
+}
+
+/* 5. Production Card Hover System */
+.bento-card-interactive {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
+  will-change: transform, box-shadow;
+}
+
+.bento-card-interactive:hover {
+  transform: translateY(-3px);
+}
+
+/* 6. Subtle Pulse Indicator for Live Availability */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.88); }
+}
+
+.animate-live-pulse {
+  animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scale in micro-interaction */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ============================================================
+   BOOKMYSTUDIO CINEMATIC INTRO (REFERENCE SPECIFICATION)
+   ============================================================ */
+.bms-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 46%,
+      rgba(245, 158, 11, 0.09) 0%,
+      rgba(120, 53, 15, 0.035) 32%,
+      transparent 67%
+    ),
+    #09090b;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 500ms ease, transform 500ms ease;
+  user-select: none;
+}
+
+.bms-intro-overlay::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+}
+
+.bms-intro-brand-lockup {
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+.bms-intro-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: clamp(2rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.065em;
+  font-family: Inter, var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.bms-intro-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px);
+  background: linear-gradient(
+    110deg,
+    #d97706 0%,
+    #f59e0b 27%,
+    #fde68a 48%,
+    #ffffff 52%,
+    #fbbf24 70%,
+    #d97706 100%
+  );
+  background-size: 250% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    bmsLetterReveal 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    bmsGoldShimmer 4s ease-in-out 1.2s infinite;
+}
+
+.bms-intro-tagline {
+  margin: 22px 0 0;
+  color: #a1a1aa;
+  font-size: clamp(0.68rem, 1.8vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: clamp(0.12em, 0.8vw, 0.24em);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: bmsTaglineReveal 650ms ease 1.25s forwards;
+}
+
+.bms-intro-skip {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  padding: 10px 14px;
+  border: 1px solid #27272a;
+  border-radius: 999px;
+  background: rgba(24, 24, 27, 0.7);
+  color: #a1a1aa;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  z-index: 10;
+}
+
+.bms-intro-skip:hover {
+  color: #fff;
+  border-color: #52525b;
+  background: rgba(39, 39, 42, 0.8);
+}
+
+.bms-intro-overlay.bms-intro-exiting {
+  opacity: 0;
+  transform: scale(1.015);
+  pointer-events: none;
+}
+
+@keyframes bmsLetterReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bmsGoldShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes bmsTaglineReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .bms-intro-brand-lockup {
+    padding: 16px;
+  }
+
+  .bms-intro-brand {
+    font-size: clamp(1.75rem, 8.2vw, 2.5rem);
+    letter-spacing: -0.065em;
+  }
+
+  .bms-intro-tagline {
+    margin-top: 16px;
+    letter-spacing: 0.12em;
+  }
+
+  .bms-intro-skip {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bms-intro-letter,
+  .bms-intro-tagline {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Accessible Reduced Motion Guarantee */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

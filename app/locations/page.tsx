@@ -1,22 +1,55 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LocationCard } from '@/components/locations/LocationCard';
 import { MobileFilterSheet } from '@/components/search/MobileFilterSheet';
 import { FilterIcon } from '@/components/ui/Icons';
 import { INITIAL_LOCATIONS } from '@/lib/data';
-import { LocationCategory } from '@/lib/types';
+import { LocationCategory, FilmingLocation } from '@/lib/types';
+import { marketplaceApi } from '@/lib/api/marketplace';
+import { useLocation } from '@/context/LocationContext';
+import { LocationFilterBanner } from '@/components/location/LocationFilterBanner';
 
 export default function LocationsPage() {
+  const { location, isNeutral } = useLocation();
+  const [locations, setLocations] = useState<FilmingLocation[]>(INITIAL_LOCATIONS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<LocationCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'area-desc'>('featured');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  useEffect(() => {
+    let isCancelled = false;
+    const params: Record<string, string | number> = {};
+    if (!isNeutral && location.coordinates && location.coordinates.length === 2) {
+      params.lng = location.coordinates[0];
+      params.lat = location.coordinates[1];
+    }
+    if (location.radiusKm) {
+      params.radiusKm = location.radiusKm;
+    }
+
+    marketplaceApi
+      .getLocations(params)
+      .then((res) => {
+        if (isCancelled) return;
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setLocations(res.data);
+        } else if (res.success && Array.isArray(res.data) && res.data.length === 0) {
+          setLocations([]);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [location.coordinates, location.radiusKm, isNeutral]);
+
   const filteredLocations = useMemo(() => {
-    let result = [...INITIAL_LOCATIONS];
+    let result = [...locations];
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -43,7 +76,7 @@ export default function LocationsPage() {
     }
 
     return result;
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [locations, searchQuery, selectedCategory, sortBy]);
 
   const resetAllFilters = () => {
     setSearchQuery('');
@@ -57,17 +90,20 @@ export default function LocationsPage() {
       <Breadcrumbs items={[{ label: 'Filming Locations' }]} />
 
       {/* Header */}
-      <div className="mt-2 pb-6 border-b border-slate-100 dark:border-[#303030]">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
+      <div className="mt-2 pb-6 border-b border-zinc-200/80 dark:border-zinc-800/80">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
           LOCATION SCOUTING DIRECTORY
         </span>
-        <h1 className="mt-1 text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5]">
-          Filming Locations &amp; Industrial Spaces
+        <h1 className="mt-1 text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Filming Locations &amp; Industrial Sets
         </h1>
-        <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-[#8A8A8A] max-w-2xl leading-relaxed">
+        <p className="mt-2 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed">
           Pre-scouted brick warehouses, landmark lofts, deep-water pier terminals, and rooftop panoramas permitted for commercial filming.
         </p>
       </div>
+
+      {/* Location Filter Banner */}
+      <LocationFilterBanner categoryName="Filming Locations" totalFound={filteredLocations.length} className="mt-5" />
 
       {/* Toolbar */}
       <div className="mt-6 space-y-4">
@@ -81,10 +117,10 @@ export default function LocationsPage() {
                 placeholder="Search locations by architectural style, dock access, or zoning..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2.5 min-h-[44px] text-base sm:text-xs rounded-xl border border-slate-200 dark:border-[#303030] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] placeholder:text-slate-400 dark:placeholder:text-[#8A8A8A]"
+                className="w-full pl-9 pr-8 py-2.5 min-h-[44px] text-base sm:text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-[#121216] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
               <svg
-                className="absolute left-3 top-3.5 w-4 h-4 text-slate-400 dark:text-[#8A8A8A]"
+                className="absolute left-3 top-3.5 w-4 h-4 text-zinc-400 dark:text-zinc-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -95,7 +131,7 @@ export default function LocationsPage() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 w-6 h-6 flex items-center justify-center text-slate-400 dark:text-[#8A8A8A] hover:text-slate-600 dark:hover:text-[#F5F5F5] text-xs cursor-pointer"
+                  className="absolute right-2.5 top-2.5 w-6 h-6 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 text-xs cursor-pointer"
                   aria-label="Clear search input"
                 >
                   ✕
@@ -103,17 +139,17 @@ export default function LocationsPage() {
               )}
             </div>
 
-            {/* Mobile Filter Sheet Trigger Button */}
+            {/* Mobile Filter Sheet Button */}
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="md:hidden flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-slate-900 dark:bg-emerald-600 text-white text-xs font-bold shrink-0 shadow-xs cursor-pointer active:scale-95 transition-all"
+              className="md:hidden flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-xs font-bold shrink-0 shadow-xs cursor-pointer active:scale-95 transition-all"
               aria-label="Open filter panel"
             >
               <FilterIcon className="w-4 h-4" />
               <span>Filters</span>
               {selectedCategory !== 'all' && (
-                <span className="w-4 h-4 rounded-full bg-white text-slate-950 text-[10px] font-extrabold flex items-center justify-center">
+                <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] font-extrabold flex items-center justify-center">
                   1
                 </span>
               )}
@@ -122,14 +158,14 @@ export default function LocationsPage() {
 
           {/* Desktop Sort Select */}
           <div className="hidden md:flex items-center gap-2 shrink-0">
-            <label htmlFor="locationSortSelect" className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A]">
+            <label htmlFor="locationSortSelect" className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
               Sort By:
             </label>
             <select
               id="locationSortSelect"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-3 py-2.5 min-h-[44px] text-xs rounded-xl border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] font-medium text-slate-800 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] cursor-pointer"
+              className="px-3 py-2.5 min-h-[44px] text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] font-medium text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
               <option value="featured">Featured Hubs</option>
               <option value="price-asc">Day Rate: Low to High</option>
@@ -139,15 +175,15 @@ export default function LocationsPage() {
           </div>
         </div>
 
-        {/* Category Pills (Horizontally scrollable on mobile) */}
-        <div className="flex overflow-x-auto pb-1 scrollbar-none items-center gap-2 pt-1">
+        {/* Category Pills (Mobile Horizontal Scrolling) */}
+        <div className="flex overflow-x-auto pb-1 scrollbar-none items-center gap-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
           <button
             type="button"
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border whitespace-nowrap ${
               selectedCategory === 'all'
-                ? 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] border-black dark:border-[#F5F5F5]'
-                : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white'
+                : 'bg-white dark:bg-[#121216] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
             }`}
           >
             All Spaces
@@ -155,10 +191,10 @@ export default function LocationsPage() {
           <button
             type="button"
             onClick={() => setSelectedCategory('warehouse')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border whitespace-nowrap ${
               selectedCategory === 'warehouse'
-                ? 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] border-black dark:border-[#F5F5F5]'
-                : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white'
+                : 'bg-white dark:bg-[#121216] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
             }`}
           >
             Brick Warehouses
@@ -166,10 +202,10 @@ export default function LocationsPage() {
           <button
             type="button"
             onClick={() => setSelectedCategory('loft')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border whitespace-nowrap ${
               selectedCategory === 'loft'
-                ? 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] border-black dark:border-[#F5F5F5]'
-                : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white'
+                : 'bg-white dark:bg-[#121216] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
             }`}
           >
             Cast-Iron Lofts
@@ -177,10 +213,10 @@ export default function LocationsPage() {
           <button
             type="button"
             onClick={() => setSelectedCategory('industrial')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border whitespace-nowrap ${
               selectedCategory === 'industrial'
-                ? 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] border-black dark:border-[#F5F5F5]'
-                : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white'
+                : 'bg-white dark:bg-[#121216] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
             }`}
           >
             Maritime Docks
@@ -188,10 +224,10 @@ export default function LocationsPage() {
           <button
             type="button"
             onClick={() => setSelectedCategory('rooftop')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border whitespace-nowrap ${
               selectedCategory === 'rooftop'
-                ? 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] border-black dark:border-[#F5F5F5]'
-                : 'bg-white dark:bg-[#181818] text-slate-700 dark:text-[#B3B3B3] border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 border-zinc-950 dark:border-white'
+                : 'bg-white dark:bg-[#121216] text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
             }`}
           >
             Rooftop Panoramas
@@ -201,7 +237,7 @@ export default function LocationsPage() {
             <button
               type="button"
               onClick={resetAllFilters}
-              className="text-xs font-semibold text-slate-500 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] underline ml-2 cursor-pointer"
+              className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 underline ml-2 cursor-pointer whitespace-nowrap"
             >
               Clear Filters
             </button>
@@ -210,17 +246,17 @@ export default function LocationsPage() {
       </div>
 
       {/* Meta Bar */}
-      <div className="mt-6 flex items-center justify-between text-xs text-slate-500 dark:text-[#8A8A8A] border-b border-slate-100 dark:border-[#303030] pb-3">
+      <div className="mt-6 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
         <span>
-          Showing <strong className="text-slate-900 dark:text-[#F5F5F5] font-bold">{filteredLocations.length}</strong> filming {filteredLocations.length === 1 ? 'location' : 'locations'}
+          Showing <strong className="text-zinc-950 dark:text-white font-bold">{filteredLocations.length}</strong> filming {filteredLocations.length === 1 ? 'location' : 'locations'}
         </span>
-        <span className="text-[11px] text-slate-400 dark:text-[#8A8A8A]">All locations supported by NYC MOFTB liaison team</span>
+        <span className="text-[11px] text-zinc-400 dark:text-zinc-500">All locations supported by NYC MOFTB liaison team</span>
       </div>
 
       {/* Locations Grid */}
       <div className="mt-6">
         {filteredLocations.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredLocations.map((loc) => (
               <LocationCard key={loc.id} location={loc} />
             ))}
@@ -248,7 +284,7 @@ export default function LocationsPage() {
           { id: 'loft', label: 'Cast-Iron Lofts' },
           { id: 'commercial', label: 'Commercial Buildings' },
           { id: 'rooftop', label: 'Rooftops' },
-          { id: 'mansion', label: 'Estates & Mansions' },
+          { id: 'industrial', label: 'Maritime Docks' },
         ]}
         sortBy={sortBy}
         onSelectSortBy={(sort) => setSortBy(sort as typeof sortBy)}
@@ -264,4 +300,3 @@ export default function LocationsPage() {
     </div>
   );
 }
-

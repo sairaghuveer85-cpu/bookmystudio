@@ -20,7 +20,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 dark:focus-visible:ring-[#10B981] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer';
+    'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer';
 
   const sizeStyles = {
     sm: 'text-xs px-3 py-1.5 rounded-lg gap-1.5',
@@ -29,12 +29,12 @@ export function Button({
   };
 
   const variantStyles = {
-    primary: 'bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] hover:bg-slate-800 dark:hover:bg-white active:bg-slate-900 shadow-sm',
-    secondary: 'bg-slate-100 dark:bg-[#202020] text-slate-800 dark:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626] active:bg-slate-300',
-    outline: 'border border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818] text-slate-800 dark:text-[#F5F5F5] hover:bg-slate-50 dark:hover:bg-[#202020] hover:border-slate-300 dark:hover:border-[#454545] shadow-xs',
-    darkOutline: 'border border-slate-700 dark:border-[#383838] bg-slate-900/60 dark:bg-[#202020]/60 text-white hover:bg-slate-800 dark:hover:bg-[#262626] hover:border-slate-600',
-    white: 'bg-white dark:bg-[#262626] text-slate-900 dark:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#303030] active:bg-slate-200 shadow-sm font-semibold',
-    pill: 'rounded-full bg-black dark:bg-[#F5F5F5] text-white dark:text-[#101010] hover:bg-slate-800 dark:hover:bg-white text-sm px-5 py-2.5',
+    primary: 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold active:scale-[0.98] shadow-sm',
+    secondary: 'bg-[#18181E] hover:bg-[#22222B] text-zinc-100 border border-zinc-800 font-semibold',
+    outline: 'border border-zinc-800 bg-[#121216] text-zinc-200 hover:bg-[#18181E] hover:border-zinc-700 shadow-xs',
+    darkOutline: 'border border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800 hover:border-zinc-600',
+    white: 'bg-white text-zinc-950 hover:bg-zinc-100 font-bold shadow-sm',
+    pill: 'rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm px-5 py-2.5',
   };
 
   return (

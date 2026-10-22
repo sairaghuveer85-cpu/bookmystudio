@@ -34,7 +34,7 @@ export default function ContactPage() {
         {/* Page Header */}
         <div className="max-w-3xl pb-6 border-b border-slate-100 dark:border-[#262626]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
               PRODUCTION DESK
             </span>
@@ -67,7 +67,7 @@ export default function ContactPage() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#F5F5F5]">
               Emergency Active Shoot Desk
             </h2>
-            <div className="mt-2 text-lg font-extrabold text-emerald-700 dark:text-emerald-400">
+            <div className="mt-2 text-lg font-extrabold text-amber-600 dark:text-amber-400">
               24/7 Shoot Day Line
             </div>
             <p className="mt-1 text-xs text-slate-500 dark:text-[#8A8A8A] leading-relaxed">
@@ -134,7 +134,7 @@ export default function ContactPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Maya Chen"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818]"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818]"
                     />
                   </div>
 
@@ -148,7 +148,7 @@ export default function ContactPage() {
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                       placeholder="e.g. Apex Visuals LLC"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818]"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818]"
                     />
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function ContactPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="maya@apexvisuals.com"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818]"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818]"
                     />
                   </div>
 
@@ -178,7 +178,7 @@ export default function ContactPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="(212) 555-0184"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818]"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818]"
                     />
                   </div>
                 </div>
@@ -191,7 +191,7 @@ export default function ContactPage() {
                     <select
                       value={inquiryType}
                       onChange={(e) => setInquiryType(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818] cursor-pointer"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818] cursor-pointer"
                     >
                       <option value="Stage Booking & Availability">Stage Booking &amp; Availability</option>
                       <option value="Multi-Stage RFP / Turnkey Commercial Quote">Multi-Stage Commercial RFP</option>
@@ -210,7 +210,7 @@ export default function ContactPage() {
                       value={shootDates}
                       onChange={(e) => setShootDates(e.target.value)}
                       placeholder="e.g. Dec 3-5, 2026 (3 Days)"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818]"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818]"
                     />
                   </div>
                 </div>
@@ -225,13 +225,13 @@ export default function ContactPage() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Describe creative shoot scope, Camlock electrical requirements, vehicle drive-in needs, or sound isolation specs..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-[#10B981] focus:bg-white dark:focus:bg-[#181818] resize-none"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-[#303030] rounded-lg text-xs text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-[#181818] resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   Send Production Inquiry
                 </button>

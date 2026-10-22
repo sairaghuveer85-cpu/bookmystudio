@@ -1,22 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
+import { CinematicIntro } from "@/components/intro/CinematicIntro";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
+import { ComparisonTray } from "@/components/comparison/ComparisonTray";
 import { MarketplaceProvider } from "@/context/MarketplaceContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { LocationProvider } from "@/context/LocationContext";
+import { LocationSelectorModal } from "@/components/location/LocationSelectorModal";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
-    { media: "(prefers-color-scheme: dark)", color: "#101010" },
-  ],
+  themeColor: "#09090B",
 };
 
 export const metadata: Metadata = {
@@ -36,24 +37,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full antialiased scroll-smooth">
+    <html lang="en" suppressHydrationWarning className="dark h-full antialiased scroll-smooth" style={{ colorScheme: 'dark' }}>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('bms_theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&d)){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}else{document.documentElement.classList.remove('dark');document.documentElement.setAttribute('data-theme','light');document.documentElement.style.colorScheme='light';}}catch(e){}})();`,
+            __html: `(function(){try{localStorage.removeItem('bms_theme');var d=document.documentElement;d.classList.add('dark');d.setAttribute('data-theme','dark');d.style.colorScheme='dark';}catch(e){}})();`,
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans bg-[var(--bg-page)] text-[var(--text-primary)] selection:bg-emerald-600 selection:text-white">
+      <body className="min-h-full flex flex-col font-sans bg-[#09090B] text-[#FAFAFA] selection:bg-amber-500/30 selection:text-amber-200">
         <ThemeProvider>
           <MarketplaceProvider>
             <AuthProvider>
-              <Suspense fallback={<div className="h-16 sm:h-20 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]" />}>
-                <Header />
-              </Suspense>
-              <div className="flex-1 flex flex-col pb-16 lg:pb-0">{children}</div>
-              <Footer />
-              <MobileBottomNav />
+              <LocationProvider>
+                <CinematicIntro />
+                <Suspense fallback={<div className="h-16 sm:h-20 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]" />}>
+                  <Header />
+                </Suspense>
+                <div className="flex-1 flex flex-col pb-16 lg:pb-0">{children}</div>
+                <Footer />
+                <ComparisonTray />
+                <MobileBottomNav />
+                <LocationSelectorModal />
+              </LocationProvider>
             </AuthProvider>
           </MarketplaceProvider>
         </ThemeProvider>

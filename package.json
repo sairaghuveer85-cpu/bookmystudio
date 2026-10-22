@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "server:dev": "pnpm --filter bookmystudio-server dev",
+    "server:build": "pnpm --filter bookmystudio-server build",
+    "server:start": "pnpm --filter bookmystudio-server start",
+    "server:seed": "pnpm --filter bookmystudio-server seed",
+    "server:test": "pnpm --filter bookmystudio-server test",
+    "server:verify-smtp": "pnpm --filter bookmystudio-server verify-smtp"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.118.0",
+    "libphonenumber-js": "^1.13.15",
+    "motion": "^14.4.0",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0"

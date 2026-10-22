@@ -25,9 +25,14 @@ export function AccountMenu() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Producer';
+  const fullName = user?.fullName || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Producer';
   const email = user?.email || '';
-  const isEmailVerified = Boolean(user?.email_confirmed_at);
+  const isEmailVerified = Boolean(user?.isVerified);
+  const isVendor = Boolean(
+    user?.roles?.some(
+      (role) => role === 'STUDIO_OWNER' || role === 'PROFESSIONAL' || role === 'ADMIN'
+    )
+  );
   const initials = fullName
     .split(' ')
     .map((n: string) => n[0])
@@ -48,38 +53,45 @@ export function AccountMenu() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full border border-slate-200 dark:border-[#303030] hover:border-slate-300 dark:hover:border-[#454545] bg-white dark:bg-[#181818] hover:bg-slate-50 dark:hover:bg-[#202020] transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+        className="group flex items-center gap-1.5 p-1 sm:pr-2.5 rounded-full border border-zinc-800/80 hover:border-zinc-700 bg-[#141418] hover:bg-[#1A1A22] transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
         aria-expanded={isOpen}
         aria-haspopup="true"
+        aria-label="User Account Menu"
       >
-        <div className="w-7 h-7 rounded-full bg-slate-900 dark:bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+        <div className="w-7 h-7 rounded-full bg-amber-500 text-zinc-950 flex items-center justify-center font-bold text-xs shrink-0 shadow-xs ring-1 ring-amber-400/30">
           {initials}
         </div>
-        <div className="hidden sm:flex flex-col leading-tight max-w-[120px]">
-          <span className="text-xs font-semibold text-slate-900 dark:text-[#F5F5F5] truncate">{fullName}</span>
-          <span className="text-[10px] text-slate-500 dark:text-[#8A8A8A] font-medium truncate">
-            {isEmailVerified ? 'Verified Producer' : 'Pending Verification'}
-          </span>
-        </div>
-        <ChevronDownIcon className="w-3.5 h-3.5 text-slate-400 dark:text-[#8A8A8A] ml-0.5" />
+        <span className="hidden xl:inline text-xs font-medium text-zinc-200 group-hover:text-white max-w-[80px] truncate">
+          {fullName.split(' ')[0]}
+        </span>
+        <ChevronDownIcon
+          className={`w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200 transition-transform duration-200 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
       </button>
 
       {/* Account Popover Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#181818] rounded-2xl shadow-xl dark:shadow-2xl border border-slate-200/90 dark:border-[#303030] p-3 z-50 animate-dropdown-in">
+        <div className="absolute right-0 mt-2 w-64 bg-[#121216] rounded-2xl shadow-2xl border border-zinc-800 p-3 z-50 animate-dropdown-in">
           {/* User Info Header */}
-          <div className="px-2.5 py-2 border-b border-slate-100 dark:border-[#262626] mb-2">
-            <p className="text-xs font-bold text-slate-900 dark:text-[#F5F5F5] truncate">{fullName}</p>
-            <p className="text-[11px] text-slate-500 dark:text-[#8A8A8A] truncate">{email}</p>
-            <div className="mt-1.5 flex items-center gap-1.5">
+          <div className="px-2.5 py-2 border-b border-zinc-800 mb-2">
+            <p className="text-xs font-bold text-[#FAFAFA] truncate">{fullName}</p>
+            <p className="text-[11px] text-zinc-400 truncate">{email}</p>
+            <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
               {isEmailVerified ? (
                 <>
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">Verified Account</span>
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-[10px] font-semibold text-emerald-400">Verified Account</span>
                 </>
               ) : (
-                <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+                <span className="text-[10px] font-semibold text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-800">
                   Email Verification Pending
+                </span>
+              )}
+              {isVendor && (
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded font-mono">
+                  Host / Vendor
                 </span>
               )}
             </div>
@@ -87,22 +99,54 @@ export function AccountMenu() {
 
           {/* Navigation Links */}
           <div className="space-y-1 text-xs">
+            {!isVendor && (
+              <Link
+                href="/become-vendor"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-between px-2.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-300 hover:text-amber-200 hover:bg-amber-500/20 font-bold transition-all mb-1"
+              >
+                <span>✨ Become a Vendor</span>
+                <span className="text-[9px] bg-amber-500/30 px-1.5 py-0.5 rounded font-mono text-amber-200">
+                  LIST SPACE
+                </span>
+              </Link>
+            )}
+
             <Link
               href="/dashboard"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
               <span>Production Dashboard</span>
             </Link>
 
             <Link
+              href="/dashboard?tab=listings"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-amber-400 hover:text-amber-300 hover:bg-zinc-800 font-semibold transition-colors"
+            >
+              <span>My Listings</span>
+            </Link>
+
+            {user?.roles?.includes('ADMIN') && (
+              <Link
+                href="/admin/listings"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-between px-2.5 py-2 rounded-xl text-purple-300 hover:text-purple-200 hover:bg-purple-950/40 font-bold border border-purple-800/40 transition-colors"
+              >
+                <span>Admin Review Portal</span>
+                <span className="text-[10px] bg-purple-900/60 font-mono px-1.5 py-0.5 rounded text-purple-300">ADMIN</span>
+              </Link>
+            )}
+
+            <Link
               href="/saved"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
               <span>Saved Listings</span>
               {bookmarkedIds.length > 0 && (
-                <span className="text-[10px] bg-slate-200 dark:bg-[#262626] font-bold px-1.5 py-0.5 rounded-full text-slate-700 dark:text-[#F5F5F5]">
+                <span className="text-[10px] bg-zinc-800 font-bold px-1.5 py-0.5 rounded-full text-zinc-200">
                   {bookmarkedIds.length}
                 </span>
               )}
@@ -111,11 +155,11 @@ export function AccountMenu() {
             <Link
               href="/crew-list"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
               <span>Call Sheet Roster</span>
               {selectedCrew.length > 0 && (
-                <span className="text-[10px] bg-slate-200 dark:bg-[#262626] font-bold px-1.5 py-0.5 rounded-full text-slate-700 dark:text-[#F5F5F5]">
+                <span className="text-[10px] bg-zinc-800 font-bold px-1.5 py-0.5 rounded-full text-zinc-200">
                   {selectedCrew.length}
                 </span>
               )}
@@ -124,7 +168,7 @@ export function AccountMenu() {
             <Link
               href="/account"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
               <span>Account Profile</span>
             </Link>
@@ -132,26 +176,37 @@ export function AccountMenu() {
             <Link
               href="/account/settings"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
               <span>Account Settings</span>
             </Link>
 
             <Link
+              href="/account/settings/payouts"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-amber-400 hover:text-amber-300 hover:bg-zinc-800 font-semibold transition-colors"
+            >
+              <span>Payout Settings</span>
+              <span className="text-[9px] font-mono uppercase tracking-wider bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">
+                ACH / Route
+              </span>
+            </Link>
+
+            <Link
               href="/list-your-studio"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202020] font-medium transition-colors"
+              className="flex items-center justify-between px-2.5 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-800 font-medium transition-colors"
             >
-              <span>List Your Studio Space</span>
+              <span>+ Create New Listing</span>
             </Link>
           </div>
 
           {/* Sign Out Action */}
-          <div className="pt-2 mt-2 border-t border-slate-100 dark:border-[#262626]">
+          <div className="pt-2 mt-2 border-t border-zinc-800">
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+              className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer"
             >
               Sign Out
             </button>

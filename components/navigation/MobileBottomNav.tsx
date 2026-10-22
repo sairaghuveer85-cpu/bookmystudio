@@ -8,15 +8,15 @@ import {
   StagesGridIcon,
   BookmarkIcon,
   ClapperboardIcon,
-  UserIcon,
+  WarehouseIcon,
 } from '@/components/ui/Icons';
 import { useMarketplace } from '@/context/MarketplaceContext';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const { bookmarkedIds, selectedCrew } = useMarketplace();
+  const { bookmarkedIds } = useMarketplace();
 
-  // Hide on authentication workflows to keep sign-in/registration distraction-free
+  // Hide on auth screens to keep focused
   const isAuthScreen =
     pathname === '/login' ||
     pathname === '/create-account' ||
@@ -24,7 +24,14 @@ export function MobileBottomNav() {
     pathname === '/reset-password' ||
     pathname === '/verify-email';
 
-  if (isAuthScreen) {
+  // Hide on listing detail screens to give priority to the sticky booking action bar
+  const isDetailScreen =
+    /^\/studios\/[^/]+$/.test(pathname) ||
+    /^\/locations\/[^/]+$/.test(pathname) ||
+    /^\/crew\/[^/]+$/.test(pathname) ||
+    /^\/equipment\/[^/]+$/.test(pathname);
+
+  if (isAuthScreen || isDetailScreen) {
     return null;
   }
 
@@ -36,14 +43,22 @@ export function MobileBottomNav() {
       isActive: pathname === '/',
     },
     {
-      label: 'Explore',
+      label: 'Studios',
       href: '/studios',
       icon: StagesGridIcon,
-      isActive:
-        pathname.startsWith('/studios') ||
-        pathname.startsWith('/locations') ||
-        pathname.startsWith('/equipment') ||
-        pathname.startsWith('/search'),
+      isActive: pathname.startsWith('/studios'),
+    },
+    {
+      label: 'Locations',
+      href: '/locations',
+      icon: WarehouseIcon,
+      isActive: pathname.startsWith('/locations'),
+    },
+    {
+      label: 'Crew',
+      href: '/crew',
+      icon: ClapperboardIcon,
+      isActive: pathname.startsWith('/crew') || pathname.startsWith('/equipment'),
     },
     {
       label: 'Saved',
@@ -52,27 +67,14 @@ export function MobileBottomNav() {
       isActive: pathname.startsWith('/saved'),
       badge: bookmarkedIds.length > 0 ? bookmarkedIds.length : null,
     },
-    {
-      label: 'Crew',
-      href: '/crew',
-      icon: ClapperboardIcon,
-      isActive: pathname.startsWith('/crew'),
-      badge: selectedCrew.length > 0 ? selectedCrew.length : null,
-    },
-    {
-      label: 'Profile',
-      href: '/account',
-      icon: UserIcon,
-      isActive: pathname.startsWith('/account') || pathname.startsWith('/dashboard'),
-    },
   ];
 
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#121212]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-[#262626] safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)] lg:hidden select-none transition-colors duration-200"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#09090B]/95 backdrop-blur-xl border-t border-zinc-200/80 dark:border-zinc-800/80 safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)] lg:hidden select-none transition-colors duration-150"
     >
-      <div className="grid grid-cols-5 h-15 max-w-md mx-auto items-center">
+      <div className="grid grid-cols-5 h-14 max-w-md mx-auto items-center">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = item.isActive;
@@ -81,15 +83,15 @@ export function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex flex-col items-center justify-center h-full w-full py-1 group transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+              className={`relative flex flex-col items-center justify-center h-full w-full py-1 group transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                 active
-                  ? 'text-slate-900 dark:text-emerald-400 font-semibold'
-                  : 'text-slate-500 dark:text-[#8A8A8A] hover:text-slate-800 dark:hover:text-[#F5F5F5] font-medium'
+                  ? 'text-amber-600 dark:text-amber-400 font-bold'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 font-medium'
               }`}
             >
-              {/* Active top pill indicator */}
+              {/* Active top indicator pill */}
               {active && (
-                <span className="absolute top-0 w-8 h-0.5 rounded-full bg-slate-900 dark:bg-emerald-400 transition-all duration-200" />
+                <span className="absolute top-0 w-8 h-0.5 rounded-full bg-amber-500 dark:bg-amber-400 transition-all duration-200" />
               )}
 
               {/* Icon Container with Badge */}
@@ -99,15 +101,19 @@ export function MobileBottomNav() {
                     active ? 'scale-110 stroke-[2.2]' : 'group-hover:scale-105 stroke-[1.8]'
                   }`}
                 />
-                {item.badge !== null && item.badge !== undefined && (
-                  <span className="absolute -top-1 -right-2 min-w-4 h-4 px-1 rounded-full bg-emerald-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs">
-                    {item.badge > 99 ? '99+' : item.badge}
+                {item.badge !== null && item.badge !== undefined && item.badge > 0 && (
+                  <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-3.5 h-3.5 px-0.5 text-[9px] font-bold rounded-full bg-amber-600 dark:bg-amber-500 text-white ring-2 ring-white dark:ring-[#09090B] animate-scale-in">
+                    {item.badge}
                   </span>
                 )}
               </div>
 
-              {/* Label */}
-              <span className="text-[10px] tracking-tight mt-0.5 leading-none">
+              {/* Destination Label */}
+              <span
+                className={`text-[10px] mt-0.5 tracking-tight transition-colors ${
+                  active ? 'font-bold' : 'font-medium'
+                }`}
+              >
                 {item.label}
               </span>
             </Link>
@@ -117,4 +123,3 @@ export function MobileBottomNav() {
     </nav>
   );
 }
-

@@ -46,7 +46,7 @@ export function EarningsCalculatorModal({
       }}
     >
       <div
-        className="relative w-full max-w-lg bg-white dark:bg-[#181818] text-slate-900 dark:text-[#F5F5F5] rounded-3xl border border-slate-200 dark:border-[#303030] shadow-2xl p-6 sm:p-8 overflow-hidden animate-modal-in"
+        className="relative w-full max-w-lg bg-[#121216] text-zinc-100 rounded-3xl border border-zinc-800 shadow-2xl p-6 sm:p-8 overflow-hidden animate-modal-in"
         role="dialog"
         aria-modal="true"
         aria-labelledby="calculator-title"
@@ -55,7 +55,7 @@ export function EarningsCalculatorModal({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 dark:bg-[#262626] text-slate-500 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer"
           aria-label="Close calculator"
         >
           ✕
@@ -93,7 +93,7 @@ export function EarningsCalculatorModal({
               step="50"
               value={dayRate}
               onChange={(e) => setDayRate(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 dark:bg-[#303030] rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              className="w-full h-2 bg-slate-200 dark:bg-[#303030] rounded-lg appearance-none cursor-pointer accent-amber-500"
             />
             <div className="flex justify-between text-[10px] text-slate-400 dark:text-[#8A8A8A] font-mono">
               <span>$500</span>
@@ -120,7 +120,7 @@ export function EarningsCalculatorModal({
               step="1"
               value={daysPerMonth}
               onChange={(e) => setDaysPerMonth(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 dark:bg-[#303030] rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              className="w-full h-2 bg-slate-200 dark:bg-[#303030] rounded-lg appearance-none cursor-pointer accent-amber-500"
             />
             <div className="flex justify-between text-[10px] text-slate-400 dark:text-[#8A8A8A] font-mono">
               <span>1 day</span>
@@ -139,21 +139,21 @@ export function EarningsCalculatorModal({
               type="checkbox"
               checked={includeGripAddon}
               onChange={(e) => setIncludeGripAddon(e.target.checked)}
-              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+              className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 cursor-pointer accent-amber-500"
             />
           </div>
 
           {/* Calculation Payout Result Card */}
-          <div className="p-4 rounded-2xl bg-slate-900 dark:bg-[#202020] text-white border border-slate-800 dark:border-[#303030]">
+          <div className="p-4 rounded-2xl bg-zinc-900 dark:bg-[#202020] text-white border border-zinc-800 dark:border-[#303030]">
             <div className="flex justify-between items-baseline">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Estimated Net Host Payout
               </span>
-              <span className="text-2xl sm:text-3xl font-black text-emerald-400">
+              <span className="text-2xl sm:text-3xl font-black text-amber-400">
                 ${netEstimatedPayout.toLocaleString()}
               </span>
             </div>
-            <div className="mt-2 text-[11px] text-slate-400 space-y-1 border-t border-slate-800 dark:border-[#303030] pt-2">
+            <div className="mt-2 text-[11px] text-slate-400 space-y-1 border-t border-zinc-800 dark:border-[#303030] pt-2">
               <div className="flex justify-between">
                 <span>Gross Stage Revenue ({daysPerMonth} days × ${dayRate})</span>
                 <span className="text-slate-200">${(dayRate * daysPerMonth).toLocaleString()}</span>
@@ -179,14 +179,14 @@ export function EarningsCalculatorModal({
                 onApplyEstimate(netEstimatedPayout, daysPerMonth, dayRate);
                 onClose();
               }}
-              className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-sm text-center"
+              className="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-sm text-center"
             >
               Apply to Host Banner
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="py-3 px-5 rounded-xl border border-slate-200 dark:border-[#303030] hover:bg-slate-50 dark:hover:bg-[#262626] text-slate-700 dark:text-[#B3B3B3] text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+              className="py-3 px-5 rounded-xl border border-zinc-800 hover:bg-zinc-800 text-zinc-300 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
             >
               Done
             </button>

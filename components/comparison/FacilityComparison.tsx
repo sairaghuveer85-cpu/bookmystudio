@@ -10,7 +10,6 @@ import {
   CheckCircleIcon,
 } from '@/components/ui/Icons';
 import { FACILITY_COMPARISON_DATA } from '@/lib/data';
-import { ScrollReveal } from '@/components/common/ScrollReveal';
 
 export function FacilityComparison() {
   const [mobileActiveTier, setMobileActiveTier] = useState<'dryHire' | 'turnkey'>('turnkey');
@@ -18,129 +17,121 @@ export function FacilityComparison() {
   const getServiceIcon = (iconName: string) => {
     switch (iconName) {
       case 'power':
-        return <CamlockPowerIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <CamlockPowerIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
       case 'grip':
-        return <GripIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <GripIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
       case 'truck':
-        return <TruckLoadingIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <TruckLoadingIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
       case 'manager':
-        return <StageManagerIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <StageManagerIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
       case 'shield':
-        return <ShieldPolicyIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <ShieldPolicyIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
       default:
-        return <CamlockPowerIcon className="w-4 h-4 text-slate-500 dark:text-emerald-400" />;
+        return <CamlockPowerIcon className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
     }
   };
 
   return (
-    <section id="comparison" className="py-14 sm:py-16 bg-slate-50/70 dark:bg-[#141414] border-b border-slate-200/80 dark:border-[#202020] transition-colors duration-150">
+    <section id="comparison" className="py-14 sm:py-16 bg-zinc-50 dark:bg-[#0E0E12] border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header with Scroll Reveal */}
-        <ScrollReveal>
-          <div className="max-w-3xl">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
-              FACILITY OPERATIONS
+        {/* Section Header */}
+        <div className="max-w-3xl mb-8">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+              FACILITY STANDARDS
             </span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5]">
-              Self-Service Dry Hire <span className="text-slate-400 font-normal">vs.</span> Full Turnkey Production Stage
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-[#B3B3B3] leading-relaxed">
-              Choose the operational tier that matches your production&apos;s scope. Every booking on BookMyStudio includes our automated $2,000,000 liability guarantee and verified stage load-in uniform.
-            </p>
           </div>
-        </ScrollReveal>
+          <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+            Dry Hire Space <span className="text-zinc-400 font-normal">vs.</span> Turnkey Production Stage
+          </h2>
+          <p className="mt-1 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            Understand operational tiers before booking. Every reservation on BookMyStudio includes our automated $2,000,000 direct production liability certificate.
+          </p>
+        </div>
 
         {/* Mobile Tier Switcher (< md) */}
-        <div className="mt-6 md:hidden flex p-1 bg-white dark:bg-[#181818] rounded-xl border border-slate-200 dark:border-[#303030] shadow-2xs">
+        <div className="mb-6 md:hidden flex p-1 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-2xs">
           <button
             type="button"
             onClick={() => setMobileActiveTier('dryHire')}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
               mobileActiveTier === 'dryHire'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white'
-                : 'text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950'
+                : 'text-zinc-600 dark:text-zinc-300'
             }`}
           >
-            Standard Dry Hire Space
+            Standard Dry Hire
           </button>
           <button
             type="button"
             onClick={() => setMobileActiveTier('turnkey')}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
               mobileActiveTier === 'turnkey'
-                ? 'bg-slate-900 dark:bg-emerald-600 text-white'
-                : 'text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5]'
+                ? 'bg-amber-500 text-white'
+                : 'text-zinc-600 dark:text-zinc-300'
             }`}
           >
-            Turnkey Production Stage
+            Turnkey Production
           </button>
         </div>
 
-        {/* Comparison Table / Matrix with Scroll Reveal */}
-        <ScrollReveal delay={100}>
-          <div className="mt-6 bg-white dark:bg-[#181818] rounded-2xl border border-slate-200/90 dark:border-[#303030] shadow-xs overflow-hidden bento-card-interactive">
-            
-            {/* Desktop Table Header (md+) */}
-            <div className="hidden md:grid md:grid-cols-12 border-b border-slate-200 dark:border-[#303030] bg-white dark:bg-[#181818]">
-              <div className="md:col-span-5 px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A]">
-                FACILITY SPECIFICATION / SERVICE
-              </div>
-              <div className="md:col-span-3 px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#8A8A8A]">
-                STANDARD DRY HIRE SPACE
-              </div>
-              <div className="md:col-span-4 px-4 py-2 flex items-center justify-center">
-                <div className="w-full bg-slate-900 dark:bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider text-center py-2.5 rounded-lg shadow-2xs">
-                  TURNKEY PRODUCTION STAGE
-                </div>
-              </div>
-            </div>
-
-            {/* Table Rows */}
-            <div className="divide-y divide-slate-100 dark:divide-[#262626]">
+        {/* Desktop Comparison Table (hidden on mobile, shown on md+) */}
+        <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#121216] shadow-sm">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-zinc-200/90 dark:border-zinc-800/90 bg-zinc-100/60 dark:bg-zinc-900/60 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                <th className="py-4 px-6 w-1/3">Production Capability</th>
+                <th className="py-4 px-6 w-1/3 text-zinc-700 dark:text-zinc-300">Dry Hire Space</th>
+                <th className="py-4 px-6 w-1/3 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20">Turnkey Commercial Stage</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80 text-xs">
               {FACILITY_COMPARISON_DATA.map((row) => (
-                <div
-                  key={row.id}
-                  className="grid grid-cols-1 md:grid-cols-12 p-4 sm:p-5 md:py-4.5 md:px-6 items-center hover:bg-slate-50/70 dark:hover:bg-[#202020]/70 transition-colors"
-                >
-                  {/* Specification Column */}
-                  <div className="md:col-span-5 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#262626] flex items-center justify-center shrink-0">
+                <tr key={row.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40 transition-colors">
+                  <td className="py-4 px-6 font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
                       {getServiceIcon(row.iconName)}
                     </div>
-                    <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-[#F5F5F5]">
-                      {row.specification}
-                    </span>
-                  </div>
-
-                  {/* Dry Hire Column */}
-                  <div
-                    className={`mt-2 md:mt-0 md:col-span-3 text-xs text-slate-500 dark:text-[#8A8A8A] md:block ${
-                      mobileActiveTier === 'dryHire' ? 'block pl-11' : 'hidden'
-                    }`}
-                  >
-                    <span className="md:hidden font-semibold text-slate-700 dark:text-[#B3B3B3] block mb-0.5">Dry Hire:</span>
+                    <span>{row.specification}</span>
+                  </td>
+                  <td className="py-4 px-6 text-zinc-600 dark:text-zinc-400">
                     {row.standardDryHire}
-                  </div>
-
-                  {/* Turnkey Stage Column */}
-                  <div
-                    className={`mt-2 md:mt-0 md:col-span-4 md:block ${
-                      mobileActiveTier === 'turnkey' ? 'block pl-11' : 'hidden'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-[#F5F5F5]">
-                      <CheckCircleIcon className="w-4 h-4 shrink-0 text-emerald-500" />
+                  </td>
+                  <td className="py-4 px-6 font-medium text-zinc-900 dark:text-zinc-100 bg-amber-50/30 dark:bg-amber-950/10">
+                    <div className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                       <span>{row.turnkeyStage}</span>
                     </div>
-                  </div>
-
-                </div>
+                  </td>
+                </tr>
               ))}
-            </div>
+            </tbody>
+          </table>
+        </div>
 
-          </div>
-        </ScrollReveal>
+        {/* Mobile Comparison Cards (< md) */}
+        <div className="md:hidden space-y-3">
+          {FACILITY_COMPARISON_DATA.map((row) => (
+            <div
+              key={row.id}
+              className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]"
+            >
+              <div className="flex items-center gap-2 mb-2 font-bold text-xs text-zinc-900 dark:text-zinc-100">
+                <div className="w-7 h-7 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
+                  {getServiceIcon(row.iconName)}
+                </div>
+                <span>{row.specification}</span>
+              </div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 pl-9">
+                {mobileActiveTier === 'dryHire' ? row.standardDryHire : (
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold">{row.turnkeyStage}</span>
+                )}
+              </p>
+            </div>
+          ))}
+        </div>
 
       </div>
     </section>

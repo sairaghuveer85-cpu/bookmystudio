@@ -1,100 +1,180 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/client';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { authApi, AuthUser, AuthResponse } from '@/lib/api/auth';
+
+export interface User extends AuthUser {
+  user_metadata?: {
+    full_name?: string;
+  };
+}
+
+export interface Session {
+  user: User;
+}
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
   isConfigured: boolean;
+  isVendor: boolean;
+  isStudioOwner: boolean;
+  isProfessional: boolean;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<AuthResponse>;
+  register: (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    role?: 'CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL';
+  }) => Promise<AuthResponse>;
+  becomeVendor: (payload: {
+    vendorTypes?: ('studio' | 'location' | 'crew' | 'equipment')[];
+    role?: 'STUDIO_OWNER' | 'PROFESSIONAL';
+    companyName?: string | null;
+    phone?: string | null;
+    bio?: string | null;
+  }) => Promise<AuthResponse>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function mapAuthUser(authUser: AuthUser): User {
+  return {
+    ...authUser,
+    user_metadata: {
+      full_name: authUser.fullName,
+    },
+  };
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const configured = isSupabaseConfigured();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(configured);
+  const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
-    if (!configured) {
-      setUser(null);
-      setSession(null);
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
+      const res = await authApi.getMe();
+      if (res?.success && res.user) {
+        const mappedUser = mapAuthUser(res.user);
+        setUser(mappedUser);
+        setSession({ user: mappedUser });
+      } else {
+        setUser(null);
+        setSession(null);
+      }
     } catch {
       setUser(null);
       setSession(null);
     } finally {
       setIsLoading(false);
     }
-  }, [configured]);
+  }, []);
 
   useEffect(() => {
-    if (!configured) {
-      return;
-    }
-
-    const supabase = createClient();
-    let mounted = true;
-
-    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setIsLoading(false);
-    }).catch(() => {
-      if (!mounted) return;
-      setUser(null);
-      setSession(null);
-      setIsLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, currentSession: Session | null) => {
-      if (!mounted) return;
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setIsLoading(false);
-    });
+    let active = true;
+    authApi
+      .getMe()
+      .then((res) => {
+        if (!active) return;
+        if (res?.success && res.user) {
+          const mappedUser = mapAuthUser(res.user);
+          setUser(mappedUser);
+          setSession({ user: mappedUser });
+        } else {
+          setUser(null);
+          setSession(null);
+        }
+      })
+      .catch(() => {
+        if (!active) return;
+        setUser(null);
+        setSession(null);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
 
     return () => {
-      mounted = false;
-      subscription.unsubscribe();
+      active = false;
     };
-  }, [configured]);
+  }, []);
+
+  const login = useCallback(
+    async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
+      const res = await authApi.login(credentials);
+      if (res.success && res.user) {
+        const mappedUser = mapAuthUser(res.user);
+        setUser(mappedUser);
+        setSession({ user: mappedUser });
+      }
+      return res;
+    },
+    []
+  );
+
+  const register = useCallback(
+    async (data: {
+      fullName: string;
+      email: string;
+      password: string;
+      role?: 'CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL';
+    }): Promise<AuthResponse> => {
+      const res = await authApi.register(data);
+      if (res.success && res.user) {
+        const mappedUser = mapAuthUser(res.user);
+        setUser(mappedUser);
+        setSession({ user: mappedUser });
+      }
+      return res;
+    },
+    []
+  );
+
+  const becomeVendor = useCallback(
+    async (payload: {
+      vendorTypes?: ('studio' | 'location' | 'crew' | 'equipment')[];
+      role?: 'STUDIO_OWNER' | 'PROFESSIONAL';
+      companyName?: string | null;
+      phone?: string | null;
+      bio?: string | null;
+    }): Promise<AuthResponse> => {
+      const res = await authApi.becomeVendor(payload);
+      if (res.success && res.user) {
+        const mappedUser = mapAuthUser(res.user);
+        setUser(mappedUser);
+        setSession({ user: mappedUser });
+      }
+      return res;
+    },
+    []
+  );
 
   const signOut = useCallback(async () => {
-    if (!configured) {
-      setUser(null);
-      setSession(null);
-      return;
-    }
-
     try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
+      await authApi.logout();
     } catch {
+      // Continue client cleanup even if network fails
+    } finally {
       setUser(null);
       setSession(null);
     }
-  }, [configured]);
+  }, []);
+
+  const isVendor = Boolean(
+    user?.roles?.some(
+      (role) => role === 'STUDIO_OWNER' || role === 'PROFESSIONAL' || role === 'ADMIN'
+    )
+  );
+  const isStudioOwner = Boolean(
+    user?.roles?.includes('STUDIO_OWNER') || user?.roles?.includes('ADMIN')
+  );
+  const isProfessional = Boolean(
+    user?.roles?.includes('PROFESSIONAL') || user?.roles?.includes('ADMIN')
+  );
 
   return (
     <AuthContext.Provider
@@ -102,9 +182,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         session,
         isLoading,
-        isConfigured: configured,
+        isConfigured: true,
+        isVendor,
+        isStudioOwner,
+        isProfessional,
         signOut,
         refreshUser,
+        login,
+        register,
+        becomeVendor,
       }}
     >
       {children}

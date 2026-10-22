@@ -1,17 +1,34 @@
 'use client';
 
-import React, { createContext, useContext, useSyncExternalStore } from 'react';
-import { ProductionCrewMember } from '@/lib/types';
+import React, { createContext, useContext, useSyncExternalStore, useMemo } from 'react';
+import { ProductionCrewMember, StudioSpace } from '@/lib/types';
+import { INITIAL_STUDIOS } from '@/lib/data';
+import { marketplaceApi } from '@/lib/api/marketplace';
+
+export interface CompareResult {
+  success: boolean;
+  reason?: 'limit_reached' | 'already_added';
+}
 
 interface MarketplaceContextType {
   bookmarkedIds: string[];
   selectedCrew: ProductionCrewMember[];
+  comparedStudioIds: string[];
+  comparedStudios: StudioSpace[];
   toggleBookmark: (id: string) => void;
   isBookmarked: (id: string) => boolean;
   toggleCrew: (member: ProductionCrewMember) => void;
   removeCrew: (id: string) => void;
   clearCrew: () => void;
   isCrewSelected: (id: string) => boolean;
+  // Studio Comparison
+  addToCompare: (studioId: string) => CompareResult;
+  removeFromCompare: (studioId: string) => void;
+  toggleCompare: (studioId: string) => CompareResult;
+  clearCompare: () => void;
+  isCompared: (studioId: string) => boolean;
+  canAddMoreCompare: boolean;
+  compareLimit: number;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(undefined);
@@ -24,6 +41,12 @@ let cachedBookmarks: string[] = emptyBookmarks;
 const emptyCrew: ProductionCrewMember[] = [];
 let cachedCrewRaw = '';
 let cachedCrew: ProductionCrewMember[] = emptyCrew;
+
+const emptyCompare: string[] = [];
+let cachedCompareRaw = '';
+let cachedCompare: string[] = emptyCompare;
+
+const COMPARE_LIMIT = 3;
 
 function subscribeBookmarks(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -81,6 +104,34 @@ function getCrewServerSnapshot(): ProductionCrewMember[] {
   return emptyCrew;
 }
 
+function subscribeCompare(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  window.addEventListener('bms_compare_change', callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener('bms_compare_change', callback);
+  };
+}
+
+function getCompareSnapshot(): string[] {
+  if (typeof window === 'undefined') return emptyCompare;
+  try {
+    const raw = localStorage.getItem('bms_compare') || '[]';
+    if (raw !== cachedCompareRaw) {
+      cachedCompareRaw = raw;
+      cachedCompare = JSON.parse(raw);
+    }
+    return cachedCompare;
+  } catch {
+    return emptyCompare;
+  }
+}
+
+function getCompareServerSnapshot(): string[] {
+  return emptyCompare;
+}
+
 export function MarketplaceProvider({ children }: { children: React.ReactNode }) {
   const bookmarkedIds = useSyncExternalStore(
     subscribeBookmarks,
@@ -94,14 +145,31 @@ export function MarketplaceProvider({ children }: { children: React.ReactNode })
     getCrewServerSnapshot
   );
 
+  const comparedStudioIds = useSyncExternalStore(
+    subscribeCompare,
+    getCompareSnapshot,
+    getCompareServerSnapshot
+  );
+
+  const comparedStudios = useMemo(() => {
+    return INITIAL_STUDIOS.filter((s) => comparedStudioIds.includes(s.id));
+  }, [comparedStudioIds]);
+
   const toggleBookmark = (id: string) => {
     const current = getBookmarksSnapshot();
-    const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
+    const exists = current.includes(id);
+    const next = exists ? current.filter((item) => item !== id) : [...current, id];
     try {
       localStorage.setItem('bms_bookmarks', JSON.stringify(next));
       window.dispatchEvent(new Event('bms_bookmarks_change'));
     } catch {
       // Ignore localStorage quotas
+    }
+    // Sync with MongoDB backend if session is active
+    if (!exists) {
+      marketplaceApi.addSavedItem('studio', id).catch(() => {});
+    } else {
+      marketplaceApi.removeSavedItem(id).catch(() => {});
     }
   };
 
@@ -141,17 +209,81 @@ export function MarketplaceProvider({ children }: { children: React.ReactNode })
 
   const isCrewSelected = (id: string) => selectedCrew.some((m) => m.id === id);
 
+  // Comparison Handlers
+  const addToCompare = (studioId: string): CompareResult => {
+    const current = getCompareSnapshot();
+    if (current.includes(studioId)) {
+      return { success: false, reason: 'already_added' };
+    }
+    if (current.length >= COMPARE_LIMIT) {
+      return { success: false, reason: 'limit_reached' };
+    }
+    const next = [...current, studioId];
+    try {
+      localStorage.setItem('bms_compare', JSON.stringify(next));
+      window.dispatchEvent(new Event('bms_compare_change'));
+      // Sync to MongoDB backend
+      marketplaceApi.addStudioToCompare(studioId).catch(() => {});
+      return { success: true };
+    } catch {
+      return { success: false };
+    }
+  };
+
+  const removeFromCompare = (studioId: string) => {
+    const current = getCompareSnapshot();
+    const next = current.filter((id) => id !== studioId);
+    try {
+      localStorage.setItem('bms_compare', JSON.stringify(next));
+      window.dispatchEvent(new Event('bms_compare_change'));
+      marketplaceApi.removeStudioFromCompare(studioId).catch(() => {});
+    } catch {
+      // Ignore localStorage quotas
+    }
+  };
+
+  const toggleCompare = (studioId: string): CompareResult => {
+    const current = getCompareSnapshot();
+    if (current.includes(studioId)) {
+      removeFromCompare(studioId);
+      return { success: true };
+    }
+    return addToCompare(studioId);
+  };
+
+  const clearCompare = () => {
+    try {
+      localStorage.setItem('bms_compare', JSON.stringify([]));
+      window.dispatchEvent(new Event('bms_compare_change'));
+      marketplaceApi.clearCompare().catch(() => {});
+    } catch {
+      // Ignore localStorage quotas
+    }
+  };
+
+  const isCompared = (studioId: string) => comparedStudioIds.includes(studioId);
+  const canAddMoreCompare = comparedStudioIds.length < COMPARE_LIMIT;
+
   return (
     <MarketplaceContext.Provider
       value={{
         bookmarkedIds,
         selectedCrew,
+        comparedStudioIds,
+        comparedStudios,
         toggleBookmark,
         isBookmarked,
         toggleCrew,
         removeCrew,
         clearCrew,
         isCrewSelected,
+        addToCompare,
+        removeFromCompare,
+        toggleCompare,
+        clearCompare,
+        isCompared,
+        canAddMoreCompare,
+        compareLimit: COMPARE_LIMIT,
       }}
     >
       {children}

@@ -43,7 +43,7 @@ export default function SavedPage() {
   };
 
   return (
-    <div className="py-8 bg-white dark:bg-[#101010] min-h-[calc(100vh-140px)]">
+    <div className="py-8 bg-white dark:bg-[#09090B] min-h-[calc(100vh-140px)] transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
@@ -55,21 +55,21 @@ export default function SavedPage() {
         />
 
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-100 dark:border-[#303030]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-200/80 dark:border-zinc-800/80">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-[#8A8A8A]">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
                 PRODUCTION SHORTLIST
               </span>
             </div>
 
-            <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-[#F5F5F5]">
+            <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
               Saved Spaces &amp; Equipment
             </h1>
 
-            <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-[#8A8A8A] max-w-2xl">
-              Compare stages, daylight suites, filming locations, and grip packages shortlisted for your upcoming shoot.
+            <p className="mt-1 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-2xl">
+              Compare stages, daylight suites, filming locations, and grip packages shortlisted for your upcoming commercial shoot.
             </p>
           </div>
 
@@ -79,7 +79,7 @@ export default function SavedPage() {
               <button
                 type="button"
                 onClick={handleShareShortlist}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 dark:border-[#303030] bg-white dark:bg-[#181818] hover:bg-slate-50 dark:hover:bg-[#202020] text-slate-700 dark:text-[#F5F5F5] text-xs font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <ShareIcon className="w-3.5 h-3.5" />
                 <span>{copyFeedback ? 'Link Copied!' : 'Share Shortlist'}</span>
@@ -88,7 +88,7 @@ export default function SavedPage() {
               <button
                 type="button"
                 onClick={handleClearAll}
-                className="px-3 py-2 rounded-lg border border-slate-200 dark:border-[#303030] text-slate-500 dark:text-[#8A8A8A] hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/40 text-xs font-semibold transition-colors cursor-pointer"
+                className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/40 text-xs font-semibold transition-colors cursor-pointer"
               >
                 Clear All
               </button>
@@ -98,9 +98,9 @@ export default function SavedPage() {
 
         {/* Share Toast Banner */}
         {copyFeedback && (
-          <div className="mt-4 p-3.5 rounded-xl bg-slate-900 dark:bg-[#202020] text-white border border-transparent dark:border-[#303030] text-xs flex items-center justify-between">
+          <div className="mt-4 p-3.5 rounded-xl bg-zinc-950 dark:bg-zinc-800 text-white border border-zinc-800 text-xs flex items-center justify-between">
             <span>Shareable shortlist link copied to clipboard. Ready for client and producer deck review.</span>
-            <span className="text-slate-400 text-[10px] uppercase font-mono">Prototype Demonstration</span>
+            <span className="text-zinc-400 text-[10px] uppercase font-mono">Production Shortlist</span>
           </div>
         )}
 
@@ -116,14 +116,14 @@ export default function SavedPage() {
         ) : (
           <>
             {/* Filter Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto py-4 border-b border-slate-100 dark:border-[#303030] scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto py-4 border-b border-zinc-200/80 dark:border-zinc-800/80 scrollbar-none">
               <button
                 type="button"
                 onClick={() => setActiveTab('all')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === 'all'
-                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
-                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                    ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
                 }`}
               >
                 All Items ({totalSavedCount})
@@ -134,8 +134,8 @@ export default function SavedPage() {
                 onClick={() => setActiveTab('studios')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === 'studios'
-                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
-                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                    ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
                 }`}
               >
                 Studios ({savedStudios.length})
@@ -146,8 +146,8 @@ export default function SavedPage() {
                 onClick={() => setActiveTab('locations')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === 'locations'
-                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
-                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                    ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
                 }`}
               >
                 Filming Locations ({savedLocations.length})
@@ -158,8 +158,8 @@ export default function SavedPage() {
                 onClick={() => setActiveTab('equipment')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === 'equipment'
-                    ? 'bg-slate-900 dark:bg-[#F5F5F5] text-white dark:text-[#101010]'
-                    : 'bg-slate-100 dark:bg-[#202020] text-slate-600 dark:text-[#B3B3B3] hover:text-slate-900 dark:hover:text-[#F5F5F5] hover:bg-slate-200 dark:hover:bg-[#262626]'
+                    ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
                 }`}
               >
                 Equipment ({savedEquipment.length})
@@ -172,18 +172,18 @@ export default function SavedPage() {
               {(activeTab === 'all' || activeTab === 'studios') && savedStudios.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                    <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                       Shortlisted Studios &amp; Stages ({savedStudios.length})
                     </h2>
                     <Link
                       href="/studios"
-                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                      className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
                     >
                       <span>Browse More Studios</span>
                       <ArrowRightIcon className="w-3 h-3" />
                     </Link>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {savedStudios.map((studio) => (
                       <StudioCard key={studio.id} studio={studio} />
                     ))}
@@ -195,18 +195,18 @@ export default function SavedPage() {
               {(activeTab === 'all' || activeTab === 'locations') && savedLocations.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
+                    <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                       Shortlisted Filming Locations ({savedLocations.length})
                     </h2>
                     <Link
                       href="/locations"
-                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                      className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
                     >
                       <span>Browse More Locations</span>
                       <ArrowRightIcon className="w-3 h-3" />
                     </Link>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {savedLocations.map((location) => (
                       <LocationCard key={location.id} location={location} />
                     ))}
@@ -218,18 +218,18 @@ export default function SavedPage() {
               {(activeTab === 'all' || activeTab === 'equipment') && savedEquipment.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F5F5]">
-                      Shortlisted Equipment &amp; Packages ({savedEquipment.length})
+                    <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
+                      Shortlisted Equipment Kits ({savedEquipment.length})
                     </h2>
                     <Link
                       href="/equipment"
-                      className="text-xs font-semibold text-slate-600 dark:text-[#8A8A8A] hover:text-slate-900 dark:hover:text-[#F5F5F5] flex items-center gap-1"
+                      className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
                     >
                       <span>Browse More Equipment</span>
                       <ArrowRightIcon className="w-3 h-3" />
                     </Link>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {savedEquipment.map((equipment) => (
                       <EquipmentCard key={equipment.id} equipment={equipment} />
                     ))}

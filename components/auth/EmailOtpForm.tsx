@@ -3,17 +3,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircleIcon } from '@/components/ui/Icons';
-import { createClient } from '@/lib/supabase/client';
+import { CheckCircleIcon, ArrowRightIcon } from '@/components/ui/Icons';
+import { authApi } from '@/lib/api/auth';
 import { useAuth } from '@/context/AuthContext';
 
 export function EmailOtpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailParam = searchParams.get('email') || '';
-  const { isConfigured, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
 
-  const email = emailParam;
+  const [email, setEmail] = useState(emailParam);
   const [digits, setDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [resendSuccess, setResendSuccess] = useState(false);
@@ -36,19 +36,6 @@ export function EmailOtpForm() {
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
-
-  // Mask email for display: m***@domain.com
-  const maskedEmail = React.useMemo(() => {
-    if (!email) return 'your work email';
-    const parts = email.split('@');
-    if (parts.length !== 2) return email;
-    const name = parts[0];
-    const domain = parts[1];
-    if (name.length <= 2) {
-      return `${name[0]}***@${domain}`;
-    }
-    return `${name[0]}${'*'.repeat(Math.max(name.length - 2, 3))}${name[name.length - 1]}@${domain}`;
-  }, [email]);
 
   const handleDigitChange = (index: number, val: string) => {
     setErrorMsg(null);
@@ -113,34 +100,17 @@ export function EmailOtpForm() {
       return;
     }
 
-    if (!isConfigured) {
-      setErrorMsg('Supabase is not configured yet. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local to enable live verification.');
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const supabase = createClient();
-      // Verify OTP through Supabase auth
-      const { error } = await supabase.auth.verifyOtp({
+      const res = await authApi.verifyEmail({
         email: email.trim(),
-        token: fullCode,
-        type: 'signup',
+        otp: fullCode,
       });
 
-      if (error) {
-        // Retry with 'email' type if 'signup' type returns error (supports both magic link & signup confirmations)
-        const retryResult = await supabase.auth.verifyOtp({
-          email: email.trim(),
-          token: fullCode,
-          type: 'email',
-        });
-
-        if (retryResult.error) {
-          setErrorMsg(retryResult.error.message || 'Invalid or expired verification code.');
-          return;
-        }
+      if (!res.success) {
+        setErrorMsg(res.error || 'Invalid or expired verification code.');
+        return;
       }
 
       await refreshUser();
@@ -160,26 +130,19 @@ export function EmailOtpForm() {
     setResendSuccess(false);
 
     if (!email) {
-      setErrorMsg('Please enter your email to request a new code.');
-      return;
-    }
-
-    if (!isConfigured) {
-      setErrorMsg('Supabase credentials are not configured in .env.local.');
+      setErrorMsg('Please enter your work email to request a new verification code.');
       return;
     }
 
     setIsResending(true);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
+      const res = await authApi.resendVerification({
         email: email.trim(),
       });
 
-      if (error) {
-        setErrorMsg(error.message);
+      if (!res.success) {
+        setErrorMsg(res.error || 'Unable to dispatch resend request.');
         return;
       }
 
@@ -196,97 +159,140 @@ export function EmailOtpForm() {
   return (
     <form onSubmit={handleVerify} className="space-y-6" noValidate>
       {/* Sent Email Notice */}
-      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] text-xs text-slate-600 dark:text-[#B3B3B3] flex items-start gap-2.5">
-        <CheckCircleIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-        <div>
-          We sent a 6-digit confirmation code to{' '}
-          <span className="font-semibold text-slate-900 dark:text-[#F5F5F5]">{maskedEmail}</span>. Enter the code below to activate your commercial studio booking account.
+      <div className="p-4 rounded-xl bg-[#121216] border border-zinc-800 text-xs text-zinc-400 space-y-1">
+        <div className="flex items-center gap-2 font-bold text-white">
+          <CheckCircleIcon className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>Verification Code Sent</span>
         </div>
+        <p className="text-[11px] leading-relaxed">
+          We sent a 6-digit confirmation code to{' '}
+          <strong className="text-white font-mono">{email || 'your email address'}</strong>.
+        </p>
       </div>
 
-      {/* Resend Success Message */}
-      {resendSuccess && (
-        <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs">
-          A fresh 6-digit verification code has been dispatched to your email.
-        </div>
-      )}
-
-      {/* Error Message */}
+      {/* Accessible Error Summary */}
       {errorMsg && (
         <div
           role="alert"
-          className="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-800 dark:text-red-300 text-xs space-y-1"
+          aria-live="polite"
+          className="p-4 rounded-xl bg-red-950/40 border border-red-900/80 text-red-200 text-xs space-y-1 animate-page-enter"
         >
-          <div className="font-semibold">Verification failed</div>
-          <div>{errorMsg}</div>
+          <div className="font-bold flex items-center gap-1.5 text-red-400">
+            <span>Verification Unsuccessful</span>
+          </div>
+          <p className="text-[11px] leading-relaxed text-red-300/90">
+            {errorMsg}
+          </p>
         </div>
       )}
 
-      {/* 6-Digit OTP Input Grid */}
-      <div>
-        <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F5F5] text-center mb-3">
+      {/* Resend Success Notice */}
+      {resendSuccess && (
+        <div
+          role="status"
+          className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2"
+        >
+          <span className="font-bold text-emerald-400">✓</span>
+          <span>A fresh verification code has been dispatched to your inbox.</span>
+        </div>
+      )}
+
+      {/* Missing Email Input Prompt (if navigated without email in URL) */}
+      {!emailParam && (
+        <div className="space-y-1.5">
+          <label htmlFor="otp-email" className="block text-xs font-bold text-zinc-200">
+            Confirm Your Work Email
+          </label>
+          <input
+            id="otp-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="producer@agency.com"
+            className="auth-input w-full px-4 py-2.5 bg-[#121216] border border-zinc-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+      )}
+
+      {/* 6 Digit Input Group (3 - 3 formatted) */}
+      <div className="space-y-2">
+        <label className="block text-xs font-bold text-zinc-200 text-center">
           Enter 6-Digit Verification Code
         </label>
-        <div className="flex items-center justify-center gap-1.5 sm:gap-3" onPaste={handlePaste}>
+        
+        <div className="flex items-center justify-center gap-2 sm:gap-3" onPaste={handlePaste}>
           {digits.map((digit, idx) => (
-            <input
-              key={idx}
-              ref={(el) => {
-                inputRefs.current[idx] = el;
-              }}
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="[0-9]*"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleDigitChange(idx, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(idx, e)}
-              className={`w-9 h-11 sm:w-12 sm:h-14 text-center text-base sm:text-xl font-mono font-bold rounded-lg sm:rounded-xl text-slate-900 dark:text-[#F5F5F5] focus:outline-none focus:ring-2 focus:scale-105 focus:bg-white dark:focus:bg-[#202020] transition-all duration-150 selection:bg-emerald-600 selection:text-white ${
-                errorMsg
-                  ? 'border-red-400 dark:border-red-600 bg-red-50/30 dark:bg-red-950/20 focus:ring-red-500'
-                  : digit
-                  ? 'bg-white dark:bg-[#202020] border-2 border-emerald-500/80 dark:border-emerald-500 shadow-2xs focus:ring-emerald-500'
-                  : 'bg-slate-50 dark:bg-[#181818] border border-slate-200 dark:border-[#303030] focus:ring-emerald-500'
-              }`}
-              aria-label={`Digit ${idx + 1}`}
-            />
+            <React.Fragment key={idx}>
+              {idx === 3 && (
+                <div className="w-2 h-0.5 bg-zinc-700 mx-0.5" aria-hidden="true" />
+              )}
+              <input
+                ref={(el) => {
+                  inputRefs.current[idx] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleDigitChange(idx, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(idx, e)}
+                aria-label={`Digit ${idx + 1} of 6`}
+                className="auth-input w-11 sm:w-13 h-13 sm:h-14 text-center font-mono text-xl sm:text-2xl font-black rounded-xl bg-[#121216] border border-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all shadow-xs"
+              />
+            </React.Fragment>
           ))}
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={!isComplete || isLoading}
-        className="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 disabled:bg-slate-300 dark:disabled:bg-[#303030] disabled:cursor-not-allowed text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-xs active:scale-[0.98] hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2"
-      >
-        {isLoading ? (
-          <>
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            <span>Verifying Code...</span>
-          </>
-        ) : (
-          <span>Verify &amp; Enter Dashboard</span>
-        )}
-      </button>
-
-      {/* Resend and Email Change Options */}
-      <div className="pt-2 border-t border-slate-100 dark:border-[#262626] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-[#8A8A8A]">
+      {/* Resend Code Trigger & Countdown */}
+      <div className="flex items-center justify-between text-xs text-zinc-400 pt-1">
+        <span>Didn&apos;t receive code?</span>
         <button
           type="button"
           onClick={handleResend}
           disabled={cooldown > 0 || isResending}
-          className="font-semibold text-slate-700 dark:text-[#F5F5F5] hover:text-slate-900 dark:hover:text-emerald-400 disabled:text-slate-400 dark:disabled:text-[#606060] cursor-pointer disabled:cursor-not-allowed transition-colors"
+          className="font-bold text-amber-400 hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
-          {cooldown > 0 ? `Resend Code in ${cooldown}s` : isResending ? 'Sending...' : 'Resend Verification Code'}
+          {isResending ? (
+            'Sending...'
+          ) : cooldown > 0 ? (
+            `Resend in ${cooldown}s`
+          ) : (
+            'Resend Code'
+          )}
         </button>
+      </div>
 
+      {/* Primary Action Button */}
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={!isComplete || isLoading}
+          className="w-full py-3.5 px-4 bg-amber-500 hover:bg-amber-400 text-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-[0.98] hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2 min-h-[48px]"
+        >
+          {isLoading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+              <span>Verifying Code...</span>
+            </>
+          ) : (
+            <>
+              <span>Verify &amp; Continue to Dashboard</span>
+              <ArrowRightIcon className="w-4 h-4" />
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Wrong Email Address Fallback */}
+      <div className="text-center text-xs text-zinc-400 pt-2">
+        <span>Entered the wrong email? </span>
         <Link
           href="/create-account"
-          className="text-slate-500 dark:text-[#8A8A8A] hover:text-slate-800 dark:hover:text-[#F5F5F5] transition-colors"
+          className="font-semibold text-white hover:text-amber-400 underline underline-offset-2 transition-colors"
         >
-          Use a different email address
+          Update registration details
         </Link>
       </div>
     </form>

@@ -12,17 +12,16 @@ export default function VerifyEmailPage() {
   return (
     <AuthLayout
       title="Verify Your Work Email"
-      subtitle="Security verification is required for commercial stage liability and COI policy access."
+      subtitle="Enter the 6-digit confirmation code sent to your inbox to activate your production profile."
       footerPrompt={{
-        text: 'Need assistance with your call-sheet credentials?',
-        linkText: 'Contact Support',
-        linkHref: '/contact',
+        text: 'Already verified or need help?',
+        linkText: 'Sign In',
+        linkHref: '/login',
       }}
     >
-      <Suspense fallback={<div className="h-48 flex items-center justify-center text-xs text-slate-400">Loading verification...</div>}>
+      <Suspense fallback={<div className="h-48 flex items-center justify-center text-xs text-zinc-400">Loading verification...</div>}>
         <EmailOtpForm />
       </Suspense>
     </AuthLayout>
   );
 }
-
