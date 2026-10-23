@@ -61,20 +61,20 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
       }}
     >
       <div
-        className="relative w-full max-w-xl bg-[#121216] text-zinc-100 rounded-t-3xl sm:rounded-3xl border-t sm:border border-zinc-800 shadow-2xl p-5 sm:p-7 overflow-hidden max-h-[92vh] overflow-y-auto animate-drawer-up sm:animate-modal-in safe-area-bottom"
+        className="relative w-full max-w-xl bg-white dark:bg-[#121216] text-zinc-900 dark:text-zinc-100 rounded-t-3xl sm:rounded-3xl border-t sm:border border-zinc-200 dark:border-zinc-800 shadow-2xl p-5 sm:p-7 overflow-hidden max-h-[92vh] overflow-y-auto animate-drawer-up sm:animate-modal-in safe-area-bottom"
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-title"
       >
         {/* Mobile drag handle bar */}
         <div className="sm:hidden flex justify-center pb-2 -mt-1">
-          <div className="w-10 h-1 rounded-full bg-zinc-700" />
+          <div className="w-10 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
         </div>
 
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-4 sm:top-5 right-4 sm:right-5 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer"
+          className="absolute top-4 sm:top-5 right-4 sm:right-5 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer"
           aria-label="Close booking modal"
         >
           ✕
@@ -82,16 +82,16 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
 
         {isSubmitted ? (
           <div className="py-8 text-center space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 mx-auto rounded-full bg-emerald-950/40 text-emerald-400 flex items-center justify-center border border-emerald-800/40">
+            <div className="w-16 h-16 mx-auto rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200 dark:border-emerald-800/40">
               <CheckCircleIcon className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
               Production Date Hold Requested
             </h3>
-            <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
-              Your shoot shift inquiry for <span className="font-semibold text-white">{studio.name}</span> has been dispatched to the on-site Facility Stage Manager.
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed">
+              Your shoot shift inquiry for <span className="font-semibold text-zinc-900 dark:text-white">{studio.name}</span> has been dispatched to the on-site Facility Stage Manager.
             </p>
-            <div className="p-3 bg-[#18181E] rounded-xl text-xs font-mono text-zinc-400 max-w-xs mx-auto border border-zinc-800">
+            <div className="p-3 bg-zinc-100 dark:bg-[#18181E] rounded-xl text-xs font-mono text-zinc-700 dark:text-zinc-400 max-w-xs mx-auto border border-zinc-200 dark:border-zinc-800">
               Hold Reference: {holdReferenceId}
             </div>
             <button
@@ -107,7 +107,7 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
             
             {/* Header: Studio Summary */}
             <div className="flex gap-4 items-center pr-8">
-              <div className="relative w-20 h-16 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-800">
+              <div className="relative w-20 h-16 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0 border border-zinc-200 dark:border-zinc-800">
                 <Image
                   src={studio.imageUrl}
                   alt={studio.imageAlt}
@@ -116,17 +116,17 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
                 />
               </div>
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   {studio.categoryLabel}
                 </span>
-                <h3 id="booking-title" className="text-sm sm:text-base font-bold text-white line-clamp-1">
+                <h3 id="booking-title" className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white line-clamp-1">
                   {studio.name}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-zinc-400 mt-0.5">
+                <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
                   <span>{studio.location}</span>
                   <span>·</span>
-                  <div className="flex items-center gap-1 font-semibold text-zinc-200">
-                    <StarIcon className="w-3 h-3 text-amber-400 fill-amber-400" />
+                  <div className="flex items-center gap-1 font-semibold text-zinc-800 dark:text-zinc-200">
+                    <StarIcon className="w-3 h-3 text-amber-500 fill-amber-500" />
                     <span>{studio.rating.toFixed(2)}</span>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
 
             {/* Shift Selection */}
             <div>
-              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 font-mono">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2 font-mono">
                 Select Shoot Shift
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -144,12 +144,12 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
                   onClick={() => setSelectedShift('10h')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedShift === '10h'
-                      ? 'border-amber-500 bg-amber-500/15 text-amber-400 shadow-xs'
-                      : 'border-zinc-800 bg-[#18181E] hover:border-zinc-700 text-zinc-300'
+                      ? 'border-amber-500 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 shadow-xs font-bold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   <div className="text-xs font-bold">10h Full Day</div>
-                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '10h' ? 'text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
+                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '10h' ? 'text-amber-700 dark:text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
                     ${studio.dayRate10h.toLocaleString()}
                   </div>
                 </button>
@@ -159,12 +159,12 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
                   onClick={() => setSelectedShift('5h')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedShift === '5h'
-                      ? 'border-amber-500 bg-amber-500/15 text-amber-400 shadow-xs'
-                      : 'border-zinc-800 bg-[#18181E] hover:border-zinc-700 text-zinc-300'
+                      ? 'border-amber-500 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 shadow-xs font-bold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   <div className="text-xs font-bold">5h Half Day</div>
-                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '5h' ? 'text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
+                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '5h' ? 'text-amber-700 dark:text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
                     ${Math.round(studio.dayRate10h * 0.6).toLocaleString()}
                   </div>
                 </button>
@@ -174,12 +174,12 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
                   onClick={() => setSelectedShift('12h')}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedShift === '12h'
-                      ? 'border-amber-500 bg-amber-500/15 text-amber-400 shadow-xs'
-                      : 'border-zinc-800 bg-[#18181E] hover:border-zinc-700 text-zinc-300'
+                      ? 'border-amber-500 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 shadow-xs font-bold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   <div className="text-xs font-bold">12h Overnight</div>
-                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '12h' ? 'text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
+                  <div className={`text-[10px] mt-0.5 font-mono ${selectedShift === '12h' ? 'text-amber-700 dark:text-amber-300/80 font-bold' : 'text-zinc-500'}`}>
                     ${Math.round(studio.dayRate10h * 1.25).toLocaleString()}
                   </div>
                 </button>
@@ -188,17 +188,17 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
 
             {/* Optional Facility Add-ons */}
             <div>
-              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2 font-mono">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2 font-mono">
                 Facility &amp; Power Add-ons
               </label>
               <div className="space-y-2">
-                <label className="flex items-center justify-between p-3 rounded-xl border border-zinc-800 bg-[#18181E] hover:bg-[#22222B] cursor-pointer">
+                <label className="flex items-center justify-between p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] hover:bg-zinc-100 dark:hover:bg-[#22222B] cursor-pointer">
                   <div className="text-xs">
-                    <span className="font-semibold text-zinc-100">3-Phase 400A Camlock Subpanel Drop</span>
-                    <span className="block text-[11px] text-zinc-400">Direct heavy lighting power tie-in</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">3-Phase 400A Camlock Subpanel Drop</span>
+                    <span className="block text-[11px] text-zinc-600 dark:text-zinc-400">Direct heavy lighting power tie-in</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-zinc-300 font-mono">+$350</span>
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-300 font-mono">+$350</span>
                     <input
                       type="checkbox"
                       checked={addCamlock}
@@ -208,13 +208,13 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
                   </div>
                 </label>
 
-                <label className="flex items-center justify-between p-3 rounded-xl border border-zinc-800 bg-[#18181E] hover:bg-[#22222B] cursor-pointer">
+                <label className="flex items-center justify-between p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] hover:bg-zinc-100 dark:hover:bg-[#22222B] cursor-pointer">
                   <div className="text-xs">
-                    <span className="font-semibold text-zinc-100">Facility Pre-Rigging Technician</span>
-                    <span className="block text-[11px] text-zinc-400">2-hour early call for overhead truss pre-hang</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">Facility Pre-Rigging Technician</span>
+                    <span className="block text-[11px] text-zinc-600 dark:text-zinc-400">2-hour early call for overhead truss pre-hang</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-zinc-300 font-mono">+$500</span>
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-300 font-mono">+$500</span>
                     <input
                       type="checkbox"
                       checked={addPreRig}
@@ -227,24 +227,24 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
             </div>
 
             {/* Price Quote Summary */}
-            <div className="p-4 rounded-2xl bg-[#18181E] border border-zinc-800 space-y-1.5 text-xs">
-              <div className="flex justify-between text-zinc-400 font-mono">
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-[#18181E] border border-zinc-200 dark:border-zinc-800 space-y-1.5 text-xs">
+              <div className="flex justify-between text-zinc-600 dark:text-zinc-400 font-mono">
                 <span>Shift Facility Fee ({selectedShift})</span>
-                <span className="font-medium text-white">${baseShiftPrice.toLocaleString()}</span>
+                <span className="font-medium text-zinc-900 dark:text-white">${baseShiftPrice.toLocaleString()}</span>
               </div>
               {addOnTotal > 0 && (
-                <div className="flex justify-between text-zinc-400 font-mono">
+                <div className="flex justify-between text-zinc-600 dark:text-zinc-400 font-mono">
                   <span>Selected Power &amp; Rigging Add-ons</span>
-                  <span className="font-medium text-white">+${addOnTotal}</span>
+                  <span className="font-medium text-zinc-900 dark:text-white">+${addOnTotal}</span>
                 </div>
               )}
-              <div className="flex justify-between text-zinc-400 font-mono">
+              <div className="flex justify-between text-zinc-600 dark:text-zinc-400 font-mono">
                 <span>Direct Production Liability Insurance</span>
-                <span className="font-semibold text-amber-400">Included ($0)</span>
+                <span className="font-semibold text-amber-600 dark:text-amber-400">Included ($0)</span>
               </div>
-              <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline text-sm font-extrabold text-white">
+              <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-baseline text-sm font-extrabold text-zinc-900 dark:text-white">
                 <span>Estimated Shift Subtotal</span>
-                <span className="text-base font-black text-amber-400 font-mono">${subtotal.toLocaleString()}</span>
+                <span className="text-base font-black text-amber-600 dark:text-amber-400 font-mono">${subtotal.toLocaleString()}</span>
               </div>
             </div>
 
@@ -282,7 +282,7 @@ export function BookingModal({ studio, isOpen, onClose }: BookingModalProps) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="py-3 px-4 rounded-xl border border-zinc-800 hover:bg-zinc-800 text-zinc-400 text-xs font-semibold cursor-pointer"
+                className="py-3 px-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-400 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>

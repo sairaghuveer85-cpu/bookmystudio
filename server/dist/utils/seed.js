@@ -12,6 +12,15 @@ const saved_item_model_1 = require("../models/saved-item.model");
 const seed_data_1 = require("./seed-data");
 async function seedDatabase() {
     console.log('🌱 Starting BookMyStudio Database Seeding...');
+    if (process.env.NODE_ENV === 'production') {
+        throw new Error('CRITICAL SAFETY HALT: Database seeding is strictly blocked in production mode.');
+    }
+    const hasConfirmFlag = process.argv.includes('--confirm-seed') || process.env.CONFIRM_SEED === 'true';
+    if (!hasConfirmFlag) {
+        console.warn('\n⚠️  SAFETY HALT: Seeding will purge all existing studios, locations, equipment, and bookings.');
+        console.warn('To confirm, run with: npm --prefix server run seed -- --confirm-seed\n');
+        return;
+    }
     try {
         await (0, database_1.connectDatabase)();
         // 1. Clean existing records for fresh seed

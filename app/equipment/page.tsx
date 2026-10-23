@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { EquipmentCard } from '@/components/equipment/EquipmentCard';
 import { MobileFilterSheet } from '@/components/search/MobileFilterSheet';
 import { FilterIcon } from '@/components/ui/Icons';
-import { INITIAL_EQUIPMENT } from '@/lib/data';
 import { EquipmentCategory, EquipmentItem } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
 import { useLocation } from '@/context/LocationContext';
@@ -14,7 +13,8 @@ import { LocationFilterBanner } from '@/components/location/LocationFilterBanner
 
 export default function EquipmentPage() {
   const { location, isNeutral } = useLocation();
-  const [equipment, setEquipment] = useState<EquipmentItem[]>(INITIAL_EQUIPMENT);
+  const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'value-desc'>('featured');
@@ -35,13 +35,18 @@ export default function EquipmentPage() {
       .getEquipment(params)
       .then((res) => {
         if (isCancelled) return;
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setEquipment(res.data);
-        } else if (res.success && Array.isArray(res.data) && res.data.length === 0) {
+        } else {
           setEquipment([]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!isCancelled) setEquipment([]);
+      })
+      .finally(() => {
+        if (!isCancelled) setLoading(false);
+      });
 
     return () => {
       isCancelled = true;
@@ -248,14 +253,28 @@ export default function EquipmentPage() {
       {/* Meta Bar */}
       <div className="mt-6 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
         <span>
-          Showing <strong className="text-zinc-950 dark:text-white font-bold">{filteredEquipment.length}</strong> equipment {filteredEquipment.length === 1 ? 'kit' : 'kits'}
+          Showing <strong className="text-zinc-950 dark:text-white font-bold">{loading ? '...' : filteredEquipment.length}</strong> equipment {filteredEquipment.length === 1 ? 'kit' : 'kits'}
         </span>
         <span className="text-[11px] text-zinc-400 dark:text-zinc-500">All rentals backed by $250,000 inland marine equipment floater policy</span>
       </div>
 
       {/* Equipment Grid */}
       <div className="mt-6">
-        {filteredEquipment.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] p-4 space-y-3 animate-pulse"
+              >
+                <div className="w-full h-48 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-2/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-1/2 h-3 rounded bg-zinc-150 dark:bg-zinc-850" />
+                <div className="w-1/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800 pt-2" />
+              </div>
+            ))}
+          </div>
+        ) : filteredEquipment.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredEquipment.map((item) => (
               <EquipmentCard key={item.id} equipment={item} />

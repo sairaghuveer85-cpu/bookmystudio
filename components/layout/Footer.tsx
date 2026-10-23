@@ -3,21 +3,24 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogoMark, ShieldPolicyIcon } from '@/components/ui/Icons';
+import { ShieldPolicyIcon } from '@/components/ui/Icons';
 import { PolicyModal } from '@/components/modals/PolicyModal';
+import { BrandLogo } from '@/components/common/BrandLogo';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 export function Footer() {
   const pathname = usePathname();
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
 
-  const isAuthRoute =
+  const isExcludedRoute =
+    pathname.startsWith('/admin') ||
     pathname === '/login' ||
     pathname === '/create-account' ||
     pathname === '/forgot-password' ||
     pathname === '/reset-password' ||
     pathname === '/verify-email';
 
-  if (isAuthRoute) {
+  if (isExcludedRoute) {
     return null;
   }
 
@@ -31,18 +34,8 @@ export function Footer() {
             
             {/* Brand & Mission (Span 2 on lg) */}
             <div className="lg:col-span-2 space-y-4">
-              <Link href="/" className="inline-flex items-center gap-2.5 group">
-                <div className="w-7 h-7 rounded-lg bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-bold">
-                  <LogoMark className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-extrabold text-sm tracking-tight text-zinc-900 dark:text-zinc-100 uppercase">
-                    BOOKMYSTUDIO
-                  </span>
-                  <span className="text-[9px] font-semibold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase -mt-0.5">
-                    CREATIVE-PRODUCTION MARKETPLACE
-                  </span>
-                </div>
+              <Link href="/" className="inline-flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg p-1 -m-1" aria-label="BookMyStudio Home">
+                <BrandLogo variant="full" height={36} />
               </Link>
 
               <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-sm">
@@ -169,6 +162,8 @@ export function Footer() {
               <span>LA Soundstages</span>
               <span>·</span>
               <span>London Stages</span>
+              <span>·</span>
+              <ThemeToggle variant="header" />
             </div>
           </div>
 

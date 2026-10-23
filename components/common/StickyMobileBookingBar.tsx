@@ -50,20 +50,20 @@ export function StickyMobileBookingBar({
   return (
     <aside
       aria-label="Mobile booking action bar"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-[#09090B]/95 backdrop-blur-xl border-t border-zinc-800/90 safe-area-bottom lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.6)] transition-all duration-200"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#09090B]/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800/90 safe-area-bottom lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.6)] transition-all duration-200"
     >
       <div className="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
         {/* Left: Pricing & Context */}
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-1">
-            <span className="text-lg sm:text-xl font-extrabold text-white font-mono tracking-tight tabular-nums">
+            <span className="text-lg sm:text-xl font-extrabold text-zinc-900 dark:text-white font-mono tracking-tight tabular-nums">
               ${price.toLocaleString()}
             </span>
-            <span className="text-xs font-semibold text-zinc-400">
+            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
               {priceUnit}
             </span>
           </div>
-          <span className="block text-[10px] text-zinc-400 font-medium truncate mt-0.5">
+          <span className="block text-[10px] text-zinc-500 dark:text-zinc-400 font-medium truncate mt-0.5">
             {priceSubtitle}
           </span>
         </div>
@@ -77,7 +77,7 @@ export function StickyMobileBookingBar({
             className={`w-11 h-11 rounded-xl border flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
               saved
                 ? 'bg-amber-500 text-zinc-950 border-amber-400 shadow-xs'
-                : 'bg-[#18181E] border-zinc-700/80 text-zinc-300 hover:text-white hover:bg-[#202028]'
+                : 'bg-zinc-100 dark:bg-[#18181E] border-zinc-300 dark:border-zinc-700/80 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-[#202028]'
             }`}
             aria-label={saved ? `Remove ${listingTitle} from saved` : `Save ${listingTitle} to shortlist`}
             title={saved ? 'Shortlisted' : 'Save to shortlist'}

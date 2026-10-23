@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
@@ -14,8 +14,8 @@ import {
   PlusIcon,
 } from '@/components/ui/Icons';
 import { useMarketplace } from '@/context/MarketplaceContext';
-import { INITIAL_STUDIOS } from '@/lib/data';
 import { StudioSpace } from '@/lib/types';
+import { marketplaceApi } from '@/lib/api/marketplace';
 
 export default function ComparePage() {
   const {
@@ -32,15 +32,29 @@ export default function ComparePage() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [highlightDifferences, setHighlightDifferences] = useState(false);
 
+  const [allStudios, setAllStudios] = useState<StudioSpace[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    marketplaceApi.getStudios().then((res) => {
+      if (active && res.success && Array.isArray(res.data)) {
+        setAllStudios(res.data);
+      }
+    }).catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // Studios available to add (not currently compared)
-  const availableStudios = INITIAL_STUDIOS.filter(
+  const availableStudios = allStudios.filter(
     (s) => !comparedStudioIds.includes(s.id)
   );
 
   const handleAddDefaultPair = () => {
     clearCompare();
-    if (INITIAL_STUDIOS[0]) addToCompare(INITIAL_STUDIOS[0].id);
-    if (INITIAL_STUDIOS[1]) addToCompare(INITIAL_STUDIOS[1].id);
+    if (allStudios[0]) addToCompare(allStudios[0].id);
+    if (allStudios[1]) addToCompare(allStudios[1].id);
   };
 
   const handleOpenBooking = (studio: StudioSpace) => {
@@ -175,7 +189,7 @@ export default function ComparePage() {
                 {/* Table Header: Studio Visual Cards */}
                 <thead>
                   <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60">
-                    <th className="p-4 sm:p-6 w-48 sm:w-64 align-top border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <th className="sticky left-0 z-20 bg-zinc-50 dark:bg-[#18181E] p-4 sm:p-6 w-48 sm:w-64 align-top border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 block">
                           SPECIFICATION
@@ -288,12 +302,14 @@ export default function ComparePage() {
                   {/* GROUP 1: DIMENSIONS & RIGGING */}
                   <tr className="bg-zinc-100/70 dark:bg-zinc-900/80 font-bold text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     <td colSpan={comparedStudios.length + 2} className="py-2.5 px-4 sm:px-6">
-                      1. Dimensions, Geometries &amp; Truss Rigging
+                      <span className="sticky left-4 sm:left-6 inline-block">
+                        1. Dimensions, Geometries &amp; Truss Rigging
+                      </span>
                     </td>
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Total Floor Area
                     </td>
                     {comparedStudios.map((s) => (
@@ -310,7 +326,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Ceiling / Truss Clear Height
                     </td>
                     {comparedStudios.map((s) => (
@@ -327,7 +343,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Loading Gate &amp; Access
                     </td>
                     {comparedStudios.map((s) => (
@@ -342,7 +358,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Max Crew / Client Capacity
                     </td>
                     {comparedStudios.map((s) => (
@@ -359,12 +375,14 @@ export default function ComparePage() {
                   {/* GROUP 2: POWER & ACOUSTICS */}
                   <tr className="bg-zinc-100/70 dark:bg-zinc-900/80 font-bold text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     <td colSpan={comparedStudios.length + 2} className="py-2.5 px-4 sm:px-6">
-                      2. Electrical Camlock Service &amp; Soundproofing
+                      <span className="sticky left-4 sm:left-6 inline-block">
+                        2. Electrical Camlock Service &amp; Soundproofing
+                      </span>
                     </td>
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       3-Phase Camlock Amperage
                     </td>
                     {comparedStudios.map((s) => (
@@ -379,7 +397,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Acoustic Sound Isolation
                     </td>
                     {comparedStudios.map((s) => (
@@ -401,7 +419,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Drive-In Vehicle Access
                     </td>
                     {comparedStudios.map((s) => (
@@ -425,12 +443,14 @@ export default function ComparePage() {
                   {/* GROUP 3: EQUIPMENT & FACILITIES */}
                   <tr className="bg-zinc-100/70 dark:bg-zinc-900/80 font-bold text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     <td colSpan={comparedStudios.length + 2} className="py-2.5 px-4 sm:px-6">
-                      3. Included Equipment &amp; Stage Amenities
+                      <span className="sticky left-4 sm:left-6 inline-block">
+                        3. Included Equipment &amp; Stage Amenities
+                      </span>
                     </td>
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Included Gear Highlight
                     </td>
                     {comparedStudios.map((s) => (
@@ -445,7 +465,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Amenities &amp; Production Support
                     </td>
                     {comparedStudios.map((s) => (
@@ -469,12 +489,14 @@ export default function ComparePage() {
                   {/* GROUP 4: COMMERCIAL PRICING SHIFTS */}
                   <tr className="bg-zinc-100/70 dark:bg-zinc-900/80 font-bold text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     <td colSpan={comparedStudios.length + 2} className="py-2.5 px-4 sm:px-6">
-                      4. Commercial Pricing Shifts &amp; Insurance
+                      <span className="sticky left-4 sm:left-6 inline-block">
+                        4. Commercial Pricing Shifts &amp; Insurance
+                      </span>
                     </td>
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       5-Hour Half Day Shift
                     </td>
                     {comparedStudios.map((s) => (
@@ -489,7 +511,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       12-Hour Overnight Shift
                     </td>
                     {comparedStudios.map((s) => (
@@ -504,7 +526,7 @@ export default function ComparePage() {
                   </tr>
 
                   <tr>
-                    <td className="py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#121216] py-3.5 px-4 sm:px-6 font-semibold text-zinc-700 dark:text-zinc-300 border-r border-zinc-200/80 dark:border-zinc-800/80 shadow-[2px_0_5px_rgba(0,0,0,0.04)]">
                       Production Liability Insurance
                     </td>
                     {comparedStudios.map((s) => (
@@ -587,7 +609,7 @@ export default function ComparePage() {
                     className="p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-amber-500/50 flex items-center justify-between gap-3 bg-zinc-50/50 dark:bg-zinc-900/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-900 shrink-0">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 shrink-0">
                         <Image
                           src={studio.imageUrl || '/images/studios/apex-stage-c.svg'}
                           alt={studio.name}

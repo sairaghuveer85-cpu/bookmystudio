@@ -1,8 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useSyncExternalStore, useMemo } from 'react';
+import React, { createContext, useContext, useSyncExternalStore, useState, useEffect } from 'react';
 import { ProductionCrewMember, StudioSpace } from '@/lib/types';
-import { INITIAL_STUDIOS } from '@/lib/data';
 import { marketplaceApi } from '@/lib/api/marketplace';
 
 export interface CompareResult {
@@ -151,8 +150,51 @@ export function MarketplaceProvider({ children }: { children: React.ReactNode })
     getCompareServerSnapshot
   );
 
-  const comparedStudios = useMemo(() => {
-    return INITIAL_STUDIOS.filter((s) => comparedStudioIds.includes(s.id));
+  const [comparedStudios, setComparedStudios] = useState<StudioSpace[]>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    marketplaceApi
+      .getComparedStudios()
+      .then((res) => {
+        if (!active) return;
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setComparedStudios(res.data);
+        } else if (comparedStudioIds.length > 0) {
+          marketplaceApi
+            .getStudios()
+            .then((sRes) => {
+              if (!active) return;
+              if (sRes.success && Array.isArray(sRes.data)) {
+                setComparedStudios(sRes.data.filter((s) => comparedStudioIds.includes(s.id)));
+              }
+            })
+            .catch(() => {});
+        } else {
+          setComparedStudios([]);
+        }
+      })
+      .catch(() => {
+        if (!active) return;
+        if (comparedStudioIds.length > 0) {
+          marketplaceApi
+            .getStudios()
+            .then((sRes) => {
+              if (!active) return;
+              if (sRes.success && Array.isArray(sRes.data)) {
+                setComparedStudios(sRes.data.filter((s) => comparedStudioIds.includes(s.id)));
+              }
+            })
+            .catch(() => {});
+        } else {
+          setComparedStudios([]);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
   }, [comparedStudioIds]);
 
   const toggleBookmark = (id: string) => {

@@ -43,10 +43,10 @@ export function ListingLocationBadge({
 
   return (
     <div
-      className={`inline-flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-[#121216] border border-zinc-800 text-xs text-zinc-300 ${className}`}
+      className={`inline-flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-zinc-100 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 ${className}`}
     >
-      <div className="flex items-center gap-1.5 text-zinc-200">
-        <svg className="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-200">
+        <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -55,31 +55,31 @@ export function ListingLocationBadge({
           />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <span className="font-medium text-white">{locationText || 'Location'}</span>
+        <span className="font-medium text-zinc-900 dark:text-white">{locationText || 'Location'}</span>
       </div>
 
       {distanceKm !== null && (
         <>
-          <span className="text-zinc-600">·</span>
-          <span className="font-mono text-amber-400 font-semibold">
+          <span className="text-zinc-400 dark:text-zinc-600">·</span>
+          <span className="font-mono text-amber-600 dark:text-amber-400 font-semibold">
             {distanceKm} km away (straight-line)
           </span>
         </>
       )}
 
-      <span className="text-zinc-600">·</span>
-      <span className="text-zinc-400">
+      <span className="text-zinc-400 dark:text-zinc-600">·</span>
+      <span className="text-zinc-500 dark:text-zinc-400">
         {isNeutral ? (
           <>Set your location to see distance</>
         ) : (
-          <>From: <strong className="text-zinc-300 font-medium">{location.locality || location.city}</strong></>
+          <>From: <strong className="text-zinc-700 dark:text-zinc-300 font-medium">{location.locality || location.city}</strong></>
         )}
       </span>
 
       <button
         type="button"
         onClick={openSelector}
-        className="text-amber-400 hover:text-amber-300 underline font-semibold ml-1 cursor-pointer"
+        className="text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 underline font-semibold ml-1 cursor-pointer"
       >
         {isNeutral ? 'Select Base' : 'Change Base'}
       </button>

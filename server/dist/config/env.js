@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
+exports.getDatabaseUri = getDatabaseUri;
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
@@ -27,8 +28,10 @@ const envSchema = zod_1.z.object({
     MONGODB_URI: zod_1.z
         .string()
         .default('mongodb://127.0.0.1:27017/bookmystudio'),
+    MONGODB_TEST_URI: zod_1.z.string().optional(),
     CLIENT_ORIGIN: zod_1.z.string().default('http://localhost:3000'),
     SESSION_SECRET: zod_1.z.string().default('bms_dev_session_secret_32_characters_long_min_production'),
+    ADMIN_EMAILS: zod_1.z.string().optional().default('raghuveerlinkedin@gmail.com'),
     SMTP_HOST: zod_1.z.string().default('smtp.gmail.com'),
     SMTP_PORT: zod_1.z.coerce.number().default(465),
     SMTP_USER: zod_1.z.string().optional(),
@@ -59,6 +62,29 @@ if (!parsed.success) {
     process.exit(1);
 }
 exports.env = parsed.data;
+/**
+ * Returns the authoritative database URI depending on execution mode.
+ * Strictly guarantees that test execution NEVER resolves to the primary development/production database.
+ */
+function getDatabaseUri(isTest = false) {
+    const isTestMode = isTest || process.env.NODE_ENV === 'test' || exports.env.NODE_ENV === 'test';
+    if (isTestMode) {
+        if (process.env.MONGODB_TEST_URI || exports.env.MONGODB_TEST_URI) {
+            return (process.env.MONGODB_TEST_URI || exports.env.MONGODB_TEST_URI);
+        }
+        const baseUri = process.env.MONGODB_URI || exports.env.MONGODB_URI;
+        // Replace the trailing database name with bookmystudio_test
+        if (baseUri.includes('/bookmystudio')) {
+            return baseUri.replace(/\/bookmystudio(\?|$)/, '/bookmystudio_test$1');
+        }
+        // For custom connection URIs, append _test to path
+        const [pathPart, queryPart] = baseUri.split('?');
+        const segments = pathPart.split('/');
+        segments[segments.length - 1] = 'bookmystudio_test';
+        return queryPart ? `${segments.join('/')}?${queryPart}` : segments.join('/');
+    }
+    return process.env.MONGODB_URI || exports.env.MONGODB_URI;
+}
 if (exports.env.NODE_ENV === 'production' && exports.env.SESSION_SECRET.includes('dev_session_secret')) {
     console.warn('⚠️ WARNING: Using default SESSION_SECRET in production. Set a random 32+ character string in your environment.');
 }

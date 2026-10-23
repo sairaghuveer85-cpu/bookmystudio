@@ -8,6 +8,7 @@ exports.getStudioBySlugOrId = getStudioBySlugOrId;
 exports.createStudio = createStudio;
 exports.updateStudio = updateStudio;
 exports.deleteStudio = deleteStudio;
+exports.getStudioCategories = getStudioCategories;
 const mongoose_1 = __importDefault(require("mongoose"));
 const studio_model_1 = require("../models/studio.model");
 const slug_1 = require("../utils/slug");
@@ -434,6 +435,70 @@ async function deleteStudio(req, res, next) {
         res.status(200).json({
             success: true,
             message: 'Studio listing deleted successfully.',
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+async function getStudioCategories(req, res, next) {
+    try {
+        const rawCategories = await studio_model_1.Studio.aggregate([
+            { $match: { reviewStatus: 'APPROVED' } },
+            { $group: { _id: '$category', count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+        ]);
+        const categoryMetadata = {
+            cyclorama: {
+                name: 'Cycloramas',
+                description: '1 & 2-wall seamless infinity coves',
+                iconName: 'cyclorama',
+            },
+            soundstage: {
+                name: 'Soundstages',
+                description: 'STC 60+ certified acoustic stages',
+                iconName: 'soundstage',
+            },
+            podcast: {
+                name: 'Podcast Suites',
+                description: 'Turnkey multi-cam broadcast bays',
+                iconName: 'mic',
+            },
+            daylight: {
+                name: 'Daylight Lofts',
+                description: 'Factory sash & natural skylights',
+                iconName: 'sun',
+            },
+            kitchen: {
+                name: 'Kitchen Stages',
+                description: 'Working island ranges & culinary bays',
+                iconName: 'kitchen',
+            },
+            industrial: {
+                name: 'Industrial Silos',
+                description: 'Clear span warehouse locations',
+                iconName: 'warehouse',
+            },
+        };
+        const categories = rawCategories.map((item) => {
+            const key = item._id || 'general';
+            const meta = categoryMetadata[key] || {
+                name: key.charAt(0).toUpperCase() + key.slice(1),
+                description: 'Certified commercial production spaces',
+                iconName: 'soundstage',
+            };
+            return {
+                id: `cat-${key}`,
+                categoryKey: key,
+                name: meta.name,
+                count: item.count,
+                description: meta.description,
+                iconName: meta.iconName,
+            };
+        });
+        res.status(200).json({
+            success: true,
+            data: categories,
         });
     }
     catch (error) {

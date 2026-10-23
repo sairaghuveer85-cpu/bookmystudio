@@ -18,7 +18,6 @@ import {
 } from '@/components/common/ListingDetailState';
 import { EquipmentItem } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
-import { getEquipmentBySlug, getSimilarEquipment } from '@/lib/data';
 import { ApiError } from '@/lib/api/client';
 
 interface EquipmentDetailViewProps {
@@ -30,22 +29,13 @@ type ViewStatus = 'loading' | 'success' | 'not_found' | 'network_error' | 'serve
 
 export function EquipmentDetailView({ slug, initialEquipment }: EquipmentDetailViewProps) {
   const [equipment, setEquipment] = useState<EquipmentItem | null>(initialEquipment || null);
-  const [similar, setSimilar] = useState<EquipmentItem[]>(() => {
-    if (initialEquipment) {
-      return getSimilarEquipment(initialEquipment.id, 3);
-    }
-    return [];
-  });
+  const [similar, setSimilar] = useState<EquipmentItem[]>([]);
   const [status, setStatus] = useState<ViewStatus>(initialEquipment ? 'success' : 'loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isDraftPreview, setIsDraftPreview] = useState<boolean>(false);
   const [retryCounter, setRetryCounter] = useState(0);
 
   useEffect(() => {
-    if (initialEquipment) {
-      return;
-    }
-
     let isCancelled = false;
 
     marketplaceApi
@@ -66,16 +56,10 @@ export function EquipmentDetailView({ slug, initialEquipment }: EquipmentDetailV
               if (isCancelled) return;
               if (simRes.success && Array.isArray(simRes.data)) {
                 const filtered = simRes.data.filter((e) => e.id !== res.data.id && e.slug !== res.data.slug).slice(0, 3);
-                setSimilar(filtered.length > 0 ? filtered : getSimilarEquipment(res.data.id, 3));
-              } else {
-                setSimilar(getSimilarEquipment(res.data.id, 3));
+                setSimilar(filtered);
               }
             })
-            .catch(() => {
-              if (!isCancelled) {
-                setSimilar(getSimilarEquipment(res.data.id, 3));
-              }
-            });
+            .catch(() => {});
           return;
         }
 
@@ -83,14 +67,6 @@ export function EquipmentDetailView({ slug, initialEquipment }: EquipmentDetailV
       })
       .catch((err: unknown) => {
         if (isCancelled) return;
-
-        const staticFallback = getEquipmentBySlug(slug);
-        if (staticFallback) {
-          setEquipment(staticFallback);
-          setSimilar(getSimilarEquipment(staticFallback.id, 3));
-          setStatus('success');
-          return;
-        }
 
         if (err instanceof ApiError) {
           if (err.status === 404 || err.code === 'EQUIPMENT_NOT_FOUND') {
@@ -111,7 +87,7 @@ export function EquipmentDetailView({ slug, initialEquipment }: EquipmentDetailV
     return () => {
       isCancelled = true;
     };
-  }, [slug, initialEquipment, retryCounter]);
+  }, [slug, retryCounter]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -144,7 +120,7 @@ export function EquipmentDetailView({ slug, initialEquipment }: EquipmentDetailV
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32 lg:pb-8">
       {/* Draft Preview Indicator Banner */}
       {isDraftPreview && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-300">

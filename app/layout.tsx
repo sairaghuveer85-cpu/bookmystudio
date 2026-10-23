@@ -24,6 +24,16 @@ export const metadata: Metadata = {
   title: "BookMyStudio — World-Class Studios & Soundstages for Your Next Shoot",
   description:
     "Instant booking for commercial cycloramas, soundproof stages, natural daylight lofts, and vetted crew across global production hubs.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -37,27 +47,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark h-full antialiased scroll-smooth" style={{ colorScheme: 'dark' }}>
+    <html lang="en" suppressHydrationWarning className="h-full antialiased scroll-smooth">
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{localStorage.removeItem('bms_theme');var d=document.documentElement;d.classList.add('dark');d.setAttribute('data-theme','dark');d.style.colorScheme='dark';}catch(e){}})();`,
+            __html: `(function(){try{var s=localStorage.getItem('bms_theme');var d=document.documentElement;var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var isDark=s?s==='dark':prefersDark;if(isDark){d.classList.add('dark');d.setAttribute('data-theme','dark');d.style.colorScheme='dark';}else{d.classList.remove('dark');d.setAttribute('data-theme','light');d.style.colorScheme='light';}}catch(e){}})();`,
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans bg-[#09090B] text-[#FAFAFA] selection:bg-amber-500/30 selection:text-amber-200">
+      <body className="min-h-full flex flex-col font-sans bg-[var(--bg-page)] text-[var(--text-primary)] selection:bg-amber-500/30 selection:text-amber-800 dark:selection:text-amber-200">
         <ThemeProvider>
           <MarketplaceProvider>
             <AuthProvider>
               <LocationProvider>
-                <CinematicIntro />
+                <Suspense fallback={null}>
+                  <CinematicIntro />
+                </Suspense>
                 <Suspense fallback={<div className="h-16 sm:h-20 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]" />}>
                   <Header />
                 </Suspense>
-                <div className="flex-1 flex flex-col pb-16 lg:pb-0">{children}</div>
-                <Footer />
-                <ComparisonTray />
-                <MobileBottomNav />
+                <main className="flex-1 flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)] pb-16 lg:pb-0">{children}</main>
+                <Suspense fallback={null}>
+                  <Footer />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <ComparisonTray />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <MobileBottomNav />
+                </Suspense>
                 <LocationSelectorModal />
               </LocationProvider>
             </AuthProvider>

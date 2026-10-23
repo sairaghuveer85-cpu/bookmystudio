@@ -1,12 +1,55 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, [data-theme="dark"], .dark *, [data-theme="dark"] *));
 
 /* ============================================================
-   BOOKMYSTUDIO — DARK-ONLY DESIGN SYSTEM TOKENS
-   Permanent cinematic soundstage palette (OLED Black, Tungsten Amber)
+   BOOKMYSTUDIO DESIGN SYSTEM TOKENS
+   - Light Mode: Crisp warm gallery white, deep charcoal, luminous amber
+   - Dark Mode: OLED obsidian soundstage floor, tungsten amber
    ============================================================ */
-:root,
+:root {
+  color-scheme: light;
+  --bg-page: #FAFAFA;               /* Warm gallery off-white backdrop */
+  --bg-page-subtle: #F4F4F6;        /* Subtle section divider backdrop */
+  --bg-surface: #FFFFFF;            /* Pure white primary card, panel, and search bar */
+  --bg-surface-secondary: #F1F2F5;  /* Inputs, pill filters, badges, secondary cards */
+  --bg-surface-elevated: #FFFFFF;   /* Menus, dialogs, drawers */
+  --bg-surface-hover: #EAEBF0;      /* Interactive hover surface */
+  --text-primary: #09090B;          /* High-contrast deep charcoal typography */
+  --text-secondary: #52525B;        /* Editorial specs, metadata, subtitles */
+  --text-muted: #71717A;            /* Tertiary captions, helper text */
+  --border-subtle: #E4E4E7;         /* Clean hairline studio separators */
+  --border-hover: #D4D4D8;          /* Focused / active element borders */
+  --accent-primary: #D97706;        /* Luminous accessible tungsten amber (4.5:1 on light) */
+  --accent-hover: #B45309;          /* Deep warm amber interaction hover */
+  --accent-subtle: #FEF3C7;         /* Warm honey tint badge background */
+  --accent-border: #FDE68A;         /* Amber accent border */
+  --status-error: #DC2626;          /* High-contrast destructive alerts */
+  --status-warning: #D97706;        /* Hold warnings, production curfews */
+  --status-success: #059669;        /* $2M COI & Verified stage seals */
+
+  /* shadcn/ui semantic tokens */
+  --background: 0 0% 98%;
+  --foreground: 240 10% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 4%;
+  --primary: 38 92% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 6% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 38 92% 50%;
+}
+
 .dark,
 [data-theme="dark"] {
   color-scheme: dark;
@@ -28,11 +71,32 @@
   --status-error: #EF4444;          /* High-contrast destructive alerts */
   --status-warning: #F59E0B;        /* Hold warnings, production curfews */
   --status-success: #10B981;        /* $2M COI & Verified stage seals */
+
+  /* shadcn/ui semantic tokens */
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 7%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 38 92% 50%;
+  --primary-foreground: 240 10% 4%;
+  --secondary: 240 4% 11%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 38 92% 50%;
 }
 
 /* ============================================================
    AUTHENTICATION EXPERIENCE RESILIENT STYLES
-   Permanent dark split-screen layout and inputs
+   Split-screen layout and adaptive inputs
    ============================================================ */
 .auth-page-container {
   background-color: var(--bg-page);
@@ -42,19 +106,19 @@
 }
 
 .auth-form-panel {
-  background-color: #09090B;
-  color: #FAFAFA;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
 }
 
 .auth-input {
-  background-color: #121216;
-  color: #FAFAFA;
-  border-color: #27272A;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
 }
 
 .auth-input:focus {
-  background-color: #18181E;
-  border-color: #F59E0B;
+  background-color: var(--bg-surface-secondary);
+  border-color: var(--accent-primary);
 }
 
 @theme inline {
@@ -96,6 +160,8 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
 }
 
 body {

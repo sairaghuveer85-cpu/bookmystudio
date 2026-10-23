@@ -53,28 +53,28 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
   };
 
   return (
-    <div id="inquiry-form" className="bg-[#121216] rounded-2xl border border-zinc-800 shadow-sm p-5 sm:p-6 sticky top-24 scroll-mt-24">
+    <div id="inquiry-form" className="bg-white dark:bg-[#121216] rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-5 sm:p-6 sticky top-24 scroll-mt-24">
       {submitted ? (
         <div className="py-6 text-center space-y-3 animate-in fade-in duration-200">
-          <div className="w-12 h-12 mx-auto rounded-full bg-emerald-950/40 text-emerald-400 flex items-center justify-center border border-emerald-800/40">
+          <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200 dark:border-emerald-800/40">
             <CheckCircleIcon className="w-6 h-6" />
           </div>
-          <h4 className="text-sm font-bold text-white">
+          <h4 className="text-sm font-bold text-zinc-900 dark:text-white">
             Hold Inquiry Dispatched
           </h4>
-          <p className="text-xs text-zinc-400 leading-relaxed">
-            Your production hold request for <span className="font-semibold text-white">{itemTitle}</span> has been logged under inquiry reference:
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Your production hold request for <span className="font-semibold text-zinc-900 dark:text-white">{itemTitle}</span> has been logged under inquiry reference:
           </p>
-          <div className="p-2.5 bg-zinc-900 rounded-xl font-mono text-[11px] text-amber-400 font-bold border border-zinc-800">
+          <div className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-xl font-mono text-[11px] text-amber-600 dark:text-amber-400 font-bold border border-zinc-200 dark:border-zinc-800">
             #{bookingRef}
           </div>
-          <div className="pt-2 text-[10px] bg-amber-950/30 p-2 rounded-lg border border-amber-800/40 text-amber-300">
+          <div className="pt-2 text-[10px] bg-amber-50 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-800/40 text-amber-900 dark:text-amber-300">
             Automated Certificate of Insurance (COI) checklist and facility load-in protocol dispatched to {producerEmail}.
           </div>
           <button
             type="button"
             onClick={() => setSubmitted(false)}
-            className="mt-2 text-xs font-semibold text-zinc-400 hover:text-white underline cursor-pointer"
+            className="mt-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white underline cursor-pointer"
           >
             Submit Another Date Inquiry
           </button>
@@ -86,16 +86,16 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
               PRODUCTION RESERVATION &amp; QUOTE
             </span>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-2xl font-black text-white font-mono">
+              <span className="text-2xl font-black text-zinc-900 dark:text-white font-mono">
                 ${dayRate.toLocaleString()}
               </span>
-              <span className="text-xs text-zinc-400 font-medium">/ 10h Standard Day</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">/ 10h Standard Day</span>
             </div>
           </div>
 
-          <div className="space-y-3 pt-2 border-t border-zinc-800">
+          <div className="space-y-3 pt-2 border-t border-zinc-200 dark:border-zinc-800">
             <div>
-              <label htmlFor="shootDateInput" className="block text-xs font-semibold text-zinc-300 mb-1">
+              <label htmlFor="shootDateInput" className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Target Shoot Date
               </label>
               <input
@@ -104,19 +104,19 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 required
                 value={shootDate}
                 onChange={(e) => setShootDate(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-800 bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
             <div>
-              <label htmlFor="shiftSelect" className="block text-xs font-semibold text-zinc-300 mb-1">
+              <label htmlFor="shiftSelect" className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Shift Length
               </label>
               <select
                 id="shiftSelect"
                 value={shiftHours}
                 onChange={(e) => setShiftHours(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-800 bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
               >
                 <option value="10">10h Full Production Day (100% Rate)</option>
                 <option value="5">5h Half Day (60% Rate)</option>
@@ -125,7 +125,7 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
             </div>
 
             <div>
-              <label htmlFor="prodNameInput" className="block text-xs font-semibold text-zinc-300 mb-1">
+              <label htmlFor="prodNameInput" className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Production / Project Title
               </label>
               <input
@@ -135,12 +135,12 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 placeholder="e.g. Commercial Brand Campaign"
                 value={productionName}
                 onChange={(e) => setProductionName(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
             <div>
-              <label htmlFor="emailInput" className="block text-xs font-semibold text-zinc-300 mb-1">
+              <label htmlFor="emailInput" className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Producer Call Sheet Email
               </label>
               <input
@@ -150,24 +150,24 @@ export function InquiryForm({ itemTitle, itemType, dayRate }: InquiryFormProps) 
                 placeholder="producer@agency.com"
                 value={producerEmail}
                 onChange={(e) => setProducerEmail(e.target.value)}
-                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 text-base sm:text-xs rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>
           </div>
 
           {/* Subtotal preview */}
-          <div className="p-3 bg-zinc-900 rounded-xl space-y-1 text-xs border border-zinc-800">
-            <div className="flex justify-between text-zinc-400">
+          <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl space-y-1 text-xs border border-zinc-200 dark:border-zinc-800">
+            <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
               <span>Estimated Shift Rate</span>
-              <span className="font-semibold text-white font-mono">${calculateTotal().toLocaleString()}</span>
+              <span className="font-semibold text-zinc-900 dark:text-white font-mono">${calculateTotal().toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-zinc-400">
+            <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
               <span>$2M Direct Policy Endorsement</span>
-              <span className="font-semibold text-emerald-400">Included ($0)</span>
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400">Included ($0)</span>
             </div>
-            <div className="pt-2 border-t border-zinc-800 flex justify-between font-extrabold text-white">
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-between font-extrabold text-zinc-900 dark:text-white">
               <span>Quote Total</span>
-              <span className="text-sm font-black font-mono text-amber-400">${calculateTotal().toLocaleString()}</span>
+              <span className="text-sm font-black font-mono text-amber-600 dark:text-amber-400">${calculateTotal().toLocaleString()}</span>
             </div>
           </div>
 

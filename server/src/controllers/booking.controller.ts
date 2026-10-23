@@ -183,14 +183,22 @@ export async function getBookingRequests(req: Request, res: Response, next: Next
     }
 
     const query: any = {};
+    const { as } = req.query;
 
     const isAdmin = req.user.roles.includes('ADMIN');
-    const isOwner = req.user.roles.includes('STUDIO_OWNER');
+    const isOwner =
+      req.user.roles.includes('STUDIO_OWNER') || req.user.roles.includes('PROFESSIONAL');
 
-    if (isAdmin) {
-      // Admin sees all
+    if (as === 'partner') {
+      // Partner perspective: show only inbound inquiries received for owned listings
+      query.studioOwner = req.user._id;
+    } else if (as === 'buyer') {
+      // Buyer perspective: show only reservations made by the authenticated user
+      query.customer = req.user._id;
+    } else if (isAdmin) {
+      // Admin sees all without filter
     } else if (isOwner) {
-      // Owner sees bookings made by them as customer OR inquiries received for their stages
+      // Owner default sees both
       query.$or = [{ customer: req.user._id }, { studioOwner: req.user._id }];
     } else {
       // Customer sees only their own booking requests

@@ -44,7 +44,7 @@ interface InboundBookingRequest {
   companyName: string;
   shootDate: string;
   shiftHours: string;
-  payoutGross: number;
+  bookingValue: number;
   status: 'Pending Host Review' | 'Accepted' | 'Declined';
 }
 
@@ -62,6 +62,16 @@ function DashboardContent() {
   const { bookmarkedIds, selectedCrew } = useMarketplace();
 
   const urlTab = searchParams.get('tab');
+
+  // Smoothly route partner tabs to the dedicated partner console
+  useEffect(() => {
+    if (urlTab === 'listings') {
+      router.replace('/partner?tab=listings');
+    } else if (urlTab === 'host') {
+      router.replace('/partner?tab=bookings');
+    }
+  }, [urlTab, router]);
+
   const [activePersona, setActivePersona] = useState<'producer' | 'host' | 'listings'>(
     urlTab === 'listings' ? 'listings' : urlTab === 'host' ? 'host' : 'producer'
   );
@@ -69,30 +79,11 @@ function DashboardContent() {
   // Producer Holds State
   const [producerHolds, setProducerHolds] = useState<CommercialHold[]>([]);
 
-  // Host Inbound Requests State
-  const [inboundRequests, setInboundRequests] = useState<InboundBookingRequest[]>([
-    {
-      id: 'req-1',
-      stageName: 'Commercial Soundstage',
-      productionTitle: 'Nike Fall Motion Campaign',
-      producerName: 'Marcus Chen',
-      companyName: 'Wieden+Kennedy NY',
-      shootDate: 'Nov 24, 2026',
-      shiftHours: '10h Commercial (07:00 - 17:00)',
-      payoutGross: 1400,
-      status: 'Pending Host Review',
-    },
-  ]);
+  // Host Inbound Requests State (Hydrated from live MongoDB booking requests)
+  const [inboundRequests, setInboundRequests] = useState<InboundBookingRequest[]>([]);
 
-  // Calendar Blackout Dates State
-  const [blackoutDates, setBlackoutDates] = useState<BlackoutDate[]>([
-    {
-      id: 'blk-1',
-      stageName: 'Commercial Soundstage',
-      date: '2026-11-12',
-      reason: 'Cyc Floor White Repaint Maintenance',
-    },
-  ]);
+  // Calendar Blackout Dates State (Hydrated from live database records)
+  const [blackoutDates, setBlackoutDates] = useState<BlackoutDate[]>([]);
 
   const [newBlackoutStage, setNewBlackoutStage] = useState('Commercial Soundstage');
   const [newBlackoutDate, setNewBlackoutDate] = useState('2026-12-01');
@@ -160,12 +151,32 @@ function DashboardContent() {
             if (res.counts) {
               setMyListingCounts(res.counts);
             }
+            // Hydrate blackout dates from real listing blockedDates
+            const liveBlocks: BlackoutDate[] = [];
+            res.data.forEach((item) => {
+              const raw = item.raw as Record<string, unknown> | undefined;
+              const rawBlocks = raw?.blockedDates;
+              if (Array.isArray(rawBlocks)) {
+                rawBlocks.forEach((blockItem: unknown) => {
+                  const b = blockItem as Record<string, unknown>;
+                  liveBlocks.push({
+                    id: String(b._id || b.id || Math.random()),
+                    stageName: item.title,
+                    date: b.startDate ? new Date(String(b.startDate)).toISOString().split('T')[0] : 'N/A',
+                    reason: String(b.reason || 'Reserved Maintenance'),
+                  });
+                });
+              }
+            });
+            if (liveBlocks.length > 0) {
+              setBlackoutDates(liveBlocks);
+            }
           }
         })
         .catch(() => {});
 
       marketplaceApi
-        .getBookings()
+        .getBookings({ as: 'buyer' })
         .then((res) => {
           if (res.success && Array.isArray(res.data) && res.data.length > 0) {
             const mapped: CommercialHold[] = res.data.map((b: Record<string, unknown>) => {
@@ -196,6 +207,40 @@ function DashboardContent() {
           }
         })
         .catch(() => {});
+
+      // If user has partner privileges, fetch inbound requests from MongoDB
+      marketplaceApi
+        .getBookings({ as: 'partner' })
+        .then((res) => {
+          if (res.success && Array.isArray(res.data)) {
+            const mapped: InboundBookingRequest[] = res.data.map((b: Record<string, unknown>) => {
+              const studio = b.studio as Record<string, unknown> | undefined;
+              const customer = b.customer as Record<string, unknown> | undefined;
+              return {
+                id: String(b.id || b._id || ''),
+                stageName: String(studio?.name || b.productionName || 'Studio Stage'),
+                productionTitle: String(b.productionName || 'Production Campaign'),
+                producerName: String(customer?.fullName || customer?.name || 'Commercial Client'),
+                companyName: String(customer?.companyName || 'Production Agency'),
+                shootDate: new Date(String(b.requestedDate || '')).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                }),
+                shiftHours: String(b.shiftType || '10-Hour Commercial Shift'),
+                bookingValue: Number(b.estimatedTotal || 0),
+                status:
+                  b.status === 'confirmed'
+                    ? 'Accepted'
+                    : b.status === 'declined'
+                    ? 'Declined'
+                    : 'Pending Host Review',
+              };
+            });
+            setInboundRequests(mapped);
+          }
+        })
+        .catch(() => {});
     }
   }, [user, isLoading, router, fetchMyListings]);
 
@@ -213,37 +258,70 @@ function DashboardContent() {
     router.refresh();
   };
 
-  const handleReleaseHold = (holdId: string) => {
+  const handleReleaseHold = async (holdId: string) => {
+    try {
+      await marketplaceApi.updateBookingStatus(holdId, 'cancelled');
+    } catch {
+      // Continue optimistic state update
+    }
     setProducerHolds((prev) => prev.filter((h) => h.id !== holdId));
   };
 
-  const handleAcceptRequest = (reqId: string) => {
+  const handleAcceptRequest = async (reqId: string) => {
+    try {
+      await marketplaceApi.updateBookingStatus(reqId, 'confirmed');
+    } catch {
+      // Continue optimistic state update
+    }
     setInboundRequests((prev) =>
       prev.map((r) => (r.id === reqId ? { ...r, status: 'Accepted' } : r))
     );
   };
 
-  const handleDeclineRequest = (reqId: string) => {
+  const handleDeclineRequest = async (reqId: string) => {
+    try {
+      await marketplaceApi.updateBookingStatus(reqId, 'declined');
+    } catch {
+      // Continue optimistic state update
+    }
     setInboundRequests((prev) =>
       prev.map((r) => (r.id === reqId ? { ...r, status: 'Declined' } : r))
     );
   };
 
-  const handleAddBlackout = (e: React.FormEvent) => {
+  const handleAddBlackout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBlackoutDate) return;
+
+    // Attempt to persist to the first matching owned studio in MongoDB
+    const targetListing = myListings.find((l) => l.title === newBlackoutStage) || myListings[0];
+    if (targetListing) {
+      await marketplaceApi
+        .addBlockedDate(targetListing.type, targetListing.id, {
+          startDate: newBlackoutDate,
+          endDate: newBlackoutDate,
+          reason: newBlackoutReason,
+        })
+        .catch(() => {});
+    }
+
     const item: BlackoutDate = {
       id: `blk-${Date.now()}`,
-      stageName: newBlackoutStage,
+      stageName: targetListing?.title || newBlackoutStage,
       date: newBlackoutDate,
       reason: newBlackoutReason,
     };
     setBlackoutDates((prev) => [item, ...prev]);
-    setBlackoutNotice(`Blackout date scheduled for ${newBlackoutStage} on ${newBlackoutDate}.`);
+    setBlackoutNotice(`Blackout date scheduled for ${item.stageName} on ${newBlackoutDate}.`);
     setTimeout(() => setBlackoutNotice(null), 4000);
   };
 
-  const handleRemoveBlackout = (id: string) => {
+  const handleRemoveBlackout = async (id: string) => {
+    // If it's a persistent mongo block id, attempt backend unblock
+    const targetListing = myListings[0];
+    if (targetListing && !id.startsWith('blk-')) {
+      await marketplaceApi.removeBlockedDate(targetListing.type, targetListing.id, id).catch(() => {});
+    }
     setBlackoutDates((prev) => prev.filter((b) => b.id !== id));
   };
 
@@ -370,7 +448,7 @@ function DashboardContent() {
   });
 
   return (
-    <div className="py-8 bg-[#09090B] min-h-[calc(100vh-140px)] text-zinc-100 transition-colors duration-150">
+    <div className="py-8 bg-[var(--bg-page)] min-h-[calc(100vh-140px)] text-zinc-900 dark:text-zinc-100 transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
@@ -382,10 +460,10 @@ function DashboardContent() {
         />
 
         {/* Dashboard Profile Banner */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-[#121216] border border-zinc-800 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
+        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm dark:shadow-md">
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-mono">
                 {activePersona === 'producer'
                   ? 'COMMERCIAL PRODUCER CONSOLE'
                   : activePersona === 'host'
@@ -393,17 +471,17 @@ function DashboardContent() {
                   : 'MY LISTINGS & VERIFICATION'}
               </span>
               {isEmailVerified ? (
-                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-semibold">
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Verified Identity</span>
                 </span>
               ) : (
-                <span className="text-[11px] text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 font-medium">
+                <span className="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 font-medium">
                   Email Verification Pending
                 </span>
               )}
               {isAdmin && (
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-mono">
                   PLATFORM ADMINISTRATOR
                 </span>
               )}
@@ -413,8 +491,8 @@ function DashboardContent() {
               Welcome back, {fullName}
             </h1>
 
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl">
-              Connected as <strong className="text-zinc-200">{email}</strong>. Manage your production holds, facility listings, and verification reviews.
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-xl">
+              Connected as <strong className="text-zinc-900 dark:text-zinc-200">{email}</strong>. Manage your production holds, facility listings, and verification reviews.
             </p>
           </div>
 
@@ -422,7 +500,7 @@ function DashboardContent() {
             {!isVendor && (
               <Link
                 href="/become-vendor"
-                className="px-4 py-2.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 hover:text-amber-200 rounded-xl text-xs font-bold transition-all shadow-xs"
+                className="px-4 py-2.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 rounded-xl text-xs font-bold transition-all shadow-xs"
               >
                 ✨ Become a Vendor
               </Link>
@@ -444,7 +522,7 @@ function DashboardContent() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="px-4 py-2.5 border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2.5 border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
             >
               Sign Out
             </button>
@@ -456,15 +534,15 @@ function DashboardContent() {
           <div
             className={`mt-4 p-4 rounded-xl border text-xs flex items-center justify-between gap-3 animate-in fade-in duration-200 ${
               listingActionNotice.type === 'success'
-                ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200'
-                : 'bg-red-950/40 border-red-800 text-red-200'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+                : 'bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-800 text-red-800 dark:text-red-200'
             }`}
           >
             <span>{listingActionNotice.message}</span>
             <button
               type="button"
               onClick={() => setListingActionNotice(null)}
-              className="text-zinc-400 hover:text-white font-bold cursor-pointer"
+              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white font-bold cursor-pointer"
             >
               ✕
             </button>
@@ -472,16 +550,16 @@ function DashboardContent() {
         )}
 
         {/* Persona Mode Switcher: Producer View vs Facility Host View vs My Listings (Mobile-First Scrolling) */}
-        <div className="mt-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+        <div className="mt-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
           <div className="w-full lg:w-auto overflow-x-auto scrollbar-none pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="inline-flex items-center gap-2 bg-[#121216] p-1.5 rounded-2xl border border-zinc-800 shrink-0">
+            <div className="inline-flex items-center gap-2 bg-zinc-100 dark:bg-[#121216] p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shrink-0">
               <button
                 type="button"
                 onClick={() => setActivePersona('producer')}
                 className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap select-none ${
                   activePersona === 'producer'
                     ? 'bg-amber-500 text-zinc-950 shadow-sm font-extrabold'
-                    : 'text-zinc-400 hover:text-white'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 <CycloramaCategoryIcon className="w-4 h-4 text-zinc-950 dark:text-inherit" />
@@ -494,7 +572,7 @@ function DashboardContent() {
                 className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap select-none ${
                   activePersona === 'host'
                     ? 'bg-amber-500 text-zinc-950 shadow-sm font-extrabold'
-                    : 'text-zinc-400 hover:text-white'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 <WarehouseIcon className="w-4 h-4 text-zinc-950 dark:text-inherit" />
@@ -507,7 +585,7 @@ function DashboardContent() {
                 className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap select-none ${
                   activePersona === 'listings'
                     ? 'bg-amber-500 text-zinc-950 shadow-sm font-extrabold'
-                    : 'text-zinc-400 hover:text-white'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 <GearCrateIcon className="w-4 h-4 text-zinc-950 dark:text-inherit" />
@@ -519,7 +597,7 @@ function DashboardContent() {
             </div>
           </div>
 
-          <div className="text-xs text-zinc-400 leading-normal">
+          <div className="text-xs text-zinc-600 dark:text-zinc-400 leading-normal">
             {activePersona === 'producer' && 'Managing holds, shortlists, and union crew'}
             {activePersona === 'host' && 'Managing stage availability and incoming booking holds'}
             {activePersona === 'listings' && 'Tracking review status, reviewer notes, and public publication'}
@@ -535,18 +613,18 @@ function DashboardContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               <Link
                 href="/studios"
-                className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
+                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
                     <CycloramaCategoryIcon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-white">Production Studios</h3>
-                  <p className="mt-1 text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Production Studios</h3>
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                     Discover seamless cycloramas, STC 60+ soundstages, and daylight lofts.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-400 group-hover:text-amber-400 transition-colors">
+                <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   <span>Browse Stages</span>
                   <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -554,20 +632,20 @@ function DashboardContent() {
 
               <Link
                 href="/saved"
-                className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
+                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
                     <BookmarkIcon className="w-5 h-5" filled={bookmarkedIds.length > 0} />
                   </div>
-                  <h3 className="text-sm font-bold text-white">Saved Shortlist</h3>
-                  <p className="mt-1 text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Saved Shortlist</h3>
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                     {bookmarkedIds.length === 0
                       ? 'No stages or gear bookmarked yet.'
                       : `${bookmarkedIds.length} shortlisted items ready for client deck.`}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-400 group-hover:text-amber-400 transition-colors">
+                <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   <span>View Saved ({bookmarkedIds.length})</span>
                   <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -575,20 +653,20 @@ function DashboardContent() {
 
               <Link
                 href="/crew-list"
-                className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
+                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
                     <GearCrateIcon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-white">Call Sheet Roster</h3>
-                  <p className="mt-1 text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Call Sheet Roster</h3>
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                     {selectedCrew.length === 0
                       ? 'No department heads hired yet.'
                       : `${selectedCrew.length} union & independent heads on file.`}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-400 group-hover:text-amber-400 transition-colors">
+                <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   <span>Manage Crew ({selectedCrew.length})</span>
                   <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -596,18 +674,18 @@ function DashboardContent() {
 
               <Link
                 href="/compare"
-                className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
+                className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] hover:border-amber-500/50 transition-all group flex flex-col justify-between shadow-xs"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-white flex items-center justify-center mb-3 group-hover:bg-amber-500 group-hover:text-zinc-950 transition-colors">
                     <CompareIcon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-white">Facility Spec Matrix</h3>
-                  <p className="mt-1 text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white">Facility Spec Matrix</h3>
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                     Compare camlock power, clear grid height, and direct vehicle drive-in clearance.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-400 group-hover:text-amber-400 transition-colors">
+                <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   <span>Compare Stages</span>
                   <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -616,18 +694,18 @@ function DashboardContent() {
 
             {/* Active Commercial Stage Holds */}
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+              <div className="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
                 <div>
-                  <h2 className="text-base sm:text-lg font-bold text-white">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
                     Active Commercial Stage Holds ({producerHolds.length})
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
                     Confirmed 1st options and 2nd option reviews booked through your producer account.
                   </p>
                 </div>
                 <Link
                   href="/studios"
-                  className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+                  className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
                 >
                   + Place New Stage Hold
                 </Link>
@@ -638,35 +716,35 @@ function DashboardContent() {
                   {producerHolds.map((hold) => (
                     <div
                       key={hold.id}
-                      className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+                      className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
                     >
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-bold text-base text-white">{hold.studioName}</span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          <span className="font-bold text-base text-zinc-900 dark:text-white">{hold.studioName}</span>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                             {hold.status}
                           </span>
                         </div>
-                        <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-400 flex-wrap">
-                          <span>Shoot Date: <strong className="text-zinc-200">{hold.shootDate}</strong></span>
+                        <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 flex-wrap">
+                          <span>Shoot Date: <strong className="text-zinc-900 dark:text-zinc-200">{hold.shootDate}</strong></span>
                           <span>•</span>
                           <span>{hold.shiftType}</span>
                           <span>•</span>
-                          <span className="font-mono text-zinc-200 font-semibold">${hold.rate.toLocaleString()} / shift</span>
+                          <span className="font-mono text-zinc-900 dark:text-zinc-200 font-semibold">${hold.rate.toLocaleString()} / shift</span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <Link
                           href={`/studios/${hold.stageSlug}`}
-                          className="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold transition-colors"
+                          className="px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-white text-xs font-semibold transition-colors"
                         >
                           View Facility
                         </Link>
                         <button
                           type="button"
                           onClick={() => handleReleaseHold(hold.id)}
-                          className="px-3.5 py-2 rounded-xl border border-red-900/40 text-red-400 hover:bg-red-950/20 text-xs font-semibold transition-colors cursor-pointer"
+                          className="px-3.5 py-2 rounded-xl border border-red-300 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-semibold transition-colors cursor-pointer"
                         >
                           Release Hold
                         </button>
@@ -687,14 +765,14 @@ function DashboardContent() {
             </div>
 
             {/* Insurance Policy Banner */}
-            <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-start gap-3">
-                <ShieldPolicyIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <ShieldPolicyIcon className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-amber-300">
+                  <h4 className="text-xs sm:text-sm font-bold text-amber-800 dark:text-amber-300">
                     $2,000,000 Direct Production Liability Endorsement Active
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-amber-400/90 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-amber-700/90 dark:text-amber-400/90 mt-0.5">
                     Every commercial soundstage hold confirmed on your account automatically includes primary Certificate of Insurance (COI) coverage naming the host stage as Additional Insured.
                   </p>
                 </div>
@@ -710,63 +788,63 @@ function DashboardContent() {
           <div className="mt-8 space-y-10 animate-in fade-in duration-200">
             {/* Host Operations Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-              <div className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] shadow-xs">
+              <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] shadow-xs">
                 <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                   Managed Production Stages
                 </span>
-                <div className="mt-1 text-2xl font-extrabold text-white font-mono">
+                <div className="mt-1 text-2xl font-extrabold text-zinc-900 dark:text-white font-mono">
                   {myListingCounts.studios} Stages
                 </div>
-                <span className="text-[11px] text-emerald-400 font-medium block mt-1">
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium block mt-1">
                   {myListingCounts.approved} Published Live
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] shadow-xs">
+              <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] shadow-xs">
                 <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                   Total Managed Listings
                 </span>
-                <div className="mt-1 text-2xl font-extrabold text-amber-400 font-mono">
+                <div className="mt-1 text-2xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
                   {myListingCounts.total} Assets
                 </div>
-                <span className="text-[11px] text-zinc-400 block mt-1">
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-1">
                   {myListingCounts.pendingReview} in curation review
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] shadow-xs">
+              <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] shadow-xs">
                 <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                   Pending Shoot Holds
                 </span>
-                <div className="mt-1 text-2xl font-extrabold text-white font-mono">
+                <div className="mt-1 text-2xl font-extrabold text-zinc-900 dark:text-white font-mono">
                   {inboundRequests.filter((r) => r.status === 'Pending Host Review').length} Inbound
                 </div>
-                <span className="text-[11px] text-zinc-400 block mt-1">
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-1">
                   Action required within 24h
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] shadow-xs">
+              <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] shadow-xs">
                 <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
-                  Net ACH Payout Status
+                  Partner Status
                 </span>
-                <div className="mt-1 text-2xl font-extrabold text-emerald-400 font-mono">
+                <div className="mt-1 text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
                   Active
                 </div>
-                <span className="text-[11px] text-zinc-400 block mt-1">
-                  Direct deposit 48h post wrap
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-1">
+                  Verified production host
                 </span>
               </div>
             </div>
 
             {/* Inbound Stage Inquiries */}
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+              <div className="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
                 <div>
-                  <h2 className="text-base sm:text-lg font-bold text-white">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
                     Inbound Stage Hold Inquiries &amp; Review ({inboundRequests.length})
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
                     Commercial production inquiries awaiting stage manager approval or schedule confirmation.
                   </p>
                 </div>
@@ -776,38 +854,38 @@ function DashboardContent() {
                 {inboundRequests.map((req) => (
                   <div
                     key={req.id}
-                    className="p-5 rounded-2xl border border-zinc-800 bg-[#121216] flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs"
+                    className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs"
                   >
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-base text-white">
+                        <span className="font-bold text-base text-zinc-900 dark:text-white">
                           {req.productionTitle}
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider ${
                             req.status === 'Accepted'
-                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                               : req.status === 'Declined'
-                              ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                              : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                              ? 'bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30'
+                              : 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30'
                           }`}
                         >
                           {req.status}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-400 flex-wrap">
-                        <span>Stage: <strong className="text-zinc-200">{req.stageName}</strong></span>
+                      <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 flex-wrap">
+                        <span>Stage: <strong className="text-zinc-900 dark:text-zinc-200">{req.stageName}</strong></span>
                         <span>•</span>
                         <span>Producer: {req.producerName} ({req.companyName})</span>
                         <span>•</span>
-                        <span>Date: <strong className="text-zinc-200">{req.shootDate}</strong></span>
+                        <span>Date: <strong className="text-zinc-900 dark:text-zinc-200">{req.shootDate}</strong></span>
                         <span>•</span>
                         <span>Hours: {req.shiftHours}</span>
                       </div>
 
-                      <div className="mt-2 text-xs font-mono font-semibold text-zinc-200">
-                        Projected Payout: ${req.payoutGross.toLocaleString()} Gross · ${(req.payoutGross * 0.9).toLocaleString()} Net
+                      <div className="mt-2 text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+                        Estimated Booking Total: ${req.bookingValue.toLocaleString()}
                       </div>
                     </div>
 
@@ -823,13 +901,13 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => handleDeclineRequest(req.id)}
-                          className="px-4 py-2 border border-zinc-700 text-zinc-300 hover:text-red-400 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                          className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-red-600 dark:hover:text-red-400 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
                         >
                           Decline
                         </button>
                       </div>
                     ) : (
-                      <div className="text-xs font-bold text-zinc-400">
+                      <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                         Request updated: {req.status}
                       </div>
                     )}
@@ -839,31 +917,31 @@ function DashboardContent() {
             </div>
 
             {/* Blackout Calendar */}
-            <div className="p-6 rounded-2xl border border-zinc-800 bg-[#121216] space-y-6">
+            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] space-y-6">
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-zinc-900 dark:text-white">
                   Stage Availability Calendar &amp; Maintenance Blackouts
                 </h3>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   Block specific calendar dates for maintenance, floor repainting, or off-platform commercial productions.
                 </p>
               </div>
 
               {blackoutNotice && (
-                <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800 text-emerald-300 text-xs font-semibold animate-in fade-in duration-200">
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold animate-in fade-in duration-200">
                   {blackoutNotice}
                 </div>
               )}
 
               <form onSubmit={handleAddBlackout} className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Select Stage
                   </label>
                   <select
                     value={newBlackoutStage}
                     onChange={(e) => setNewBlackoutStage(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   >
                     {myListings.filter((l) => l.type === 'studio').length > 0 ? (
                       myListings
@@ -880,7 +958,7 @@ function DashboardContent() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Blackout Date
                   </label>
                   <input
@@ -888,12 +966,12 @@ function DashboardContent() {
                     required
                     value={newBlackoutDate}
                     onChange={(e) => setNewBlackoutDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Reason / Note
                   </label>
                   <input
@@ -902,7 +980,7 @@ function DashboardContent() {
                     value={newBlackoutReason}
                     onChange={(e) => setNewBlackoutReason(e.target.value)}
                     placeholder="e.g. Cyc floor repaint"
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
 
@@ -914,7 +992,7 @@ function DashboardContent() {
                 </button>
               </form>
 
-              <div className="pt-4 border-t border-zinc-800 space-y-2">
+              <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
                 <span className="block text-xs font-bold uppercase tracking-wider text-zinc-500">
                   Scheduled Calendar Blackouts ({blackoutDates.length})
                 </span>
@@ -922,17 +1000,17 @@ function DashboardContent() {
                   {blackoutDates.map((item) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between text-xs"
+                      className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-xs"
                     >
                       <div>
-                        <strong className="text-white mr-2">{item.stageName}</strong>
-                        <span className="font-mono text-amber-400 mr-2">{item.date}</span>
-                        <span className="text-zinc-400">({item.reason})</span>
+                        <strong className="text-zinc-900 dark:text-white mr-2">{item.stageName}</strong>
+                        <span className="font-mono text-amber-600 dark:text-amber-400 mr-2">{item.date}</span>
+                        <span className="text-zinc-600 dark:text-zinc-400">({item.reason})</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleRemoveBlackout(item.id)}
-                        className="text-xs font-semibold text-red-400 hover:text-red-300 cursor-pointer ml-2"
+                        className="text-xs font-semibold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 cursor-pointer ml-2"
                       >
                         Remove Block
                       </button>
@@ -951,41 +1029,41 @@ function DashboardContent() {
           <div className="mt-8 space-y-8 animate-in fade-in duration-200">
             {/* Summary Metrics Bar */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-              <div className="p-4 rounded-2xl border border-zinc-800 bg-[#121216]">
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]">
                 <span className="text-[10px] font-mono uppercase text-zinc-500 font-bold">Total Owned</span>
-                <div className="text-2xl font-bold font-mono text-white mt-1">{myListingCounts.total}</div>
-                <span className="text-[11px] text-zinc-400">Across 4 types</span>
+                <div className="text-2xl font-bold font-mono text-zinc-900 dark:text-white mt-1">{myListingCounts.total}</div>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Across 4 types</span>
               </div>
 
-              <div className="p-4 rounded-2xl border border-zinc-800 bg-[#121216]">
-                <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Pending Curation</span>
-                <div className="text-2xl font-bold font-mono text-amber-400 mt-1">{myListingCounts.pendingReview}</div>
-                <span className="text-[11px] text-zinc-400">Under engineering review</span>
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]">
+                <span className="text-[10px] font-mono uppercase text-amber-600 dark:text-amber-400 font-bold">Pending Curation</span>
+                <div className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1">{myListingCounts.pendingReview}</div>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Under engineering review</span>
               </div>
 
-              <div className="p-4 rounded-2xl border border-zinc-800 bg-[#121216]">
-                <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold">Live &amp; Approved</span>
-                <div className="text-2xl font-bold font-mono text-emerald-400 mt-1">{myListingCounts.approved}</div>
-                <span className="text-[11px] text-zinc-400">Public in directory</span>
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]">
+                <span className="text-[10px] font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold">Live &amp; Approved</span>
+                <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">{myListingCounts.approved}</div>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Public in directory</span>
               </div>
 
-              <div className="p-4 rounded-2xl border border-zinc-800 bg-[#121216]">
-                <span className="text-[10px] font-mono uppercase text-rose-400 font-bold">Revisions Needed</span>
-                <div className="text-2xl font-bold font-mono text-rose-400 mt-1">{myListingCounts.changesRequested}</div>
-                <span className="text-[11px] text-zinc-400">Feedback provided</span>
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]">
+                <span className="text-[10px] font-mono uppercase text-rose-600 dark:text-rose-400 font-bold">Revisions Needed</span>
+                <div className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1">{myListingCounts.changesRequested}</div>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Feedback provided</span>
               </div>
 
-              <div className="p-4 rounded-2xl border border-zinc-800 bg-[#121216]">
-                <span className="text-[10px] font-mono uppercase text-zinc-400 font-bold">Drafts</span>
-                <div className="text-2xl font-bold font-mono text-zinc-300 mt-1">{myListingCounts.drafts}</div>
-                <span className="text-[11px] text-zinc-400">Unsubmitted</span>
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216]">
+                <span className="text-[10px] font-mono uppercase text-zinc-500 dark:text-zinc-400 font-bold">Drafts</span>
+                <div className="text-2xl font-bold font-mono text-zinc-700 dark:text-zinc-300 mt-1">{myListingCounts.drafts}</div>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Unsubmitted</span>
               </div>
             </div>
 
             {/* Filter and Search Bar (Mobile-Optimized Horizontal Scroll) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 flex-nowrap sm:flex-wrap">
-                <span className="text-xs font-semibold text-zinc-400 mr-1 shrink-0">Filter Type:</span>
+                <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 mr-1 shrink-0">Filter Type:</span>
                 {(['all', 'studio', 'location', 'crew', 'equipment'] as const).map((t) => (
                   <button
                     key={t}
@@ -994,7 +1072,7 @@ function DashboardContent() {
                     className={`min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 select-none ${
                       listingTypeFilter === t
                         ? 'bg-amber-500 text-zinc-950 font-bold shadow-xs'
-                        : 'bg-zinc-800/90 text-zinc-300 hover:text-white'
+                        : 'bg-zinc-100 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                   >
                     {t === 'all' && 'All Listings'}
@@ -1007,11 +1085,11 @@ function DashboardContent() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-zinc-400 mr-1 shrink-0">Status:</span>
+                <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 mr-1 shrink-0">Status:</span>
                 <select
                   value={listingStatusFilter}
                   onChange={(e) => setListingStatusFilter(e.target.value as 'all' | ListingReviewStatus)}
-                  className="min-h-[40px] px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer w-full sm:w-auto"
+                  className="min-h-[40px] px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer w-full sm:w-auto"
                 >
                   <option value="all">All Statuses</option>
                   <option value="PENDING_REVIEW">Pending Review</option>
@@ -1025,7 +1103,7 @@ function DashboardContent() {
 
             {/* Listings Grid */}
             {isLoadingListings ? (
-              <div className="py-12 text-center text-xs text-zinc-400">
+              <div className="py-12 text-center text-xs text-zinc-500 dark:text-zinc-400">
                 Loading your registered listing assets...
               </div>
             ) : filteredListings.length > 0 ? (
@@ -1047,12 +1125,12 @@ function DashboardContent() {
                   return (
                     <div
                       key={`${item.type}-${item.id}`}
-                      className="p-5 sm:p-6 rounded-2xl border border-zinc-800 bg-[#121216] space-y-4 shadow-sm"
+                      className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] space-y-4 shadow-sm"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div className="flex items-start gap-4">
                           {item.thumbnail ? (
-                            <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">
+                            <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0 border border-zinc-200 dark:border-zinc-700">
                               <Image
                                 src={item.thumbnail}
                                 alt={item.title}
@@ -1062,42 +1140,42 @@ function DashboardContent() {
                               />
                             </div>
                           ) : (
-                            <div className="w-20 h-20 rounded-xl bg-zinc-800 text-zinc-400 flex items-center justify-center shrink-0 border border-zinc-700">
+                            <div className="w-20 h-20 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 flex items-center justify-center shrink-0 border border-zinc-200 dark:border-zinc-700">
                               <GearCrateIcon className="w-6 h-6" />
                             </div>
                           )}
 
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold tracking-wider bg-zinc-800 text-zinc-300">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold tracking-wider bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                                 {item.type.toUpperCase()}
                               </span>
 
                               {/* STATUS BADGE */}
                               {item.reviewStatus === 'APPROVED' && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                  <CheckCircleIcon className="w-3 h-3 text-emerald-400" />
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                  <CheckCircleIcon className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                   <span>LIVE &amp; APPROVED</span>
                                 </span>
                               )}
                               {item.reviewStatus === 'PENDING_REVIEW' && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-ping" />
                                   <span>UNDER CURATION REVIEW</span>
                                 </span>
                               )}
                               {item.reviewStatus === 'CHANGES_REQUESTED' && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
                                   <span>REVISIONS REQUESTED</span>
                                 </span>
                               )}
                               {item.reviewStatus === 'REJECTED' && (
-                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
                                   DECLINED
                                 </span>
                               )}
                               {item.reviewStatus === 'DRAFT' && (
-                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-zinc-700 text-zinc-300">
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300">
                                   DRAFT
                                 </span>
                               )}
@@ -1111,26 +1189,26 @@ function DashboardContent() {
                                 const accuracy = locAddr?.accuracy;
                                 if (hasGeo) {
                                   return (
-                                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono tracking-wide bg-emerald-950/40 text-emerald-300 border border-emerald-800/40">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono tracking-wide bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/40">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                                       <span>GEO: {accuracy ? String(accuracy).toUpperCase() : 'VERIFIED'}</span>
                                     </span>
                                   );
                                 }
                                 return (
-                                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono tracking-wide bg-amber-950/40 text-amber-300 border border-amber-800/40">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono tracking-wide bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800/40">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400" />
                                     <span>LOCATION INCOMPLETE</span>
                                   </span>
                                 );
                               })()}
                             </div>
 
-                            <h3 className="text-base font-bold text-white">{item.title}</h3>
-                            <div className="flex items-center gap-3 text-xs text-zinc-400 flex-wrap">
-                              <span>Category: <strong className="text-zinc-200">{item.category}</strong></span>
+                            <h3 className="text-base font-bold text-zinc-900 dark:text-white">{item.title}</h3>
+                            <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-zinc-400 flex-wrap">
+                              <span>Category: <strong className="text-zinc-900 dark:text-zinc-200">{item.category}</strong></span>
                               <span>•</span>
-                              <span>Rate: <strong className="text-amber-400 font-mono">{item.rateLabel}</strong></span>
+                              <span>Rate: <strong className="text-amber-600 dark:text-amber-400 font-mono">{item.rateLabel}</strong></span>
                               {item.location && (
                                 <>
                                   <span>•</span>
@@ -1149,15 +1227,15 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => handleOpenEditLocation(item)}
-                            className="px-3 py-2 border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                            className="px-3 py-2 border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                           >
-                            <LocationPinIcon className="w-3.5 h-3.5 text-amber-400" />
+                            <LocationPinIcon className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                             <span>Edit Location</span>
                           </button>
                           {item.reviewStatus === 'APPROVED' && (
                             <Link
                               href={getDetailUrl()}
-                              className="px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-semibold transition-colors"
+                              className="px-3.5 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-white rounded-xl text-xs font-semibold transition-colors"
                             >
                               View Live Listing →
                             </Link>
@@ -1176,7 +1254,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => handleDeleteListing(item.type, item.id, item.title)}
-                            className="px-3.5 py-2 border border-zinc-800 text-zinc-400 hover:text-red-400 hover:border-red-900/50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                            className="px-3.5 py-2 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-900/50 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                           >
                             Withdraw / Delete
                           </button>
@@ -1185,11 +1263,11 @@ function DashboardContent() {
 
                       {/* REVIEWER FEEDBACK CALLOUT */}
                       {(item.reviewStatus === 'CHANGES_REQUESTED' || item.reviewStatus === 'REJECTED') && item.reviewFeedback && (
-                        <div className="mt-3 p-4 rounded-xl bg-rose-950/30 border border-rose-900/50 text-rose-200 text-xs space-y-1">
-                          <div className="flex items-center gap-1.5 font-bold text-rose-300">
+                        <div className="mt-3 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-200 text-xs space-y-1">
+                          <div className="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-300">
                             <span>Reviewer Feedback &amp; Required Revisions:</span>
                           </div>
-                          <p className="text-rose-200/90 leading-relaxed font-mono text-[11px]">
+                          <p className="text-rose-800/90 dark:text-rose-200/90 leading-relaxed font-mono text-[11px]">
                             {item.reviewFeedback}
                           </p>
                         </div>
@@ -1212,7 +1290,7 @@ function DashboardContent() {
             {/* EDIT LISTING LOCATION MODAL */}
             {editingLocationListing && (
               <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
                 onClick={(e) => {
                   if (e.target === e.currentTarget && !isSavingLocation) {
                     setEditingLocationListing(null);
@@ -1222,20 +1300,20 @@ function DashboardContent() {
                 aria-modal="true"
                 aria-labelledby="location-edit-modal-title"
               >
-                <div className="relative w-full max-w-2xl rounded-2xl bg-[#121216] border border-[#27272A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-[#27272A] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                   {/* Modal Header */}
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-[#27272A] bg-[#18181D]">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-[#27272A] bg-zinc-50 dark:bg-[#18181D]">
                     <div>
                       <h3
                         id="location-edit-modal-title"
-                        className="text-base font-bold text-white flex items-center gap-2"
+                        className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2"
                       >
-                        <LocationPinIcon className="w-5 h-5 text-amber-400" />
+                        <LocationPinIcon className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                         Edit Location &amp; Address
                       </h3>
-                      <p className="text-xs text-zinc-400 mt-0.5">
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
                         Updating location for:{' '}
-                        <strong className="text-white">{editingLocationListing.title}</strong> (
+                        <strong className="text-zinc-900 dark:text-white">{editingLocationListing.title}</strong> (
                         {editingLocationListing.type.toUpperCase()})
                       </p>
                     </div>
@@ -1243,7 +1321,7 @@ function DashboardContent() {
                       type="button"
                       disabled={isSavingLocation}
                       onClick={() => setEditingLocationListing(null)}
-                      className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition cursor-pointer"
+                      className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
                       aria-label="Close location editor"
                     >
                       ✕
@@ -1253,7 +1331,7 @@ function DashboardContent() {
                   {/* Modal Body */}
                   <div className="p-6 overflow-y-auto space-y-4">
                     {locationSaveError && (
-                      <div className="p-3.5 rounded-lg bg-red-950/40 border border-red-800 text-xs text-red-200">
+                      <div className="p-3.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-800 dark:text-red-200">
                         {locationSaveError}
                       </div>
                     )}
@@ -1271,12 +1349,12 @@ function DashboardContent() {
                   </div>
 
                   {/* Modal Footer */}
-                  <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#27272A] bg-[#18181D]">
+                  <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-[#27272A] bg-zinc-50 dark:bg-[#18181D]">
                     <button
                       type="button"
                       disabled={isSavingLocation}
                       onClick={() => setEditingLocationListing(null)}
-                      className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-semibold transition cursor-pointer"
                     >
                       Cancel
                     </button>

@@ -5,10 +5,12 @@ exports.publishListing = publishListing;
 exports.updateListingLocation = updateListingLocation;
 exports.unpublishListing = unpublishListing;
 exports.submitListingForReview = submitListingForReview;
+exports.getPartnerBusinessSummary = getPartnerBusinessSummary;
 const studio_model_1 = require("../models/studio.model");
 const location_model_1 = require("../models/location.model");
 const professional_model_1 = require("../models/professional.model");
 const equipment_model_1 = require("../models/equipment.model");
+const booking_model_1 = require("../models/booking.model");
 const location_validation_1 = require("../utils/location-validation");
 const geocoding_service_1 = require("../services/geocoding.service");
 async function getMyListings(req, res, next) {
@@ -399,5 +401,92 @@ async function unpublishListing(req, res, next) {
 async function submitListingForReview(req, res, next) {
     // Aliased directly to immediate publish
     return publishListing(req, res, next);
+}
+async function getPartnerBusinessSummary(req, res, next) {
+    try {
+        if (!req.user) {
+            res.status(401).json({ success: false, error: 'Authentication required' });
+            return;
+        }
+        const userId = req.user._id;
+        const [studios, locations, crew, equipment, bookings] = await Promise.all([
+            studio_model_1.Studio.find({ owner: userId }),
+            location_model_1.FilmingLocationModel.find({ owner: userId }),
+            professional_model_1.ProfessionalProfile.find({ user: userId }),
+            equipment_model_1.Equipment.find({ owner: userId }),
+            booking_model_1.BookingRequest.find({ studioOwner: userId })
+                .populate('studio', 'name slug dayRate10h')
+                .populate('location', 'name slug dayRate10h')
+                .populate('equipment', 'name brand dayRate')
+                .populate('crew', 'name role dayRate10h')
+                .populate('customer', 'fullName email companyName')
+                .sort({ createdAt: -1 }),
+        ]);
+        const totalListings = studios.length + locations.length + crew.length + equipment.length;
+        const activeListings = [
+            ...studios.filter((s) => s.publicationStatus === 'published' || s.reviewStatus === 'APPROVED'),
+            ...locations.filter((l) => l.publicationStatus === 'published' || l.reviewStatus === 'APPROVED'),
+            ...crew.filter((c) => c.publicationStatus === 'published' || c.reviewStatus === 'APPROVED'),
+            ...equipment.filter((e) => e.publicationStatus === 'published' || e.reviewStatus === 'APPROVED'),
+        ].length;
+        const draftListings = totalListings - activeListings;
+        const pendingRequests = bookings.filter((b) => b.status === 'pending' || b.status === 'reviewed');
+        const confirmedBookings = bookings.filter((b) => b.status === 'confirmed');
+        const completedBookings = bookings.filter((b) => b.status === 'confirmed' && new Date(b.requestedDate) < new Date());
+        const totalConfirmedRevenue = confirmedBookings.reduce((sum, b) => sum + (b.estimatedTotal || 0), 0);
+        const pendingHoldValue = pendingRequests.reduce((sum, b) => sum + (b.estimatedTotal || 0), 0);
+        const netEarnings = Math.round(totalConfirmedRevenue * 0.9); // 10% standard platform fee
+        res.status(200).json({
+            success: true,
+            data: {
+                listings: {
+                    total: totalListings,
+                    active: activeListings,
+                    drafts: draftListings,
+                    studios: studios.length,
+                    locations: locations.length,
+                    crew: crew.length,
+                    equipment: equipment.length,
+                },
+                bookings: {
+                    totalInquiries: bookings.length,
+                    pendingCount: pendingRequests.length,
+                    confirmedCount: confirmedBookings.length,
+                    completedCount: completedBookings.length,
+                    declinedCount: bookings.filter((b) => b.status === 'declined').length,
+                    cancelledCount: bookings.filter((b) => b.status === 'cancelled').length,
+                },
+                earnings: {
+                    totalGross: totalConfirmedRevenue,
+                    totalNet: netEarnings,
+                    pendingPipelineGross: pendingHoldValue,
+                    currency: 'USD',
+                    payoutStatus: 'MANUAL_DISBURSEMENT',
+                    payoutStatusLabel: 'Disbursements processed upon production wrap completion',
+                },
+                recentActivity: bookings.slice(0, 10).map((b) => ({
+                    id: b._id.toString(),
+                    productionName: b.productionName,
+                    clientName: b.customer?.fullName || b.customer?.email || 'Producer',
+                    clientCompany: b.customer?.companyName || 'Production Signatory',
+                    targetName: b.studio?.name ||
+                        b.location?.name ||
+                        b.equipment?.name ||
+                        b.crew?.name ||
+                        'Production Asset',
+                    listingType: b.listingType,
+                    requestedDate: b.requestedDate,
+                    shiftType: b.shiftType,
+                    durationHours: b.durationHours,
+                    totalAmount: b.estimatedTotal,
+                    status: b.status,
+                    createdAt: b.createdAt,
+                })),
+            },
+        });
+    }
+    catch (error) {
+        next(error);
+    }
 }
 //# sourceMappingURL=my-listings.controller.js.map

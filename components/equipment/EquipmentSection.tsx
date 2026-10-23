@@ -1,13 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { EquipmentCard } from './EquipmentCard';
 import { ArrowRightIcon } from '@/components/ui/Icons';
-import { INITIAL_EQUIPMENT } from '@/lib/data';
 import { ScrollReveal } from '@/components/common/ScrollReveal';
+import { marketplaceApi } from '@/lib/api/marketplace';
+import { EquipmentItem } from '@/lib/types';
 
 export function EquipmentSection() {
+  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    marketplaceApi.getEquipment({ limit: 4 }).then((res) => {
+      if (active && res.success && Array.isArray(res.data)) {
+        setEquipmentList(res.data.slice(0, 4));
+      }
+    }).catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section className="py-14 sm:py-16 bg-slate-50/50 dark:bg-[#141414] border-t border-slate-100 dark:border-[#202020] transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +59,7 @@ export function EquipmentSection() {
 
         {/* 4-Column Equipment Grid with Staggered Scroll Reveals */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {INITIAL_EQUIPMENT.map((item, index) => (
+          {equipmentList.map((item, index) => (
             <ScrollReveal key={item.id} delay={index * 60}>
               <EquipmentCard equipment={item} />
             </ScrollReveal>

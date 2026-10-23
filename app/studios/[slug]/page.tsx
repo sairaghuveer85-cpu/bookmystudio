@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { StudioDetailView } from '@/components/studios/StudioDetailView';
-import { getStudioBySlug, INITIAL_STUDIOS } from '@/lib/data';
 
 export function generateStaticParams() {
-  return INITIAL_STUDIOS.map((s) => ({ slug: s.slug }));
+  return [{ slug: 'the-greenpoint-cove' }];
 }
 
 interface StudioDetailPageProps {
@@ -13,13 +12,6 @@ interface StudioDetailPageProps {
 export async function generateMetadata({ params }: StudioDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const studio = getStudioBySlug(decodedSlug);
-  if (studio) {
-    return {
-      title: `${studio.name} — BookMyStudio`,
-      description: studio.description,
-    };
-  }
 
   const title = decodedSlug
     .replace(/-[0-9]+$/, '')
@@ -36,7 +28,10 @@ export async function generateMetadata({ params }: StudioDetailPageProps) {
 export default async function StudioDetailPage({ params }: StudioDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const initialStudio = getStudioBySlug(decodedSlug) || null;
 
-  return <StudioDetailView slug={decodedSlug} initialStudio={initialStudio} />;
+  return (
+    <Suspense fallback={<div className="py-16 text-center text-xs text-zinc-500 font-mono">Loading production stage...</div>}>
+      <StudioDetailView slug={decodedSlug} initialStudio={null} />
+    </Suspense>
+  );
 }

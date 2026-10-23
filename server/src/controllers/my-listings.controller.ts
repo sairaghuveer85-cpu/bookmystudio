@@ -4,6 +4,7 @@ import { Studio } from '../models/studio.model';
 import { FilmingLocationModel } from '../models/location.model';
 import { ProfessionalProfile } from '../models/professional.model';
 import { Equipment } from '../models/equipment.model';
+import { BookingRequest } from '../models/booking.model';
 import { validateListingLocation, isValidCoordinates, isValidGoogleMapsUrl, extractCoordinatesFromGoogleMapsUrl } from '../utils/location-validation';
 import { GeocodingService } from '../services/geocoding.service';
 
@@ -440,5 +441,99 @@ export async function unpublishListing(req: Request, res: Response, next: NextFu
 export async function submitListingForReview(req: Request, res: Response, next: NextFunction): Promise<void> {
   // Aliased directly to immediate publish
   return publishListing(req, res, next);
+}
+
+export async function getPartnerBusinessSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (!req.user) {
+      res.status(401).json({ success: false, error: 'Authentication required' });
+      return;
+    }
+
+    const userId = req.user._id;
+
+    const [studios, locations, crew, equipment, bookings] = await Promise.all([
+      Studio.find({ owner: userId }),
+      FilmingLocationModel.find({ owner: userId }),
+      ProfessionalProfile.find({ user: userId }),
+      Equipment.find({ owner: userId }),
+      BookingRequest.find({ studioOwner: userId })
+        .populate('studio', 'name slug dayRate10h')
+        .populate('location', 'name slug dayRate10h')
+        .populate('equipment', 'name brand dayRate')
+        .populate('crew', 'name role dayRate10h')
+        .populate('customer', 'fullName email companyName')
+        .sort({ createdAt: -1 }),
+    ]);
+
+    const totalListings = studios.length + locations.length + crew.length + equipment.length;
+    const activeListings = [
+      ...studios.filter((s) => s.publicationStatus === 'published' || s.reviewStatus === 'APPROVED'),
+      ...locations.filter((l) => l.publicationStatus === 'published' || l.reviewStatus === 'APPROVED'),
+      ...crew.filter((c) => c.publicationStatus === 'published' || c.reviewStatus === 'APPROVED'),
+      ...equipment.filter((e) => e.publicationStatus === 'published' || e.reviewStatus === 'APPROVED'),
+    ].length;
+    const draftListings = totalListings - activeListings;
+
+    const pendingRequests = bookings.filter((b) => b.status === 'pending' || b.status === 'reviewed');
+    const confirmedBookings = bookings.filter((b) => b.status === 'confirmed');
+    const completedBookings = bookings.filter((b) => b.status === 'confirmed' && new Date(b.requestedDate) < new Date());
+
+    const totalConfirmedRevenue = confirmedBookings.reduce((sum, b) => sum + (b.estimatedTotal || 0), 0);
+    const pendingHoldValue = pendingRequests.reduce((sum, b) => sum + (b.estimatedTotal || 0), 0);
+    const netEarnings = Math.round(totalConfirmedRevenue * 0.9); // 10% standard platform fee
+
+    res.status(200).json({
+      success: true,
+      data: {
+        listings: {
+          total: totalListings,
+          active: activeListings,
+          drafts: draftListings,
+          studios: studios.length,
+          locations: locations.length,
+          crew: crew.length,
+          equipment: equipment.length,
+        },
+        bookings: {
+          totalInquiries: bookings.length,
+          pendingCount: pendingRequests.length,
+          confirmedCount: confirmedBookings.length,
+          completedCount: completedBookings.length,
+          declinedCount: bookings.filter((b) => b.status === 'declined').length,
+          cancelledCount: bookings.filter((b) => b.status === 'cancelled').length,
+        },
+        earnings: {
+          totalGross: totalConfirmedRevenue,
+          totalNet: netEarnings,
+          pendingPipelineGross: pendingHoldValue,
+          currency: 'USD',
+          payoutStatus: 'MANUAL_DISBURSEMENT',
+          payoutStatusLabel: 'Disbursements processed upon production wrap completion',
+        },
+        recentActivity: bookings.slice(0, 10).map((b) => ({
+          id: b._id.toString(),
+          productionName: b.productionName,
+          clientName: (b.customer as any)?.fullName || (b.customer as any)?.email || 'Producer',
+          clientCompany: (b.customer as any)?.companyName || 'Production Signatory',
+          targetName:
+            (b.studio as any)?.name ||
+            (b.location as any)?.name ||
+            (b.equipment as any)?.name ||
+            (b.crew as any)?.name ||
+            'Production Asset',
+          listingType: b.listingType,
+          requestedDate: b.requestedDate,
+          shiftType: b.shiftType,
+          durationHours: b.durationHours,
+          totalAmount: b.estimatedTotal,
+          status: b.status,
+          createdAt: b.createdAt,
+        })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 

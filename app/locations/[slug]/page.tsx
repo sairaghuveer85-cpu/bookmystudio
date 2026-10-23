@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { LocationDetailView } from '@/components/locations/LocationDetailView';
-import { getLocationBySlug, INITIAL_LOCATIONS } from '@/lib/data';
 
 export function generateStaticParams() {
-  return INITIAL_LOCATIONS.map((l) => ({ slug: l.slug }));
+  return [{ slug: 'greenpoint-maritime-terminal' }];
 }
 
 interface LocationDetailPageProps {
@@ -13,13 +12,6 @@ interface LocationDetailPageProps {
 export async function generateMetadata({ params }: LocationDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const location = getLocationBySlug(decodedSlug);
-  if (location) {
-    return {
-      title: `${location.name} — BookMyStudio`,
-      description: location.description,
-    };
-  }
 
   const title = decodedSlug
     .replace(/-[0-9]+$/, '')
@@ -36,7 +28,10 @@ export async function generateMetadata({ params }: LocationDetailPageProps) {
 export default async function LocationDetailPage({ params }: LocationDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const initialLocation = getLocationBySlug(decodedSlug) || null;
 
-  return <LocationDetailView slug={decodedSlug} initialLocation={initialLocation} />;
+  return (
+    <Suspense fallback={<div className="py-16 text-center text-xs text-zinc-500 font-mono">Loading filming location...</div>}>
+      <LocationDetailView slug={decodedSlug} initialLocation={null} />
+    </Suspense>
+  );
 }

@@ -72,20 +72,20 @@ export function ListingLocationMapCard({
   const hasValidMapLink = isValidGoogleMapsUrl(resolvedMapUrl);
 
   return (
-    <div className={`p-6 rounded-2xl bg-[#121216] border border-zinc-800 space-y-5 ${className}`}>
+    <div className={`p-6 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 space-y-5 ${className}`}>
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+          <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
             <span>Location &amp; Logistics</span>
             {hasCoords && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/50 text-emerald-400 border border-emerald-800/60">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Verified GPS Pin
               </span>
             )}
           </h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
             {isExactPublic
               ? 'Complete street address and arrival logistics for crew & gear dispatch.'
               : 'Approximate neighborhood location. Exact address disclosed upon booking confirmation.'}
@@ -110,9 +110,9 @@ export function ListingLocationMapCard({
       </div>
 
       {/* Clean Location Summary Card (Replaces interactive canvas) */}
-      <div className="rounded-xl border border-zinc-800/90 bg-[#18181E] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-50 dark:bg-[#18181E] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
+          <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-500">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -124,10 +124,10 @@ export function ListingLocationMapCard({
             </svg>
           </div>
           <div>
-            <div className="text-sm font-semibold text-white">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-white">
               {locationAddress?.locality || submarket || displayLocation || 'Production Location'}
             </div>
-            <div className="text-xs text-zinc-400 mt-0.5">
+            <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
               {[locationAddress?.city, locationAddress?.state, locationAddress?.pincode].filter(Boolean).join(', ') || 'India'}
             </div>
           </div>
@@ -136,7 +136,7 @@ export function ListingLocationMapCard({
         {hasCoords && lat !== null && lng !== null && (
           <div className="text-left sm:text-right shrink-0">
             <span className="text-[10px] font-mono text-zinc-500 block uppercase tracking-wider">Coordinates</span>
-            <span className="text-xs font-mono font-medium text-zinc-300">
+            <span className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
               {lat.toFixed(4)}° N, {lng.toFixed(4)}° E
             </span>
           </div>
@@ -149,14 +149,14 @@ export function ListingLocationMapCard({
           <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
             Production Stage Address
           </span>
-          <div className="text-zinc-200 font-semibold leading-relaxed">
+          <div className="text-zinc-800 dark:text-zinc-200 font-semibold leading-relaxed">
             {primaryAddress || displayLocation || 'Address available on request'}
           </div>
           {secondaryAddress && secondaryAddress !== primaryAddress && (
-            <div className="text-zinc-400 text-[11px] mt-0.5">{secondaryAddress}</div>
+            <div className="text-zinc-500 dark:text-zinc-400 text-[11px] mt-0.5">{secondaryAddress}</div>
           )}
           {distanceKm !== null && (
-            <div className="mt-2 text-amber-400 text-[11px] font-mono font-bold flex items-center gap-1">
+            <div className="mt-2 text-amber-600 dark:text-amber-400 text-[11px] font-mono font-bold flex items-center gap-1">
               <span>{distanceKm} km straight-line distance from {userHub.locality || userHub.city}</span>
             </div>
           )}
@@ -168,7 +168,7 @@ export function ListingLocationMapCard({
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-0.5">
                 Landmark Reference
               </span>
-              <span className="text-zinc-300 font-medium">{locationAddress.landmark}</span>
+              <span className="text-zinc-700 dark:text-zinc-300 font-medium">{locationAddress.landmark}</span>
             </div>
           )}
 
@@ -177,7 +177,7 @@ export function ListingLocationMapCard({
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-0.5">
                 Arrival &amp; Loading Access
               </span>
-              <span className="text-zinc-300 font-medium leading-relaxed">
+              <span className="text-zinc-700 dark:text-zinc-300 font-medium leading-relaxed">
                 {locationAddress.arrivalInstructions}
               </span>
             </div>
@@ -188,7 +188,7 @@ export function ListingLocationMapCard({
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-0.5">
                 Loading Bay &amp; Vehicle Access
               </span>
-              <span className="text-zinc-400">
+              <span className="text-zinc-600 dark:text-zinc-400">
                 Ground-level load-in and high-cube van clearance available at entrance.
               </span>
             </div>

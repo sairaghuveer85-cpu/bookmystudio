@@ -71,8 +71,8 @@ export function requireRole(...permittedRoles: UserRole[]) {
       return;
     }
 
-    // ADMIN has universal access
-    if (req.user.roles.includes('ADMIN')) {
+    // SUPER_ADMIN and ADMIN have universal access to operational endpoints
+    if (req.user.roles.includes('SUPER_ADMIN') || req.user.roles.includes('ADMIN')) {
       return next();
     }
 
@@ -89,6 +89,52 @@ export function requireRole(...permittedRoles: UserRole[]) {
 
     next();
   };
+}
+
+export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.status(401).json({
+      success: false,
+      error: 'Authentication required. Please sign in to an administrator account.',
+      code: 'UNAUTHENTICATED',
+    });
+    return;
+  }
+
+  const isAdminUser = req.user.roles.includes('SUPER_ADMIN') || req.user.roles.includes('ADMIN');
+
+  if (!isAdminUser) {
+    res.status(403).json({
+      success: false,
+      error: 'Forbidden: Platform administrator privileges required.',
+      code: 'FORBIDDEN_NOT_ADMIN',
+    });
+    return;
+  }
+
+  next();
+}
+
+export function requireSuperAdmin(req: Request, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.status(401).json({
+      success: false,
+      error: 'Authentication required. Please sign in to a Super Administrator account.',
+      code: 'UNAUTHENTICATED',
+    });
+    return;
+  }
+
+  if (!req.user.roles.includes('SUPER_ADMIN')) {
+    res.status(403).json({
+      success: false,
+      error: 'Forbidden: Super Administrator privileges required.',
+      code: 'FORBIDDEN_NOT_SUPER_ADMIN',
+    });
+    return;
+  }
+
+  next();
 }
 
 export function requireVerified(req: Request, res: Response, next: NextFunction): void {

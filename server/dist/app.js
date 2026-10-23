@@ -23,9 +23,8 @@ const equipment_routes_1 = require("./routes/equipment.routes");
 const user_features_routes_1 = require("./routes/user-features.routes");
 const booking_routes_1 = require("./routes/booking.routes");
 const my_listings_routes_1 = require("./routes/my-listings.routes");
-const admin_review_routes_1 = require("./routes/admin-review.routes");
+const admin_routes_1 = require("./routes/admin.routes");
 const location_geocode_routes_1 = __importDefault(require("./routes/location-geocode.routes"));
-const payout_settings_routes_1 = require("./routes/payout-settings.routes");
 const availability_routes_1 = require("./routes/availability.routes");
 const phone_verification_routes_1 = require("./routes/phone-verification.routes");
 function createApp() {
@@ -106,10 +105,9 @@ function createApp() {
     app.use('/api/equipment', equipment_routes_1.equipmentRouter);
     app.use('/api/location', location_geocode_routes_1.default);
     app.use('/api/my-listings', my_listings_routes_1.myListingsRouter);
-    app.use('/api/admin', admin_review_routes_1.adminReviewRouter);
+    app.use('/api/admin', admin_routes_1.adminRouter);
     app.use('/api', user_features_routes_1.userFeaturesRouter);
     app.use('/api/booking-requests', booking_routes_1.bookingRouter);
-    app.use('/api/payout-settings', payout_settings_routes_1.payoutSettingsRouter);
     app.use('/api/availability', availability_routes_1.availabilityRouter);
     app.use('/api/auth/phone', phone_verification_routes_1.phoneVerificationRouter);
     // 404 Handler for Unrecognized Endpoints

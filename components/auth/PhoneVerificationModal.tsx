@@ -205,14 +205,14 @@ export function PhoneVerificationModal({
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xs transition-opacity"
     >
       <div
-        className="relative w-full max-w-md bg-[#121216] border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 text-white shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200"
+        className="relative w-full max-w-md bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 text-zinc-900 dark:text-white shadow-2xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200"
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute right-4 top-4 p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800/60 transition-colors"
+          className="absolute right-4 top-4 p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -221,7 +221,7 @@ export function PhoneVerificationModal({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-500">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -232,14 +232,14 @@ export function PhoneVerificationModal({
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white tracking-tight">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">
               {step === 'SUCCESS'
                 ? 'Phone Verified'
                 : step === 'ENTER_OTP'
                 ? 'Enter 6-Digit Code'
                 : 'Verify Phone Number'}
             </h3>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               Required for host listing publishing &amp; crew dispatch
             </p>
           </div>
@@ -247,8 +247,8 @@ export function PhoneVerificationModal({
 
         {/* Alerts / Feedback */}
         {errorMsg && (
-          <div className="mb-5 p-3 rounded-xl bg-red-950/40 border border-red-900/60 text-red-300 text-xs flex items-start gap-2.5">
-            <svg className="w-4 h-4 text-red-400 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+          <div className="mb-5 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-900/60 text-red-800 dark:text-red-300 text-xs flex items-start gap-2.5">
+            <svg className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -260,7 +260,7 @@ export function PhoneVerificationModal({
         )}
 
         {simulatedOtpNotice && (
-          <div className="mb-5 p-3 rounded-xl bg-amber-950/40 border border-amber-800 text-amber-300 text-xs flex items-center justify-between">
+          <div className="mb-5 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-300 text-xs flex items-center justify-between">
             <span className="font-mono font-bold">{simulatedOtpNotice}</span>
             <button
               type="button"
@@ -282,7 +282,7 @@ export function PhoneVerificationModal({
         {step === 'ENTER_PHONE' && (
           <form onSubmit={handleSendOtp} className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-2">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
                 Mobile Number
               </label>
               <PhoneInput
@@ -320,15 +320,15 @@ export function PhoneVerificationModal({
         {step === 'ENTER_OTP' && (
           <div className="space-y-6">
             <div>
-              <div className="flex items-center justify-between text-xs text-zinc-400 mb-3">
-                <span>Sent to: <strong className="text-zinc-200">{maskedPhone}</strong></span>
+              <div className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400 mb-3">
+                <span>Sent to: <strong className="text-zinc-900 dark:text-zinc-200">{maskedPhone}</strong></span>
                 <button
                   type="button"
                   onClick={() => {
                     setStep('ENTER_PHONE');
                     setErrorMsg(null);
                   }}
-                  className="text-amber-500 hover:text-amber-400 font-medium underline underline-offset-2"
+                  className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium underline underline-offset-2"
                 >
                   Edit number
                 </button>
@@ -349,7 +349,7 @@ export function PhoneVerificationModal({
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                     onPaste={handleOtpPaste}
-                    className="w-11 sm:w-12 h-13 sm:h-14 text-center text-lg sm:text-xl font-bold text-white bg-[#18181E] border border-zinc-800 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-500/40 focus:outline-hidden transition-all"
+                    className="w-11 sm:w-12 h-13 sm:h-14 text-center text-lg sm:text-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-[#18181E] border border-zinc-300 dark:border-zinc-800 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-500/40 focus:outline-hidden transition-all"
                   />
                 ))}
               </div>
@@ -379,14 +379,14 @@ export function PhoneVerificationModal({
               <div className="text-center">
                 {cooldownSeconds > 0 ? (
                   <span className="text-xs text-zinc-500">
-                    Resend code in <strong className="text-zinc-400 font-mono">{cooldownSeconds}s</strong>
+                    Resend code in <strong className="text-zinc-700 dark:text-zinc-400 font-mono">{cooldownSeconds}s</strong>
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => handleSendOtp()}
                     disabled={isSubmitting}
-                    className="text-xs text-amber-500 hover:text-amber-400 font-medium hover:underline cursor-pointer"
+                    className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium hover:underline cursor-pointer"
                   >
                     Didn&apos;t receive code? Resend OTP
                   </button>
@@ -399,13 +399,13 @@ export function PhoneVerificationModal({
         {/* STEP 3: Success Confirmation */}
         {step === 'SUCCESS' && (
           <div className="py-6 text-center space-y-3">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
               <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h4 className="text-base font-bold text-white">Phone Number Verified!</h4>
-            <p className="text-xs text-zinc-400 max-w-xs mx-auto">
+            <h4 className="text-base font-bold text-zinc-900 dark:text-white">Phone Number Verified!</h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 max-w-xs mx-auto">
               Your phone number is confirmed. You can now publish studio stages and receive live shoot dispatches.
             </p>
           </div>

@@ -3,6 +3,7 @@ import {
   getAvailability,
   calculateQuote,
   addBlockedDate,
+  removeBlockedDate,
 } from '../controllers/availability.controller';
 import { requireAuth } from '../middleware/auth.middleware';
 
@@ -17,4 +18,7 @@ availabilityRouter.post('/quote', calculateQuote);
 
 // Authenticated Owner/Admin: Block out dates/time ranges for maintenance or private holds
 availabilityRouter.post('/:category/:listingId/block', requireAuth, addBlockedDate);
+
+// Authenticated Owner/Admin: Remove a scheduled blackout date range
+availabilityRouter.post('/:category/:listingId/unblock', requireAuth, removeBlockedDate);
 

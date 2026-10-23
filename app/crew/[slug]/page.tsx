@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { CrewDetailView } from '@/components/crew/CrewDetailView';
-import { getCrewBySlug, INITIAL_CREW } from '@/lib/data';
 
 export function generateStaticParams() {
-  return INITIAL_CREW.map((c) => ({ slug: c.slug }));
+  return [{ slug: 'marcus-vance' }];
 }
 
 interface CrewDetailPageProps {
@@ -13,13 +12,6 @@ interface CrewDetailPageProps {
 export async function generateMetadata({ params }: CrewDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const member = getCrewBySlug(decodedSlug);
-  if (member) {
-    return {
-      title: `${member.name} (${member.role}) — BookMyStudio`,
-      description: member.bio,
-    };
-  }
 
   const title = decodedSlug
     .replace(/-[0-9]+$/, '')
@@ -36,7 +28,10 @@ export async function generateMetadata({ params }: CrewDetailPageProps) {
 export default async function CrewDetailPage({ params }: CrewDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const initialMember = getCrewBySlug(decodedSlug) || null;
 
-  return <CrewDetailView slug={decodedSlug} initialMember={initialMember} />;
+  return (
+    <Suspense fallback={<div className="py-16 text-center text-xs text-zinc-500 font-mono">Loading crew profile...</div>}>
+      <CrewDetailView slug={decodedSlug} initialMember={null} />
+    </Suspense>
+  );
 }

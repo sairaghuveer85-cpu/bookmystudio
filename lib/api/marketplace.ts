@@ -92,6 +92,53 @@ export interface MyListingsResponse {
   };
 }
 
+export interface PartnerOverviewData {
+  listings: {
+    total: number;
+    active: number;
+    drafts: number;
+    studios: number;
+    locations: number;
+    crew: number;
+    equipment: number;
+  };
+  bookings: {
+    totalInquiries: number;
+    pendingCount: number;
+    confirmedCount: number;
+    completedCount: number;
+    declinedCount: number;
+    cancelledCount: number;
+  };
+  earnings: {
+    totalGross: number;
+    totalNet: number;
+    pendingPipelineGross: number;
+    currency: string;
+    payoutStatus: string;
+    payoutStatusLabel: string;
+  };
+  recentActivity: Array<{
+    id: string;
+    productionName: string;
+    clientName: string;
+    clientCompany: string;
+    targetName: string;
+    listingType: string;
+    requestedDate: string;
+    shiftType: string;
+    durationHours: number;
+    totalAmount: number;
+    status: string;
+    createdAt: string;
+  }>;
+}
+
+export interface PartnerOverviewResponse {
+  success: boolean;
+  data: PartnerOverviewData;
+}
+
 export interface AdminListingSummary extends MyListingSummary {
   createdAt: string;
   ownerInfo?: {
@@ -175,6 +222,20 @@ export const locationApi = {
 
 export const marketplaceApi = {
   // Studios
+  getStudioCategories: async (): Promise<{
+    success: boolean;
+    data: Array<{
+      id: string;
+      categoryKey: string;
+      name: string;
+      count: number;
+      description: string;
+      iconName: string;
+    }>;
+  }> => {
+    return apiClient.get('/studios/meta/categories');
+  },
+
   getStudios: async (params?: Record<string, unknown>): Promise<PaginatedResponse<StudioSpace>> => {
     const searchParams = new URLSearchParams();
     if (params) {
@@ -321,17 +382,45 @@ export const marketplaceApi = {
     );
   },
 
+  removeBlockedDate: async (
+    category: string,
+    listingId: string,
+    blockId: string
+  ): Promise<SingleResponse<Record<string, unknown>>> => {
+    return apiClient.post<SingleResponse<Record<string, unknown>>>(
+      `/availability/${encodeURIComponent(category)}/${encodeURIComponent(listingId)}/unblock`,
+      { blockId }
+    );
+  },
+
   createBooking: async (payload: BookingPayload): Promise<SingleResponse<Record<string, unknown>>> => {
     return apiClient.post<SingleResponse<Record<string, unknown>>>('/booking-requests', payload);
   },
 
-  getBookings: async (): Promise<{ success: boolean; data: Record<string, unknown>[] }> => {
-    return apiClient.get<{ success: boolean; data: Record<string, unknown>[] }>('/booking-requests');
+  getBookings: async (params?: {
+    as?: 'buyer' | 'partner';
+  }): Promise<{ success: boolean; data: Record<string, unknown>[] }> => {
+    const query = params?.as ? `?as=${params.as}` : '';
+    return apiClient.get<{ success: boolean; data: Record<string, unknown>[] }>(`/booking-requests${query}`);
+  },
+
+  updateBookingStatus: async (
+    id: string,
+    status: 'pending' | 'reviewed' | 'confirmed' | 'declined' | 'cancelled'
+  ): Promise<SingleResponse<Record<string, unknown>>> => {
+    return apiClient.patch<SingleResponse<Record<string, unknown>>>(
+      `/booking-requests/${encodeURIComponent(id)}/status`,
+      { status }
+    );
   },
 
   // Listing Management (Owner Operations)
   getMyListings: async (): Promise<MyListingsResponse> => {
     return apiClient.get<MyListingsResponse>('/my-listings');
+  },
+
+  getPartnerOverview: async (): Promise<PartnerOverviewResponse> => {
+    return apiClient.get<PartnerOverviewResponse>('/my-listings/overview');
   },
 
   createListing: async (

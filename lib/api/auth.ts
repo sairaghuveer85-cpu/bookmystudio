@@ -4,7 +4,7 @@ export interface AuthUser {
   id: string;
   fullName: string;
   email: string;
-  roles: ('CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL' | 'ADMIN')[];
+  roles: ('CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL' | 'ADMIN' | 'SUPER_ADMIN' | 'SUPPORT')[];
   isVerified: boolean;
   accountStatus: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
   companyName?: string | null;
@@ -13,6 +13,7 @@ export interface AuthUser {
   phoneVerifiedAt?: string | null;
   bio?: string | null;
   avatarUrl?: string | null;
+  lastSeenAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

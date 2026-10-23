@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAvailability = getAvailability;
 exports.calculateQuote = calculateQuote;
 exports.addBlockedDate = addBlockedDate;
+exports.removeBlockedDate = removeBlockedDate;
 const availability_service_1 = require("../services/availability.service");
 async function getAvailability(req, res, next) {
     try {
@@ -117,6 +118,37 @@ async function addBlockedDate(req, res, next) {
         res.status(200).json({
             success: true,
             message: 'Date range blocked successfully.',
+            data: listing.blockedDates,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+async function removeBlockedDate(req, res, next) {
+    try {
+        if (!req.user) {
+            res.status(401).json({ success: false, error: 'Authentication required' });
+            return;
+        }
+        const { category, listingId } = req.params;
+        const { startDate, endDate } = req.body;
+        if (!startDate) {
+            res.status(400).json({ success: false, error: 'startDate (YYYY-MM-DD) is required to remove blackout.' });
+            return;
+        }
+        const { listing, ownerId } = await (0, availability_service_1.resolveListing)(category, listingId);
+        const isAdmin = req.user.roles.includes('ADMIN');
+        const isOwner = ownerId && req.user._id.toString() === ownerId;
+        if (!isAdmin && !isOwner) {
+            res.status(403).json({ success: false, error: 'Unauthorized: Only stage owners or administrators may remove blackout dates.' });
+            return;
+        }
+        listing.blockedDates = (listing.blockedDates || []).filter((b) => !(b.startDate === startDate && (!endDate || b.endDate === endDate)));
+        await listing.save();
+        res.status(200).json({
+            success: true,
+            message: 'Blackout date removed successfully.',
             data: listing.blockedDates,
         });
     }

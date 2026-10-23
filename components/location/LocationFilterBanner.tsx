@@ -27,13 +27,13 @@ export function LocationFilterBanner({ categoryName, totalFound, className = '' 
 
   return (
     <div
-      className={`rounded-2xl bg-[#121216] border border-[#27272A] p-4 sm:p-5 shadow-sm transition-all ${className}`}
+      className={`rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-[#27272A] p-4 sm:p-5 shadow-sm transition-all ${className}`}
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Left: Location indicator and change trigger */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/10 text-amber-400">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/10 text-amber-500">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -49,17 +49,17 @@ export function LocationFilterBanner({ categoryName, totalFound, className = '' 
                 />
               </svg>
             </span>
-            <span className="text-[11px] font-bold tracking-wider uppercase text-amber-400 font-mono">
+            <span className="text-[11px] font-bold tracking-wider uppercase text-amber-600 dark:text-amber-400 font-mono">
               {locationDisplayLabel}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-zinc-400">
+          <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
             <span>
               Showing {categoryName ? `${categoryName} ` : ''}
-              <span className="text-zinc-200 font-medium">{radiusText}</span>
+              <span className="text-zinc-900 dark:text-zinc-200 font-medium">{radiusText}</span>
               {totalFound !== undefined && (
-                <span className="ml-1.5 px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-mono text-[11px]">
+                <span className="ml-1.5 px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono text-[11px]">
                   {totalFound} available
                 </span>
               )}
@@ -67,7 +67,7 @@ export function LocationFilterBanner({ categoryName, totalFound, className = '' 
             <button
               onClick={openSelector}
               type="button"
-              className="text-amber-400 hover:text-amber-300 underline font-semibold text-xs ml-1 transition"
+              className="text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 underline font-semibold text-xs ml-1 transition"
             >
               Change Location
             </button>
@@ -89,7 +89,7 @@ export function LocationFilterBanner({ categoryName, totalFound, className = '' 
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition shrink-0 ${
                   isSelected
                     ? 'bg-amber-500 text-black border-amber-400 font-bold shadow-sm shadow-amber-500/20'
-                    : 'bg-[#181820] border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                    : 'bg-zinc-100 dark:bg-[#181820] border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
                 {opt.label}

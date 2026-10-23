@@ -36,12 +36,12 @@ export function HeaderLocationButton({
       <button
         onClick={openSelector}
         type="button"
-        className={`group flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-[#141418] hover:bg-[#1A1A22] border border-[#27272A] hover:border-amber-500/40 text-xs transition-colors shadow-xs text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${className}`}
+        className={`group flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-[#141418] dark:hover:bg-[#1A1A22] border border-zinc-300 dark:border-[#27272A] hover:border-amber-500/40 text-xs transition-colors shadow-xs text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${className}`}
         title={buttonTitle}
         aria-label={ariaLabel}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+          <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 shrink-0">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -58,12 +58,12 @@ export function HeaderLocationButton({
             </svg>
           </span>
           <div className="flex flex-col min-w-0">
-            <span className="text-xs font-semibold text-zinc-100 truncate">{shortText}</span>
-            <span className="text-[10px] text-zinc-400 font-mono">Radius: {radiusLabel}</span>
+            <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{shortText}</span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">Radius: {radiusLabel}</span>
           </div>
         </div>
         <svg
-          className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 shrink-0"
+          className="w-4 h-4 text-zinc-500 group-hover:text-amber-500 shrink-0"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -78,11 +78,11 @@ export function HeaderLocationButton({
     <button
       onClick={openSelector}
       type="button"
-      className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141418] hover:bg-[#1A1A22] border border-[#27272A] hover:border-amber-500/40 text-xs text-zinc-300 hover:text-white transition-all shadow-xs text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0 ${className}`}
+      className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-[#141418] dark:hover:bg-[#1A1A22] border border-zinc-300 dark:border-[#27272A] hover:border-amber-500/40 text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-all shadow-xs text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0 ${className}`}
       title={buttonTitle}
       aria-label={ariaLabel}
     >
-      <span className="text-amber-400 group-hover:scale-105 transition-transform shrink-0">
+      <span className="text-amber-500 group-hover:scale-105 transition-transform shrink-0">
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
@@ -94,11 +94,11 @@ export function HeaderLocationButton({
         </svg>
       </span>
 
-      <span className="font-medium text-zinc-200 group-hover:text-white truncate max-w-[110px] sm:max-w-[145px]">
+      <span className="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-white truncate max-w-[110px] sm:max-w-[145px]">
         {shortText}
       </span>
 
-      <span className="text-[10px] font-mono text-zinc-400 group-hover:text-zinc-300 shrink-0">
+      <span className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 shrink-0">
         ({radiusLabel})
       </span>
 

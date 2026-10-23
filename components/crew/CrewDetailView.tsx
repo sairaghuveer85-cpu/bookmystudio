@@ -18,7 +18,6 @@ import {
 } from '@/components/common/ListingDetailState';
 import { ProductionCrewMember } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
-import { getCrewBySlug, getSimilarCrew } from '@/lib/data';
 import { ApiError } from '@/lib/api/client';
 
 interface CrewDetailViewProps {
@@ -30,22 +29,13 @@ type ViewStatus = 'loading' | 'success' | 'not_found' | 'network_error' | 'serve
 
 export function CrewDetailView({ slug, initialMember }: CrewDetailViewProps) {
   const [member, setMember] = useState<ProductionCrewMember | null>(initialMember || null);
-  const [similar, setSimilar] = useState<ProductionCrewMember[]>(() => {
-    if (initialMember) {
-      return getSimilarCrew(initialMember.id, 3);
-    }
-    return [];
-  });
+  const [similar, setSimilar] = useState<ProductionCrewMember[]>([]);
   const [status, setStatus] = useState<ViewStatus>(initialMember ? 'success' : 'loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isDraftPreview, setIsDraftPreview] = useState<boolean>(false);
   const [retryCounter, setRetryCounter] = useState(0);
 
   useEffect(() => {
-    if (initialMember) {
-      return;
-    }
-
     let isCancelled = false;
 
     marketplaceApi
@@ -66,16 +56,10 @@ export function CrewDetailView({ slug, initialMember }: CrewDetailViewProps) {
               if (isCancelled) return;
               if (simRes.success && Array.isArray(simRes.data)) {
                 const filtered = simRes.data.filter((c) => c.id !== res.data.id && c.slug !== res.data.slug).slice(0, 3);
-                setSimilar(filtered.length > 0 ? filtered : getSimilarCrew(res.data.id, 3));
-              } else {
-                setSimilar(getSimilarCrew(res.data.id, 3));
+                setSimilar(filtered);
               }
             })
-            .catch(() => {
-              if (!isCancelled) {
-                setSimilar(getSimilarCrew(res.data.id, 3));
-              }
-            });
+            .catch(() => {});
           return;
         }
 
@@ -83,14 +67,6 @@ export function CrewDetailView({ slug, initialMember }: CrewDetailViewProps) {
       })
       .catch((err: unknown) => {
         if (isCancelled) return;
-
-        const staticFallback = getCrewBySlug(slug);
-        if (staticFallback) {
-          setMember(staticFallback);
-          setSimilar(getSimilarCrew(staticFallback.id, 3));
-          setStatus('success');
-          return;
-        }
 
         if (err instanceof ApiError) {
           if (err.status === 404 || err.code === 'CREW_NOT_FOUND') {
@@ -111,7 +87,7 @@ export function CrewDetailView({ slug, initialMember }: CrewDetailViewProps) {
     return () => {
       isCancelled = true;
     };
-  }, [slug, initialMember, retryCounter]);
+  }, [slug, retryCounter]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -144,7 +120,7 @@ export function CrewDetailView({ slug, initialMember }: CrewDetailViewProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32 lg:pb-8">
       {/* Draft Preview Indicator Banner */}
       {isDraftPreview && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-300">

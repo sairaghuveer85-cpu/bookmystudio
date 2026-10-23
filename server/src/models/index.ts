@@ -7,5 +7,5 @@ export * from './saved-item.model';
 export * from './compare.model';
 export * from './brief.model';
 export * from './booking.model';
-export * from './payout-settings.model';
+export * from './audit-log.model';
 

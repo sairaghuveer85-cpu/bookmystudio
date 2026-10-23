@@ -18,9 +18,8 @@ import { equipmentRouter } from './routes/equipment.routes';
 import { userFeaturesRouter } from './routes/user-features.routes';
 import { bookingRouter } from './routes/booking.routes';
 import { myListingsRouter } from './routes/my-listings.routes';
-import { adminReviewRouter } from './routes/admin-review.routes';
+import { adminRouter } from './routes/admin.routes';
 import locationGeocodeRouter from './routes/location-geocode.routes';
-import { payoutSettingsRouter } from './routes/payout-settings.routes';
 import { availabilityRouter } from './routes/availability.routes';
 import { phoneVerificationRouter } from './routes/phone-verification.routes';
 
@@ -117,10 +116,9 @@ export function createApp(): Express {
   app.use('/api/equipment', equipmentRouter);
   app.use('/api/location', locationGeocodeRouter);
   app.use('/api/my-listings', myListingsRouter);
-  app.use('/api/admin', adminReviewRouter);
+  app.use('/api/admin', adminRouter);
   app.use('/api', userFeaturesRouter);
   app.use('/api/booking-requests', bookingRouter);
-  app.use('/api/payout-settings', payoutSettingsRouter);
   app.use('/api/availability', availabilityRouter);
   app.use('/api/auth/phone', phoneVerificationRouter);
 

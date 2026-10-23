@@ -173,11 +173,11 @@ export function BookingCalendar({
   const weekDayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
   return (
-    <div className="w-full bg-[#121216] border border-zinc-800 rounded-2xl p-4 sm:p-5 select-none transition-all">
+    <div className="w-full bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 select-none transition-all">
       {/* Month Header & Controls */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm sm:text-base font-bold text-white tracking-wide">
+          <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white tracking-wide">
             {monthTitle}
           </h3>
           {isLoading && (
@@ -194,7 +194,7 @@ export function BookingCalendar({
             onClick={handlePrevMonth}
             disabled={!canGoPrev}
             aria-label="Previous month"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -204,7 +204,7 @@ export function BookingCalendar({
             type="button"
             onClick={handleNextMonth}
             aria-label="Next month"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -216,7 +216,7 @@ export function BookingCalendar({
       {/* Weekday Headers */}
       <div className="grid grid-cols-7 gap-1 text-center mb-2">
         {weekDayNames.map((name) => (
-          <div key={name} className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider py-1">
+          <div key={name} className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider py-1">
             {name}
           </div>
         ))}
@@ -232,23 +232,23 @@ export function BookingCalendar({
           const { dateStr, dayNumber, isPast, isSelected, isAvailable, status } = cell;
 
           // Styling logic
-          let buttonStyle = 'text-zinc-300 hover:bg-zinc-800/80 hover:text-white border border-transparent';
+          let buttonStyle = 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-white border border-transparent';
           let indicator = null;
 
           if (isSelected) {
             buttonStyle = 'bg-amber-500 text-black font-extrabold shadow-[0_0_14px_rgba(245,158,11,0.35)] border border-amber-400';
           } else if (isPast) {
-            buttonStyle = 'text-zinc-600 opacity-40 cursor-not-allowed bg-transparent line-through';
+            buttonStyle = 'text-zinc-400 dark:text-zinc-600 opacity-40 cursor-not-allowed bg-transparent line-through';
           } else if (status === 'blocked') {
-            buttonStyle = 'text-red-400/80 bg-red-950/20 border border-red-900/30 cursor-not-allowed';
+            buttonStyle = 'text-red-700 dark:text-red-400/80 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 cursor-not-allowed';
             indicator = <span className="absolute bottom-1 w-1 h-1 rounded-full bg-red-500" />;
           } else if (status === 'fully_booked') {
-            buttonStyle = 'text-zinc-500 bg-zinc-900/60 line-through cursor-not-allowed border border-zinc-800/40';
+            buttonStyle = 'text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-900/60 line-through cursor-not-allowed border border-zinc-200 dark:border-zinc-800/40';
           } else if (status === 'partially_available') {
-            buttonStyle = 'text-white hover:bg-zinc-800/90 border border-amber-500/30 bg-amber-500/5';
-            indicator = <span className="absolute bottom-1 w-1 h-1 rounded-full bg-amber-400" />;
+            buttonStyle = 'text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/90 border border-amber-500/40 bg-amber-500/10 dark:bg-amber-500/5';
+            indicator = <span className="absolute bottom-1 w-1 h-1 rounded-full bg-amber-500" />;
           } else {
-            buttonStyle = 'text-white hover:bg-zinc-800 hover:border-zinc-700 bg-zinc-900/40 border border-zinc-800/60';
+            buttonStyle = 'text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/60';
           }
 
           return (
@@ -269,17 +269,17 @@ export function BookingCalendar({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 pt-3 border-t border-zinc-800/70 flex flex-wrap items-center justify-between gap-2 text-[10px] text-zinc-400">
+      <div className="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800/70 flex flex-wrap items-center justify-between gap-2 text-[10px] text-zinc-600 dark:text-zinc-400">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           <span>Available</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
           <span>Limited Slots</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-zinc-600" />
+          <span className="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-600" />
           <span>Fully Booked</span>
         </div>
         <div className="flex items-center gap-1.5">

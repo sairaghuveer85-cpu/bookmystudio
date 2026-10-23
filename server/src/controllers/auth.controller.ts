@@ -116,6 +116,10 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
       return;
     }
 
+    // Update lastSeenAt timestamp
+    user.lastSeenAt = new Date();
+    await user.save();
+
     // Rotate session identifier upon successful authentication
     req.session.regenerate((err) => {
       if (err) {
@@ -145,7 +149,8 @@ export async function logout(req: Request, res: Response, next: NextFunction): P
       if (err) {
         return next(err);
       }
-      res.clearCookie('connect.sid');
+      res.clearCookie('bms_sid', { path: '/' });
+      res.clearCookie('connect.sid', { path: '/' });
       res.status(200).json({
         success: true,
         message: 'Logged out successfully.',

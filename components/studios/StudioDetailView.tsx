@@ -20,7 +20,6 @@ import {
 } from '@/components/common/ListingDetailState';
 import { StudioSpace } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
-import { getStudioBySlug, getSimilarStudios } from '@/lib/data';
 import { ApiError } from '@/lib/api/client';
 
 interface StudioDetailViewProps {
@@ -32,22 +31,13 @@ type ViewStatus = 'loading' | 'success' | 'not_found' | 'network_error' | 'serve
 
 export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps) {
   const [studio, setStudio] = useState<StudioSpace | null>(initialStudio || null);
-  const [similar, setSimilar] = useState<StudioSpace[]>(() => {
-    if (initialStudio) {
-      return getSimilarStudios(initialStudio.id, 3);
-    }
-    return [];
-  });
+  const [similar, setSimilar] = useState<StudioSpace[]>([]);
   const [status, setStatus] = useState<ViewStatus>(initialStudio ? 'success' : 'loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isDraftPreview, setIsDraftPreview] = useState<boolean>(false);
   const [retryCounter, setRetryCounter] = useState(0);
 
   useEffect(() => {
-    if (initialStudio) {
-      return;
-    }
-
     let isCancelled = false;
 
     marketplaceApi
@@ -68,16 +58,10 @@ export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps)
               if (isCancelled) return;
               if (simRes.success && Array.isArray(simRes.data)) {
                 const filtered = simRes.data.filter((s) => s.id !== res.data.id && s.slug !== res.data.slug).slice(0, 3);
-                setSimilar(filtered.length > 0 ? filtered : getSimilarStudios(res.data.id, 3));
-              } else {
-                setSimilar(getSimilarStudios(res.data.id, 3));
+                setSimilar(filtered);
               }
             })
-            .catch(() => {
-              if (!isCancelled) {
-                setSimilar(getSimilarStudios(res.data.id, 3));
-              }
-            });
+            .catch(() => {});
           return;
         }
 
@@ -85,14 +69,6 @@ export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps)
       })
       .catch((err: unknown) => {
         if (isCancelled) return;
-
-        const staticFallback = getStudioBySlug(slug);
-        if (staticFallback) {
-          setStudio(staticFallback);
-          setSimilar(getSimilarStudios(staticFallback.id, 3));
-          setStatus('success');
-          return;
-        }
 
         if (err instanceof ApiError) {
           if (err.status === 404 || err.code === 'STUDIO_NOT_FOUND') {
@@ -113,7 +89,7 @@ export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps)
     return () => {
       isCancelled = true;
     };
-  }, [slug, initialStudio, retryCounter]);
+  }, [slug, retryCounter]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -146,7 +122,7 @@ export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps)
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32 lg:pb-8">
       {/* Draft Preview Indicator Banner */}
       {isDraftPreview && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-300">
@@ -309,11 +285,11 @@ export function StudioDetailView({ slug, initialStudio }: StudioDetailViewProps)
 
           {/* Equipment Package Highlight */}
           {studio.equipmentHighlight && (
-            <div className="p-4 rounded-xl bg-zinc-900 text-white border border-zinc-800 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                 INCLUDED STAGE GEAR PACKAGE
               </span>
-              <p className="text-xs text-zinc-300">
+              <p className="text-xs text-zinc-600 dark:text-zinc-300">
                 {studio.equipmentHighlight}
               </p>
             </div>

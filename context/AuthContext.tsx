@@ -21,6 +21,9 @@ interface AuthContextType {
   isVendor: boolean;
   isStudioOwner: boolean;
   isProfessional: boolean;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
+  isSupport: boolean;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
   login: (credentials: { email: string; password: string }) => Promise<AuthResponse>;
@@ -166,15 +169,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isVendor = Boolean(
     user?.roles?.some(
-      (role) => role === 'STUDIO_OWNER' || role === 'PROFESSIONAL' || role === 'ADMIN'
+      (role) =>
+        role === 'STUDIO_OWNER' ||
+        role === 'PROFESSIONAL' ||
+        role === 'ADMIN' ||
+        role === 'SUPER_ADMIN'
     )
   );
   const isStudioOwner = Boolean(
-    user?.roles?.includes('STUDIO_OWNER') || user?.roles?.includes('ADMIN')
+    user?.roles?.includes('STUDIO_OWNER') ||
+      user?.roles?.includes('ADMIN') ||
+      user?.roles?.includes('SUPER_ADMIN')
   );
   const isProfessional = Boolean(
-    user?.roles?.includes('PROFESSIONAL') || user?.roles?.includes('ADMIN')
+    user?.roles?.includes('PROFESSIONAL') ||
+      user?.roles?.includes('ADMIN') ||
+      user?.roles?.includes('SUPER_ADMIN')
   );
+  const isSuperAdmin = Boolean(user?.roles?.includes('SUPER_ADMIN'));
+  const isAdmin = Boolean(
+    user?.roles?.includes('ADMIN') || user?.roles?.includes('SUPER_ADMIN')
+  );
+  const isSupport = Boolean(user?.roles?.includes('SUPPORT'));
 
   return (
     <AuthContext.Provider
@@ -186,6 +202,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isVendor,
         isStudioOwner,
         isProfessional,
+        isAdmin,
+        isSuperAdmin,
+        isSupport,
         signOut,
         refreshUser,
         login,

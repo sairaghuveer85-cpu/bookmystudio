@@ -145,7 +145,7 @@ export function CrewCard({
           <button
             type="button"
             onClick={handleToggle}
-            className={`min-h-[40px] px-3.5 py-2 rounded-full text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 select-none ${
+            className={`min-h-[44px] px-3.5 py-2 rounded-full text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 select-none ${
               added
                 ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-xs'
                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-500 dark:hover:text-white'

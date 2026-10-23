@@ -146,17 +146,17 @@ export function TwoSidedMarketplaceSection() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  <span>Next-day ACH direct payout upon wrap</span>
+                  <span>Instant hold notifications &amp; direct booking requests</span>
                 </li>
               </ul>
             </div>
 
             <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
               <Link
-                href="/list-your-studio"
+                href="/partner"
                 className="group inline-flex items-center justify-between w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-zinc-50 dark:bg-zinc-850 hover:bg-zinc-100 text-zinc-900 dark:text-white text-xs font-bold transition-all cursor-pointer"
               >
-                <span>Calculate Stage Revenue</span>
+                <span>Become a Partner</span>
                 <ArrowRightIcon className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </div>

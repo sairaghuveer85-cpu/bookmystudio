@@ -10,10 +10,6 @@ import { CrewCard } from '@/components/crew/CrewCard';
 import { EquipmentCard } from '@/components/equipment/EquipmentCard';
 import { SearchIcon, LocationPinIcon } from '@/components/ui/Icons';
 import {
-  INITIAL_STUDIOS,
-  INITIAL_LOCATIONS,
-  INITIAL_CREW,
-  INITIAL_EQUIPMENT,
   LOCATION_OPTIONS,
 } from '@/lib/data';
 import { StudioSpace, FilmingLocation, ProductionCrewMember, EquipmentItem } from '@/lib/types';
@@ -34,10 +30,11 @@ function SearchResultsContent() {
 
   const { location, isNeutral } = useLocation();
 
-  const [studios, setStudios] = useState<StudioSpace[]>(INITIAL_STUDIOS);
-  const [filmingLocations, setFilmingLocations] = useState<FilmingLocation[]>(INITIAL_LOCATIONS);
-  const [crewList, setCrewList] = useState<ProductionCrewMember[]>(INITIAL_CREW);
-  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>(INITIAL_EQUIPMENT);
+  const [studios, setStudios] = useState<StudioSpace[]>([]);
+  const [filmingLocations, setFilmingLocations] = useState<FilmingLocation[]>([]);
+  const [crewList, setCrewList] = useState<ProductionCrewMember[]>([]);
+  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isCancelled = false;
@@ -55,13 +52,17 @@ function SearchResultsContent() {
       marketplaceApi.getLocations(params).catch(() => null),
       marketplaceApi.getProfessionals(params).catch(() => null),
       marketplaceApi.getEquipment(params).catch(() => null),
-    ]).then(([sRes, lRes, cRes, eRes]) => {
-      if (isCancelled) return;
-      if (sRes?.success && Array.isArray(sRes.data)) setStudios(sRes.data);
-      if (lRes?.success && Array.isArray(lRes.data)) setFilmingLocations(lRes.data);
-      if (cRes?.success && Array.isArray(cRes.data)) setCrewList(cRes.data);
-      if (eRes?.success && Array.isArray(eRes.data)) setEquipmentList(eRes.data);
-    });
+    ])
+      .then(([sRes, lRes, cRes, eRes]) => {
+        if (isCancelled) return;
+        if (sRes?.success && Array.isArray(sRes.data)) setStudios(sRes.data);
+        if (lRes?.success && Array.isArray(lRes.data)) setFilmingLocations(lRes.data);
+        if (cRes?.success && Array.isArray(cRes.data)) setCrewList(cRes.data);
+        if (eRes?.success && Array.isArray(eRes.data)) setEquipmentList(eRes.data);
+      })
+      .finally(() => {
+        if (!isCancelled) setLoading(false);
+      });
 
     return () => {
       isCancelled = true;
@@ -409,7 +410,20 @@ function SearchResultsContent() {
 
         {/* Results Body */}
         <div className="mt-8">
-          {totalResultsCount === 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] p-4 space-y-3 animate-pulse"
+                >
+                  <div className="w-full h-48 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                  <div className="w-2/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                  <div className="w-1/2 h-3 rounded bg-zinc-150 dark:bg-zinc-850" />
+                </div>
+              ))}
+            </div>
+          ) : totalResultsCount === 0 ? (
             <EmptyState
               title="No production listings found"
               description="No studios, filming locations, crew members, or equipment match your current search query and filters."

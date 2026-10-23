@@ -12,4 +12,6 @@ exports.availabilityRouter.get('/:category/:listingId', availability_controller_
 exports.availabilityRouter.post('/quote', availability_controller_1.calculateQuote);
 // Authenticated Owner/Admin: Block out dates/time ranges for maintenance or private holds
 exports.availabilityRouter.post('/:category/:listingId/block', auth_middleware_1.requireAuth, availability_controller_1.addBlockedDate);
+// Authenticated Owner/Admin: Remove a scheduled blackout date range
+exports.availabilityRouter.post('/:category/:listingId/unblock', auth_middleware_1.requireAuth, availability_controller_1.removeBlockedDate);
 //# sourceMappingURL=availability.routes.js.map

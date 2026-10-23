@@ -6,6 +6,7 @@ const studio_model_1 = require("../models/studio.model");
 const location_model_1 = require("../models/location.model");
 const professional_model_1 = require("../models/professional.model");
 const equipment_model_1 = require("../models/equipment.model");
+const audit_log_model_1 = require("../models/audit-log.model");
 const marketplace_validator_1 = require("../validators/marketplace.validator");
 async function getAdminListings(req, res, next) {
     try {
@@ -283,6 +284,35 @@ async function reviewListing(req, res, next) {
             listing.reviewFeedback = feedback || 'Listing suspended by trust & safety administration.';
         }
         await listing.save();
+        // Record immutable audit ledger entry
+        try {
+            const actionMap = {
+                APPROVE: 'LISTING_APPROVED',
+                REQUEST_CHANGES: 'LISTING_CHANGES_REQUESTED',
+                REJECT: 'LISTING_REJECTED',
+                SUSPEND: 'LISTING_SUSPENDED',
+            };
+            await audit_log_model_1.AuditLog.create({
+                adminId: req.user._id,
+                adminEmail: req.user.email,
+                adminName: req.user.fullName,
+                action: actionMap[action],
+                targetType: 'LISTING',
+                targetId: listing._id.toString(),
+                targetLabel: `${type.toUpperCase()}: ${listing.name || listing.title || listing.stageName || listing.slug}`,
+                details: {
+                    listingType: type,
+                    newStatus: listing.reviewStatus,
+                    feedback: feedback || undefined,
+                },
+                status: 'SUCCESS',
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            });
+        }
+        catch {
+            // Non-fatal
+        }
         res.status(200).json({
             success: true,
             message: `Listing status updated to ${listing.reviewStatus}.`,

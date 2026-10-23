@@ -23,5 +23,5 @@ __exportStar(require("./saved-item.model"), exports);
 __exportStar(require("./compare.model"), exports);
 __exportStar(require("./brief.model"), exports);
 __exportStar(require("./booking.model"), exports);
-__exportStar(require("./payout-settings.model"), exports);
+__exportStar(require("./audit-log.model"), exports);
 //# sourceMappingURL=index.js.map

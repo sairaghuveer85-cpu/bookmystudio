@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { CrewCard } from '@/components/crew/CrewCard';
 import { MobileFilterSheet } from '@/components/search/MobileFilterSheet';
 import { FilterIcon } from '@/components/ui/Icons';
-import { INITIAL_CREW } from '@/lib/data';
 import { CrewRoleCategory, ProductionCrewMember } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
 import { useLocation } from '@/context/LocationContext';
@@ -14,7 +13,8 @@ import { LocationFilterBanner } from '@/components/location/LocationFilterBanner
 
 export default function CrewPage() {
   const { location, isNeutral } = useLocation();
-  const [crew, setCrew] = useState<ProductionCrewMember[]>(INITIAL_CREW);
+  const [crew, setCrew] = useState<ProductionCrewMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CrewRoleCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState<'rating-desc' | 'price-asc' | 'price-desc'>('rating-desc');
@@ -35,13 +35,18 @@ export default function CrewPage() {
       .getProfessionals(params)
       .then((res) => {
         if (isCancelled) return;
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setCrew(res.data);
-        } else if (res.success && Array.isArray(res.data) && res.data.length === 0) {
+        } else {
           setCrew([]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!isCancelled) setCrew([]);
+      })
+      .finally(() => {
+        if (!isCancelled) setLoading(false);
+      });
 
     return () => {
       isCancelled = true;
@@ -237,14 +242,28 @@ export default function CrewPage() {
       {/* Meta Bar */}
       <div className="mt-6 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
         <span>
-          Showing <strong className="text-zinc-950 dark:text-white font-bold">{filteredCrew.length}</strong> department {filteredCrew.length === 1 ? 'head' : 'heads'}
+          Showing <strong className="text-zinc-950 dark:text-white font-bold">{loading ? '...' : filteredCrew.length}</strong> department {filteredCrew.length === 1 ? 'head' : 'heads'}
         </span>
         <span className="text-[11px] text-zinc-400 dark:text-zinc-500">All crew covered under production insurance &amp; workers comp</span>
       </div>
 
       {/* Crew Grid */}
       <div className="mt-6">
-        {filteredCrew.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] p-4 space-y-3 animate-pulse"
+              >
+                <div className="w-full h-48 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-2/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-1/2 h-3 rounded bg-zinc-150 dark:bg-zinc-850" />
+                <div className="w-1/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800 pt-2" />
+              </div>
+            ))}
+          </div>
+        ) : filteredCrew.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredCrew.map((member) => (
               <CrewCard key={member.id} member={member} />

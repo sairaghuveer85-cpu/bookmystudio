@@ -98,12 +98,12 @@ export function SignupForm() {
         <div
           role="alert"
           aria-live="polite"
-          className="p-4 rounded-xl bg-red-950/40 border border-red-900/80 text-red-200 text-xs space-y-1 animate-page-enter"
+          className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-900/80 text-red-800 dark:text-red-200 text-xs space-y-1 animate-page-enter"
         >
-          <div className="font-bold flex items-center gap-1.5 text-red-400">
+          <div className="font-bold flex items-center gap-1.5 text-red-600 dark:text-red-400">
             <span>Unable to Create Account</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-red-300/90">
+          <p className="text-[11px] leading-relaxed text-red-700 dark:text-red-300/90">
             {globalError}
           </p>
         </div>
@@ -113,12 +113,12 @@ export function SignupForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="signup-fullname"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           Full Legal / Producer Name
         </label>
         <div className="relative">
-          <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="signup-fullname"
             type="text"
@@ -132,15 +132,15 @@ export function SignupForm() {
               }
             }}
             placeholder="Sarah Jenkins"
-            className={`auth-input w-full pl-10 pr-4 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-4 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.fullName
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
         </div>
         {fieldErrors.fullName && (
-          <p className="text-[11px] text-red-400 font-medium">
+          <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">
             {fieldErrors.fullName}
           </p>
         )}
@@ -150,12 +150,12 @@ export function SignupForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="signup-email"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           Work Email Address
         </label>
         <div className="relative">
-          <MailIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <MailIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="signup-email"
             type="email"
@@ -169,15 +169,15 @@ export function SignupForm() {
               }
             }}
             placeholder="producer@agency.com"
-            className={`auth-input w-full pl-10 pr-4 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-4 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.email
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
         </div>
         {fieldErrors.email && (
-          <p className="text-[11px] text-red-400 font-medium">
+          <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">
             {fieldErrors.email}
           </p>
         )}
@@ -187,12 +187,12 @@ export function SignupForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="signup-password"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           Create Password
         </label>
         <div className="relative">
-          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="signup-password"
             type={showPassword ? 'text' : 'password'}
@@ -206,16 +206,16 @@ export function SignupForm() {
               }
             }}
             placeholder="At least 8 characters"
-            className={`auth-input w-full pl-10 pr-11 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-11 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.password
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
@@ -223,12 +223,12 @@ export function SignupForm() {
         </div>
 
         {/* Password Strength Requirement Indicators */}
-        <div className="pt-1 flex items-center gap-3 text-[11px] text-zinc-400">
-          <span className={`inline-flex items-center gap-1 ${hasMinLength ? 'text-emerald-400 font-semibold' : ''}`}>
+        <div className="pt-1 flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className={`inline-flex items-center gap-1 ${hasMinLength ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : ''}`}>
             <span>{hasMinLength ? '✓' : '○'}</span>
             <span>8+ characters</span>
           </span>
-          <span className={`inline-flex items-center gap-1 ${hasNumberOrSymbol ? 'text-emerald-400 font-semibold' : ''}`}>
+          <span className={`inline-flex items-center gap-1 ${hasNumberOrSymbol ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : ''}`}>
             <span>{hasNumberOrSymbol ? '✓' : '○'}</span>
             <span>Number or symbol</span>
           </span>
@@ -239,12 +239,12 @@ export function SignupForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="signup-confirm-password"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           Confirm Password
         </label>
         <div className="relative">
-          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="signup-confirm-password"
             type={showConfirmPassword ? 'text' : 'password'}
@@ -258,23 +258,23 @@ export function SignupForm() {
               }
             }}
             placeholder="Re-enter your password"
-            className={`auth-input w-full pl-10 pr-11 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-11 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.confirmPassword
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
           >
             {showConfirmPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
           </button>
         </div>
         {fieldErrors.confirmPassword && (
-          <p className="text-[11px] text-red-400 font-medium">
+          <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">
             {fieldErrors.confirmPassword}
           </p>
         )}
@@ -293,22 +293,22 @@ export function SignupForm() {
                 setFieldErrors((prev) => ({ ...prev, agreeTerms: '' }));
               }
             }}
-            className="w-4 h-4 mt-0.5 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500"
+            className="w-4 h-4 mt-0.5 rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-amber-500 focus:ring-amber-500"
           />
-          <span className="text-xs text-zinc-400 leading-relaxed">
+          <span className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
             I agree to the BookMyStudio{' '}
-            <Link href="/terms" target="_blank" className="text-white font-semibold underline underline-offset-2 hover:text-amber-400">
+            <Link href="/terms" target="_blank" className="text-zinc-900 dark:text-white font-semibold underline underline-offset-2 hover:text-amber-600 dark:hover:text-amber-400">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" target="_blank" className="text-white font-semibold underline underline-offset-2 hover:text-amber-400">
+            <Link href="/privacy" target="_blank" className="text-zinc-900 dark:text-white font-semibold underline underline-offset-2 hover:text-amber-600 dark:hover:text-amber-400">
               Privacy Policy
             </Link>
             .
           </span>
         </label>
         {fieldErrors.agreeTerms && (
-          <p className="mt-1 text-[11px] text-red-400 font-medium">
+          <p className="mt-1 text-[11px] text-red-600 dark:text-red-400 font-medium">
             {fieldErrors.agreeTerms}
           </p>
         )}

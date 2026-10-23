@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   SearchIcon,
@@ -18,12 +18,8 @@ import { StudioCard } from '@/components/studios/StudioCard';
 import { LocationCard } from '@/components/locations/LocationCard';
 import { CrewCard } from '@/components/crew/CrewCard';
 import { EquipmentCard } from '@/components/equipment/EquipmentCard';
-import {
-  INITIAL_STUDIOS,
-  INITIAL_LOCATIONS,
-  INITIAL_CREW,
-  INITIAL_EQUIPMENT,
-} from '@/lib/data';
+import { StudioSpace, FilmingLocation, ProductionCrewMember, EquipmentItem } from '@/lib/types';
+import { marketplaceApi } from '@/lib/api/marketplace';
 
 interface MobileDiscoveryViewProps {
   onOpenSearch: () => void;
@@ -88,10 +84,29 @@ export function MobileDiscoveryView({
   onOpenPolicyModal,
   onOpenCalculator,
 }: MobileDiscoveryViewProps) {
-  const featuredStudios = INITIAL_STUDIOS.slice(0, 4);
-  const featuredLocations = INITIAL_LOCATIONS.slice(0, 3);
-  const featuredCrew = INITIAL_CREW.slice(0, 3);
-  const featuredGear = INITIAL_EQUIPMENT.slice(0, 3);
+  const [featuredStudios, setFeaturedStudios] = useState<StudioSpace[]>([]);
+  const [featuredLocations, setFeaturedLocations] = useState<FilmingLocation[]>([]);
+  const [featuredCrew, setFeaturedCrew] = useState<ProductionCrewMember[]>([]);
+  const [featuredGear, setFeaturedGear] = useState<EquipmentItem[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([
+      marketplaceApi.getStudios({ limit: 4 }).catch(() => null),
+      marketplaceApi.getLocations({ limit: 3 }).catch(() => null),
+      marketplaceApi.getProfessionals({ limit: 3 }).catch(() => null),
+      marketplaceApi.getEquipment({ limit: 3 }).catch(() => null),
+    ]).then(([sRes, lRes, cRes, eRes]) => {
+      if (!active) return;
+      if (sRes?.success && Array.isArray(sRes.data)) setFeaturedStudios(sRes.data.slice(0, 4));
+      if (lRes?.success && Array.isArray(lRes.data)) setFeaturedLocations(lRes.data.slice(0, 3));
+      if (cRes?.success && Array.isArray(cRes.data)) setFeaturedCrew(cRes.data.slice(0, 3));
+      if (eRes?.success && Array.isArray(eRes.data)) setFeaturedGear(eRes.data.slice(0, 3));
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-8 pb-12">
@@ -105,7 +120,7 @@ export function MobileDiscoveryView({
           {/* Live Status Pill */}
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>140+ Commercial Production Stages</span>
+            <span>Verified Commercial Production Stages</span>
           </div>
 
           <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">

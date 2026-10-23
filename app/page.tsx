@@ -14,7 +14,7 @@ import { LandingFinalCta } from '@/components/landing/LandingFinalCta';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-full bg-[#09090B] text-zinc-100 transition-colors duration-150">
+    <div className="flex flex-col min-h-full bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors duration-150">
       <main className="flex-1">
         
         {/* 1. Value-First Hero: Every Production. One Connected Place. */}

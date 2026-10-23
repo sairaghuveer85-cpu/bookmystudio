@@ -5,13 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import {
-  LogoMark,
   ArrowLeftIcon,
   ShieldPolicyIcon,
   CheckCircleIcon,
   CamlockPowerIcon,
   SoundstageIcon,
 } from '@/components/ui/Icons';
+import { BrandLogo } from '@/components/common/BrandLogo';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { useAuth } from '@/context/AuthContext';
 
 interface AuthLayoutProps {
@@ -35,38 +36,29 @@ export function AuthLayout({
   const [showDevDiagnostic, setShowDevDiagnostic] = useState(false);
 
   return (
-    <div className="auth-page-container min-h-screen w-full bg-[#09090B] text-zinc-100 flex flex-col">
+    <div className="auth-page-container min-h-screen w-full bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 flex flex-col transition-colors duration-150">
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-screen">
         
         {/* ========================================================
            LEFT COLUMN: Dedicated, Distraction-Free Authentication Form
            ======================================================== */}
-        <div className="auth-form-panel lg:col-span-7 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14 max-w-2xl mx-auto w-full lg:max-w-none bg-[#09090B] text-zinc-100">
+        <div className="auth-form-panel lg:col-span-7 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14 max-w-2xl mx-auto w-full lg:max-w-none bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors">
           
-          {/* Top Navigation Shell (Brand & Return to Marketplace) */}
-          <header className="flex items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
+          {/* Top Navigation Shell (Brand, ThemeToggle & Return to Marketplace) */}
+          <header className="flex items-center justify-between gap-4 pb-6 border-b border-zinc-200 dark:border-zinc-800/80">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg p-1"
+              className="inline-flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg p-1 -m-1"
               aria-label="BookMyStudio Home"
             >
-              <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-amber-400 flex items-center justify-center font-bold shadow-xs transition-transform group-hover:scale-105">
-                <LogoMark className="w-4 h-4" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-sm tracking-tight text-white uppercase leading-none">
-                  BOOKMYSTUDIO
-                </span>
-                <span className="text-[9px] font-mono font-semibold tracking-widest text-zinc-500 uppercase mt-0.5">
-                  PRODUCER PORTAL
-                </span>
-              </div>
+              <BrandLogo variant="navbar" height={26} priority />
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-4">
+              <ThemeToggle variant="header" />
               <Link
                 href="/studios"
-                className="group inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-white py-1.5 px-2.5 rounded-lg hover:bg-zinc-900 transition-colors"
+                className="group inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white py-1.5 px-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
               >
                 <ArrowLeftIcon className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                 <span className="hidden sm:inline">Return to Marketplace</span>
@@ -85,10 +77,10 @@ export function AuthLayout({
             >
               {/* Form Title & Context Subtitle */}
               <div className="space-y-2">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
                   {title}
                 </h1>
-                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
                   {subtitle}
                 </p>
               </div>
@@ -100,11 +92,11 @@ export function AuthLayout({
 
               {/* Bottom Secondary Prompt (Sign in / Create account link) */}
               {footerPrompt && (
-                <div className="pt-4 border-t border-zinc-800/80 text-center text-xs text-zinc-400">
+                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800/80 text-center text-xs text-zinc-600 dark:text-zinc-400">
                   <span>{footerPrompt.text} </span>
                   <Link
                     href={footerPrompt.linkHref}
-                    className="font-bold text-amber-400 hover:text-amber-300 underline underline-offset-4 transition-colors"
+                    className="font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 underline underline-offset-4 transition-colors"
                   >
                     {footerPrompt.linkText}
                   </Link>
@@ -114,7 +106,7 @@ export function AuthLayout({
           </main>
 
           {/* Bottom Minimal Legal Footer */}
-          <footer className="pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
+          <footer className="pt-6 border-t border-zinc-200 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
             <div className="flex items-center gap-2">
               <span>&copy; 2026 BookMyStudio Inc.</span>
               <span>·</span>
@@ -122,13 +114,13 @@ export function AuthLayout({
             </div>
 
             <div className="flex items-center gap-4">
-              <Link href="/terms" className="hover:text-white transition-colors">
+              <Link href="/terms" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">
+              <Link href="/privacy" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/contact" className="hover:text-white transition-colors">
+              <Link href="/contact" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
                 Production Support
               </Link>
 
@@ -137,7 +129,7 @@ export function AuthLayout({
                 <button
                   type="button"
                   onClick={() => setShowDevDiagnostic(!showDevDiagnostic)}
-                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-850 hover:bg-amber-950/40 text-amber-400 border border-amber-800/60 transition-colors cursor-pointer"
+                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-100 hover:bg-amber-100 dark:bg-zinc-800 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800/60 transition-colors cursor-pointer"
                   title="Developer Environment Diagnostic"
                 >
                   ⚙ Dev Diagnostics
@@ -171,7 +163,7 @@ export function AuthLayout({
            RIGHT COLUMN: High-Craft Editorial Production Atmosphere
            (Desktop Only - Visual Context & Real Market Realities)
            ======================================================== */}
-        <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative bg-zinc-950 text-white flex-col justify-between p-12 lg:p-14 overflow-hidden border-l border-zinc-800">
+        <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-white flex-col justify-between p-12 lg:p-14 overflow-hidden border-l border-zinc-200 dark:border-zinc-800 transition-colors">
           
           {/* Background Production Stage Visual */}
           <div className="absolute inset-0 z-0">
@@ -180,20 +172,20 @@ export function AuthLayout({
               alt="Apex Commercial Soundstage with overhead lighting grid"
               fill
               priority
-              className="object-cover object-center brightness-75 scale-100 transition-transform duration-1000"
+              className="object-cover object-center brightness-90 dark:brightness-75 scale-100 transition-transform duration-1000"
             />
-            {/* Deep Cinematic Vignette Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-zinc-950/30" />
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/60 via-transparent to-zinc-950/40" />
+            {/* Cinematic Vignette Overlay Adaptive for Light & Dark */}
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-100 via-zinc-100/75 to-zinc-100/35 dark:from-zinc-950 dark:via-zinc-950/50 dark:to-zinc-950/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-zinc-100/80 via-transparent to-zinc-100/40 dark:from-zinc-950/60 dark:via-transparent dark:to-zinc-950/40" />
           </div>
 
           {/* Top Editorial Eyebrow Tag */}
           <div className="relative z-10 flex items-center justify-between">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-950/80 backdrop-blur-md border border-white/10 text-xs font-mono text-zinc-300">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/85 dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200/90 dark:border-white/10 text-xs font-mono text-zinc-700 dark:text-zinc-300 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
               <span>COMMERCIAL PRODUCTION NETWORK</span>
             </div>
-            <span className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase">
+            <span className="text-[10px] font-mono tracking-widest text-zinc-600 dark:text-zinc-400 uppercase font-semibold">
               NEW YORK · LOS ANGELES
             </span>
           </div>
@@ -201,45 +193,45 @@ export function AuthLayout({
           {/* Center Value Proposition & Set Realities */}
           <div className="relative z-10 max-w-md space-y-6">
             <div className="space-y-3">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold block">
                 VERIFIED SET ARCHITECTURE
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-white">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-zinc-950 dark:text-white">
                 Everything Your Production Needs. In One Connected Place.
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
                 Coordinate certified soundproof stages, infinity cycloramas, IATSE department heads, and cinema packages with transparent 10-hour day rates.
               </p>
             </div>
 
             {/* Verified Specification Pillars */}
             <div className="grid grid-cols-2 gap-2.5 pt-1 text-xs">
-              <div className="p-3 rounded-xl bg-zinc-900/80 backdrop-blur-md border border-white/10 space-y-1">
-                <div className="flex items-center gap-1.5 text-amber-400">
+              <div className="p-3 rounded-xl bg-white/90 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/80 dark:border-white/10 shadow-xs space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
                   <SoundstageIcon className="w-3.5 h-3.5" />
-                  <span className="font-mono text-[9px] uppercase font-bold text-zinc-300">
+                  <span className="font-mono text-[9px] uppercase font-bold text-zinc-600 dark:text-zinc-300">
                     Acoustics
                   </span>
                 </div>
-                <span className="font-bold text-white block text-xs">
+                <span className="font-bold text-zinc-900 dark:text-white block text-xs">
                   STC 60+ Certified
                 </span>
-                <span className="text-[10px] text-zinc-400 block font-mono">
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-mono">
                   Sync Sound Dialogue
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-zinc-900/80 backdrop-blur-md border border-white/10 space-y-1">
-                <div className="flex items-center gap-1.5 text-amber-400">
+              <div className="p-3 rounded-xl bg-white/90 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/80 dark:border-white/10 shadow-xs space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
                   <CamlockPowerIcon className="w-3.5 h-3.5" />
-                  <span className="font-mono text-[9px] uppercase font-bold text-zinc-300">
+                  <span className="font-mono text-[9px] uppercase font-bold text-zinc-600 dark:text-zinc-300">
                     Distribution
                   </span>
                 </div>
-                <span className="font-bold text-white block text-xs">
+                <span className="font-bold text-zinc-900 dark:text-white block text-xs">
                   600A 3-Phase Camlock
                 </span>
-                <span className="text-[10px] text-zinc-400 block font-mono">
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block font-mono">
                   Heavy Cinema Lighting
                 </span>
               </div>
@@ -247,16 +239,16 @@ export function AuthLayout({
           </div>
 
           {/* Bottom Trust & Compliance Footnote */}
-          <div className="relative z-10 pt-6 border-t border-white/15 space-y-3">
-            <div className="flex items-center gap-2 text-xs text-amber-300">
-              <ShieldPolicyIcon className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="font-semibold text-white">
+          <div className="relative z-10 pt-6 border-t border-zinc-200/90 dark:border-white/15 space-y-3">
+            <div className="flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300">
+              <ShieldPolicyIcon className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span className="font-semibold text-zinc-900 dark:text-white">
                 $2,000,000 Direct Liability Insurance Included
               </span>
             </div>
-            <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono">
+            <div className="flex items-center justify-between text-[11px] text-zinc-600 dark:text-zinc-400 font-mono">
               <span className="flex items-center gap-1.5">
-                <CheckCircleIcon className="w-3 h-3 text-emerald-400" />
+                <CheckCircleIcon className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 <span>Standard 10-Hour Shift</span>
               </span>
               <span>Published Wrap Rates</span>

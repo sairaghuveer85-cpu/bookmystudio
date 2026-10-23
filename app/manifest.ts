@@ -11,9 +11,14 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#101010',
     icons: [
       {
-        src: '/images/studios/greenpoint-cove.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
+        src: '/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+      },
+      {
+        src: '/images/bookmystudio-favicon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
       },
     ],
   };

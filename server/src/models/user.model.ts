@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-export type UserRole = 'CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL' | 'ADMIN';
+export type UserRole = 'CUSTOMER' | 'STUDIO_OWNER' | 'PROFESSIONAL' | 'ADMIN' | 'SUPER_ADMIN' | 'SUPPORT';
 export type AccountStatus = 'ACTIVE' | 'SUSPENDED' | 'PENDING';
 
 export interface IUser extends Document {
@@ -30,6 +30,7 @@ export interface IUser extends Document {
   phoneOtpAttempts?: number;
   phoneOtpLastSentAt?: Date | null;
   bio?: string | null;
+  lastSeenAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
@@ -63,7 +64,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     roles: {
       type: [String],
-      enum: ['CUSTOMER', 'STUDIO_OWNER', 'PROFESSIONAL', 'ADMIN'],
+      enum: ['CUSTOMER', 'STUDIO_OWNER', 'PROFESSIONAL', 'ADMIN', 'SUPER_ADMIN', 'SUPPORT'],
       default: ['CUSTOMER'],
     },
     isVerified: {
@@ -157,6 +158,10 @@ const userSchema = new Schema<IUser, IUserModel>(
       default: null,
       trim: true,
       maxlength: [500, 'Bio cannot exceed 500 characters'],
+    },
+    lastSeenAt: {
+      type: Date,
+      default: null,
     },
   },
   {

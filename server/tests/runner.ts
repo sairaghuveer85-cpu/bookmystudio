@@ -1,5 +1,7 @@
+process.env.NODE_ENV = 'test';
 import { Server } from 'http';
-import { connectDatabase, disconnectDatabase } from '../src/config/database';
+import mongoose from 'mongoose';
+import { connectDatabase, disconnectDatabase, assertIsTestDatabase } from '../src/config/database';
 import { createApp } from '../src/app';
 import { User } from '../src/models/user.model';
 
@@ -64,8 +66,17 @@ async function runTests() {
   console.log('🧪 RUNNING BOOKMYSTUDIO BACKEND INTEGRATION TEST SUITE');
   console.log('======================================================\n');
 
-  (process.env as any).NODE_ENV = 'test';
-  await connectDatabase();
+  process.env.NODE_ENV = 'test';
+  await connectDatabase(undefined, { isTest: true });
+  assertIsTestDatabase('Test Suite Pre-Flight Clean');
+
+  // Purge isolated test database collections so test run starts in a pristine, isolated state
+  if (mongoose.connection.db) {
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    for (const col of collections) {
+      await mongoose.connection.db.collection(col.name).deleteMany({});
+    }
+  }
 
   const app = createApp();
   const port = 4999;
@@ -1314,11 +1325,11 @@ async function runTests() {
     });
 
     // 40. Geospatial Discovery Query on Studios
-    await runTest('GET /api/studios?lat=17.4483&lng=78.3845&radiusKm=25 returns studios within radius with distanceKm', async () => {
-      const res = await client.request('/api/studios?lat=17.4483&lng=78.3845&radiusKm=25');
+    await runTest('GET /api/studios?lat=19.1363&lng=72.8277&radiusKm=25 returns studios within radius with distanceKm', async () => {
+      const res = await client.request('/api/studios?lat=19.1363&lng=72.8277&radiusKm=25');
       if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}`);
       if (!Array.isArray(res.body.data) || res.body.data.length === 0) {
-        throw new Error('Expected studios within 25km radius of Madhapur');
+        throw new Error('Expected studios within 25km radius of Mumbai test studio');
       }
       for (const item of res.body.data) {
         if (item.distanceKm === undefined || item.distanceKm === null) {
@@ -1333,9 +1344,9 @@ async function runTests() {
     // 41. Geospatial Discovery Query on Locations, Crew, and Equipment
     await runTest('Geospatial queries on locations, crew, and equipment compute distanceKm and respect radius', async () => {
       const [locRes, crewRes, eqRes] = await Promise.all([
-        client.request('/api/locations?lat=17.4483&lng=78.3845&radiusKm=50'),
-        client.request('/api/professionals?lat=17.4483&lng=78.3845&radiusKm=50'),
-        client.request('/api/equipment?lat=17.4483&lng=78.3845&radiusKm=50'),
+        client.request('/api/locations?lat=19.1363&lng=72.8277&radiusKm=50'),
+        client.request('/api/professionals?lat=19.1363&lng=72.8277&radiusKm=50'),
+        client.request('/api/equipment?lat=19.1363&lng=72.8277&radiusKm=50'),
       ]);
 
       if (locRes.status !== 200) throw new Error(`Location query failed: ${locRes.status}`);
@@ -1454,230 +1465,65 @@ async function runTests() {
     });
 
     // =========================================================================
-    // PAYOUT SETTINGS INTEGRATION TESTS
+    // PARTNER REFACTORING & ROUTE INTEGRITY TESTS
     // =========================================================================
 
-    // 49. Unauthenticated Access Blocked
-    await runTest('GET and PUT /api/payout-settings block unauthenticated requests with 401', async () => {
-      const unauthClient = new TestClient(`http://localhost:${port}`);
-      const getRes = await unauthClient.request('/api/payout-settings');
-      if (getRes.status !== 401) throw new Error(`Expected 401 for GET, got ${getRes.status}`);
+    // 49. Obsolete Payout Settings Routes are cleanly retired (404)
+    await runTest('GET and PUT /api/payout-settings return 404 following payout route retirement', async () => {
+      const getRes = await hostClient.request('/api/payout-settings');
+      if (getRes.status !== 404) throw new Error(`Expected 404 for GET /api/payout-settings, got ${getRes.status}`);
 
-      const putRes = await unauthClient.request('/api/payout-settings', {
+      const putRes = await hostClient.request('/api/payout-settings', {
         method: 'PUT',
-        body: JSON.stringify({
-          accountHolderName: 'Intruder',
-          ifsc: 'HDFC0000123',
-          accountNumber: '1234567890',
-          confirmAccountNumber: '1234567890',
-        }),
+        body: JSON.stringify({ accountHolderName: 'Test' }),
       });
-      if (putRes.status !== 401) throw new Error(`Expected 401 for PUT, got ${putRes.status}`);
+      if (putRes.status !== 404) throw new Error(`Expected 404 for PUT /api/payout-settings, got ${putRes.status}`);
     });
 
-    // 50. Default Status for Authenticated User Without Payout Settings
-    await runTest('GET /api/payout-settings returns NOT_SET_UP for new user', async () => {
-      const res = await hostClient.request('/api/payout-settings');
-      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}`);
-      if (!res.body.success) throw new Error('Expected success: true');
-      if (res.body.data.hasPayoutSettings !== false) {
-        throw new Error('Expected hasPayoutSettings to be false');
-      }
-      if (res.body.data.status !== 'NOT_SET_UP') {
-        throw new Error(`Expected NOT_SET_UP, got ${res.body.data.status}`);
-      }
-      if (res.body.data.providerOnboardingConnected !== false) {
-        throw new Error('Expected providerOnboardingConnected to be false');
-      }
-    });
-
-    // 51. Input Validation: Invalid IFSC Code
-    await runTest('PUT /api/payout-settings rejects invalid IFSC format with 400 or 422', async () => {
-      const res = await hostClient.request('/api/payout-settings', {
-        method: 'PUT',
-        body: JSON.stringify({
-          accountHolderName: 'Apex Production Stage Ltd',
-          ifsc: 'INVALID_IFSC',
-          accountNumber: '987654321012',
-          confirmAccountNumber: '987654321012',
-          accountType: 'current',
-        }),
-      });
-      if (res.status !== 400 && res.status !== 422) {
-        throw new Error(`Expected 400 or 422, got ${res.status}`);
-      }
-      if (!res.body.details?.ifsc && !res.body.error?.includes('IFSC') && !res.body.message?.includes('IFSC')) {
-        throw new Error('Expected IFSC validation error message in response');
-      }
-    });
-
-    // 52. Input Validation: Mismatched Confirmation Account Number
-    await runTest('PUT /api/payout-settings rejects mismatched account numbers with 400 or 422', async () => {
-      const res = await hostClient.request('/api/payout-settings', {
-        method: 'PUT',
-        body: JSON.stringify({
-          accountHolderName: 'Apex Production Stage Ltd',
-          ifsc: 'HDFC0001234',
-          accountNumber: '987654321012',
-          confirmAccountNumber: '987654321099', // Mismatched!
-          accountType: 'current',
-        }),
-      });
-      if (res.status !== 400 && res.status !== 422) {
-        throw new Error(`Expected 400 or 422, got ${res.status}`);
-      }
-    });
-
-    // 53. Preserving Leading Zeros, Masking Display, and Data Protection
-    await runTest('PUT /api/payout-settings preserves leading zeros and masks full account number', async () => {
-      const res = await hostClient.request('/api/payout-settings', {
-        method: 'PUT',
-        body: JSON.stringify({
-          accountHolderName: 'Apex Production Stages Pvt Ltd',
-          accountHolderType: 'business',
-          businessName: 'Apex Cinema Group LLC',
-          businessType: 'private_limited',
-          ifsc: 'HDFC0001234',
-          bankName: 'HDFC Bank Ltd',
-          accountNumber: '000192837465', // Leading zeros!
-          confirmAccountNumber: '000192837465',
-          accountType: 'current',
-        }),
-      });
-
-      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}: ${JSON.stringify(res.body)}`);
-      const data = res.body.data;
-      if (!data.hasPayoutSettings) throw new Error('Expected hasPayoutSettings to be true');
-      if (data.accountNumberMasked !== '••••••••7465') {
-        throw new Error(`Expected masked account number ••••••••7465, got ${data.accountNumberMasked}`);
-      }
-      if (data.accountNumberLast4 !== '7465') {
-        throw new Error(`Expected last4 to be 7465, got ${data.accountNumberLast4}`);
-      }
-      // CRITICAL SECURITY ASSERTION: Full bank account number must NEVER be exposed
-      const serialized = JSON.stringify(res.body);
-      if (serialized.includes('000192837465')) {
-        throw new Error('SECURITY VIOLATION: Full bank account number was leaked in the response payload!');
-      }
-      if (serialized.includes('encryptedAccountNumber') || serialized.includes('accountNumberIv')) {
-        throw new Error('SECURITY VIOLATION: Encryption cipher/IV leaked in safe response!');
-      }
-    });
-
-    // 54. Verified Isolation Between Users (User A cannot view User B payout details)
-    await runTest('GET /api/payout-settings enforces strict user ownership and privacy', async () => {
-      const otherClient = new TestClient(`http://localhost:${port}`);
-      const otherEmail = `payout-user-${Date.now()}@producer.io`;
-      await otherClient.request('/api/auth/register', {
+    // 50. Partner Onboarding & Role Separation
+    await runTest('POST /api/auth/become-vendor elevates customer privileges to partner vendor without disrupting account history', async () => {
+      const partnerClient = new TestClient(`http://localhost:${port}`);
+      const partnerEmail = `partner-test-${Date.now()}@studio.com`;
+      await partnerClient.request('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({
-          fullName: 'Independent Producer',
-          email: otherEmail,
+          fullName: 'Partner Candidate',
+          email: partnerEmail,
           password: 'Password123!',
           role: 'CUSTOMER',
         }),
       });
-      await otherClient.request('/api/auth/login', {
+      await partnerClient.request('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({
-          email: otherEmail,
+          email: partnerEmail,
           password: 'Password123!',
         }),
       });
 
-      const customerRes = await otherClient.request('/api/payout-settings');
-      if (customerRes.status !== 200) throw new Error(`Expected 200, got ${customerRes.status}`);
-      // Customer has not configured payouts yet
-      if (customerRes.body.data.hasPayoutSettings !== false) {
-        throw new Error('Customer should not see host payout settings');
-      }
-      if (customerRes.body.data.accountHolderName) {
-        throw new Error('Customer unexpectedly received account holder name');
+      // Verify user starts as CUSTOMER
+      const meBefore = await partnerClient.request('/api/auth/me');
+      if (meBefore.body.user.roles.includes('STUDIO_OWNER')) {
+        throw new Error('New customer should not have STUDIO_OWNER role initially');
       }
 
-      // Host should see their own saved settings
-      const hostRes = await hostClient.request('/api/payout-settings');
-      if (hostRes.status !== 200) throw new Error(`Expected 200, got ${hostRes.status}`);
-      if (hostRes.body.data.accountHolderName !== 'Apex Production Stages Pvt Ltd') {
-        throw new Error('Host failed to retrieve their own saved account holder name');
-      }
-    });
-
-    // 55. Partial Update Without Re-entering Account Number
-    await runTest('PUT /api/payout-settings updates metadata while preserving existing encrypted account number', async () => {
-      const updateRes = await hostClient.request('/api/payout-settings', {
-        method: 'PUT',
+      // Upgrade to vendor
+      const upgradeRes = await partnerClient.request('/api/auth/become-vendor', {
+        method: 'POST',
         body: JSON.stringify({
-          accountHolderName: 'Apex Production Lot II Stages',
-          accountHolderType: 'business',
-          businessName: 'Apex Studios International',
-          ifsc: 'HDFC0001234',
-          accountType: 'current',
-          // Notice: accountNumber and confirmAccountNumber omitted
+          vendorTypes: ['studio', 'location'],
+          companyName: 'Apex Partner Stages LLC',
         }),
       });
 
-      if (updateRes.status !== 200) throw new Error(`Expected 200, got ${updateRes.status}`);
-      const data = updateRes.body.data;
-      if (data.accountHolderName !== 'Apex Production Lot II Stages') {
-        throw new Error('Failed to update account holder name');
+      if (upgradeRes.status !== 200) {
+        throw new Error(`Expected 200 on become-vendor, got ${upgradeRes.status}: ${JSON.stringify(upgradeRes.body)}`);
       }
-      if (data.accountNumberMasked !== '••••••••7465') {
-        throw new Error('Failed to preserve existing encrypted account number and last4 mask');
+      if (!upgradeRes.body.user.roles.includes('STUDIO_OWNER')) {
+        throw new Error('Expected STUDIO_OWNER role after vendor upgrade');
       }
-    });
-
-    // 56. Provider Onboarding Endpoint Handles Honest Not-Configured State
-    await runTest('POST /api/payout-settings/onboarding returns honest PROVIDER_NOT_CONFIGURED when Route unconfigured', async () => {
-      const res = await hostClient.request('/api/payout-settings/onboarding', {
-        method: 'POST',
-      });
-
-      if (res.status !== 200 && res.status !== 400) {
-        throw new Error(`Expected 200 or 400, got ${res.status}`);
-      }
-      if (res.body.success !== false) {
-        throw new Error('Expected success: false when Razorpay Route is unconfigured');
-      }
-      if (res.body.code !== 'PROVIDER_NOT_CONFIGURED') {
-        throw new Error(`Expected code PROVIDER_NOT_CONFIGURED, got ${res.body.code}`);
-      }
-      if (res.body.providerOnboardingConnected !== false) {
-        throw new Error('Expected providerOnboardingConnected to be false');
-      }
-    });
-
-    // 57. GET /api/payout-settings/status Returns Validated Server Status
-    await runTest('GET /api/payout-settings/status returns current verified status and provider state', async () => {
-      const res = await hostClient.request('/api/payout-settings/status');
-      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}`);
-      if (!res.body.success) throw new Error('Expected success: true');
-      if (!res.body.data.status) throw new Error('Expected status field in response');
-      if (res.body.data.status !== 'AWAITING_PROVIDER_CONNECTION') {
-        throw new Error(`Expected AWAITING_PROVIDER_CONNECTION, got ${res.body.data.status}`);
-      }
-      if (res.body.data.providerOnboardingConnected !== false) {
-        throw new Error('Expected providerOnboardingConnected to be false');
-      }
-    });
-
-    // 58. Webhook Endpoint Rejects Invalid Signature and Handles Route Events
-    await runTest('POST /api/payout-settings/webhooks handles signature validation and route events', async () => {
-      const webhookClient = new TestClient(`http://localhost:${port}`);
-      // Test when webhook secret is unconfigured or invalid signature
-      const res = await webhookClient.request('/api/payout-settings/webhooks', {
-        method: 'POST',
-        headers: {
-          'x-razorpay-signature': 'invalid_signature_hash',
-        },
-        body: JSON.stringify({
-          event: 'account.activated',
-          payload: { account: { entity: { id: 'acc_fake123' } } },
-        }),
-      });
-
-      if (res.status !== 200 && res.status !== 400) {
-        throw new Error(`Expected 200 (ignored if secret unset) or 400 (rejected if secret set), got ${res.status}`);
+      if (!upgradeRes.body.user.roles.includes('CUSTOMER')) {
+        throw new Error('Expected CUSTOMER role to be preserved after vendor upgrade');
       }
     });
 
@@ -1821,8 +1667,174 @@ async function runTests() {
       }
     });
 
+    // =========================================================================
+    // ROLE-BASED ACCESS CONTROL (RBAC) & ADMIN PLATFORM SECURITY TESTS
+    // =========================================================================
+
+    const superAdminClient = new TestClient(`http://localhost:${port}`);
+    const unauthClient = new TestClient(`http://localhost:${port}`);
+
+    // 66. Unauthorized Request Barrier
+    await runTest('GET /api/admin/metrics rejects unauthenticated requests with 401', async () => {
+      const res = await unauthClient.request('/api/admin/metrics');
+      if (res.status !== 401) throw new Error(`Expected 401, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (res.body.code !== 'UNAUTHENTICATED') throw new Error(`Expected UNAUTHENTICATED code, got ${res.body.code}`);
+    });
+
+    // 67. Customer Access Barrier to Admin Endpoints
+    await runTest('GET /api/admin/metrics rejects non-admin customer requests with 403', async () => {
+      // Re-authenticate customer client
+      await client.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: testEmail,
+          password: 'BrandNewSecurePassword456!',
+        }),
+      });
+
+      const res = await client.request('/api/admin/metrics');
+      if (res.status !== 403) throw new Error(`Expected 403 Forbidden, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (res.body.code !== 'FORBIDDEN_NOT_ADMIN') throw new Error(`Expected FORBIDDEN_NOT_ADMIN code, got ${res.body.code}`);
+    });
+
+    // 68. Super Admin Authentication & Verified Roles
+    const testSaEmail = `test.superadmin.${Date.now()}@bookmystudio.internal`;
+    const testSaPass = 'SuperAdminPass#2026!';
+    let testSaId = '';
+
+    await runTest('POST /api/auth/login authenticates Super Admin and returns SUPER_ADMIN role', async () => {
+      const hash = await User.hashPassword(testSaPass);
+      const saDoc = await User.create({
+        fullName: 'Test Executive Super Admin',
+        email: testSaEmail,
+        passwordHash: hash,
+        roles: ['SUPER_ADMIN', 'ADMIN', 'CUSTOMER'],
+        isVerified: true,
+        accountStatus: 'ACTIVE',
+      });
+      testSaId = saDoc._id.toString();
+
+      const res = await superAdminClient.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: testSaEmail,
+          password: testSaPass,
+        }),
+      });
+
+      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (!res.body.user.roles.includes('SUPER_ADMIN')) {
+        throw new Error(`User does not have SUPER_ADMIN role: ${res.body.user.roles}`);
+      }
+    });
+
+    // 69. Aggregated Live Database Admin Metrics
+    await runTest('GET /api/admin/metrics returns real database metrics to Super Admin', async () => {
+      const res = await superAdminClient.request('/api/admin/metrics');
+      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (!res.body.data || typeof res.body.data.users?.total !== 'number') {
+        throw new Error(`Invalid metrics payload: ${JSON.stringify(res.body)}`);
+      }
+      if (typeof res.body.data.listings?.total !== 'number') {
+        throw new Error('Listings metrics missing from response');
+      }
+      if (typeof res.body.data.bookings?.total !== 'number') {
+        throw new Error('Bookings metrics missing from response');
+      }
+    });
+
+    // 70. Paginated Users Registry
+    let targetUserId = '';
+    await runTest('GET /api/admin/users returns verified accounts registry with pagination', async () => {
+      const res = await superAdminClient.request('/api/admin/users?limit=10');
+      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}`);
+      if (!Array.isArray(res.body.data) || res.body.data.length === 0) {
+        throw new Error('Expected at least 1 user in admin directory');
+      }
+      targetUserId = res.body.data[0].id;
+      if (!res.body.pagination || typeof res.body.pagination.total !== 'number') {
+        throw new Error('Pagination metadata missing');
+      }
+    });
+
+    // 71. User Account Status Toggle & Audit Logging
+    await runTest('PATCH /api/admin/users/:id/status updates account status and logs action', async () => {
+      // Find a customer user (not super admin) to update
+      const customerUser = await User.findOne({ email: testEmail });
+      if (!customerUser) throw new Error('Customer user not found');
+
+      const res = await superAdminClient.request(`/api/admin/users/${customerUser._id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: 'SUSPENDED',
+          reason: 'Test safety compliance hold',
+        }),
+      });
+
+      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (res.body.data.accountStatus !== 'SUSPENDED') {
+        throw new Error(`Expected SUSPENDED status, got ${res.body.data.accountStatus}`);
+      }
+
+      // Restore to active
+      await superAdminClient.request(`/api/admin/users/${customerUser._id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: 'ACTIVE',
+          reason: 'Hold resolved',
+        }),
+      });
+    });
+
+    // 72. Super Admin Safeguard: Cannot Demote Themselves
+    await runTest('POST /api/admin/access-management/assign prevents Super Admin self-demotion', async () => {
+      const res = await superAdminClient.request('/api/admin/access-management/assign', {
+        method: 'POST',
+        body: JSON.stringify({
+          userId: testSaId,
+          role: 'SUPER_ADMIN',
+          action: 'REVOKE',
+        }),
+      });
+
+      if (res.status !== 400) {
+        throw new Error(`Expected 400 Bad Request for self-demotion, got ${res.status}: ${JSON.stringify(res.body)}`);
+      }
+    });
+
+    // 73. Super Admin Only Barrier for Role Management
+    await runTest('GET /api/admin/access-management rejects standard ADMIN role with 403', async () => {
+      // adminClient has role ADMIN, but not SUPER_ADMIN
+      const res = await adminClient.request('/api/admin/access-management');
+      if (res.status !== 403) {
+        throw new Error(`Expected 403 Forbidden for non-superadmin, got ${res.status}: ${JSON.stringify(res.body)}`);
+      }
+      if (res.body.code !== 'FORBIDDEN_NOT_SUPER_ADMIN') {
+        throw new Error(`Expected FORBIDDEN_NOT_SUPER_ADMIN code, got ${res.body.code}`);
+      }
+    });
+
+    // 74. Super Admin Can Retrieve Audit Log Ledger
+    await runTest('GET /api/admin/audit-logs returns immutable security audit trail', async () => {
+      const res = await superAdminClient.request('/api/admin/audit-logs?limit=10');
+      if (res.status !== 200) throw new Error(`Expected 200, got ${res.status}: ${JSON.stringify(res.body)}`);
+      if (!Array.isArray(res.body.data)) throw new Error('Audit logs data must be an array');
+      if (res.body.data.length === 0) throw new Error('Expected at least one audit log entry from previous actions');
+    });
+
   } finally {
-    server!.close();
+    if (server!) {
+      server!.close();
+    }
+    if (mongoose.connection.readyState === 1) {
+      assertIsTestDatabase('Test Suite Teardown Clean');
+      try {
+        await mongoose.connection.db?.dropDatabase();
+        console.log('🧹 Isolated test database "bookmystudio_test" dropped successfully.');
+      } catch (err: any) {
+        console.warn('⚠️ Could not drop test database:', err.message);
+      }
+    }
     await disconnectDatabase();
   }
 

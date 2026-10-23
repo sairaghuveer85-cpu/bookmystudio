@@ -19,7 +19,6 @@ import {
 } from '@/components/common/ListingDetailState';
 import { FilmingLocation } from '@/lib/types';
 import { marketplaceApi } from '@/lib/api/marketplace';
-import { getLocationBySlug, getSimilarLocations } from '@/lib/data';
 import { ApiError } from '@/lib/api/client';
 
 interface LocationDetailViewProps {
@@ -31,22 +30,13 @@ type ViewStatus = 'loading' | 'success' | 'not_found' | 'network_error' | 'serve
 
 export function LocationDetailView({ slug, initialLocation }: LocationDetailViewProps) {
   const [location, setLocation] = useState<FilmingLocation | null>(initialLocation || null);
-  const [similar, setSimilar] = useState<FilmingLocation[]>(() => {
-    if (initialLocation) {
-      return getSimilarLocations(initialLocation.id, 3);
-    }
-    return [];
-  });
+  const [similar, setSimilar] = useState<FilmingLocation[]>([]);
   const [status, setStatus] = useState<ViewStatus>(initialLocation ? 'success' : 'loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isDraftPreview, setIsDraftPreview] = useState<boolean>(false);
   const [retryCounter, setRetryCounter] = useState(0);
 
   useEffect(() => {
-    if (initialLocation) {
-      return;
-    }
-
     let isCancelled = false;
 
     marketplaceApi
@@ -67,16 +57,10 @@ export function LocationDetailView({ slug, initialLocation }: LocationDetailView
               if (isCancelled) return;
               if (simRes.success && Array.isArray(simRes.data)) {
                 const filtered = simRes.data.filter((l) => l.id !== res.data.id && l.slug !== res.data.slug).slice(0, 3);
-                setSimilar(filtered.length > 0 ? filtered : getSimilarLocations(res.data.id, 3));
-              } else {
-                setSimilar(getSimilarLocations(res.data.id, 3));
+                setSimilar(filtered);
               }
             })
-            .catch(() => {
-              if (!isCancelled) {
-                setSimilar(getSimilarLocations(res.data.id, 3));
-              }
-            });
+            .catch(() => {});
           return;
         }
 
@@ -84,14 +68,6 @@ export function LocationDetailView({ slug, initialLocation }: LocationDetailView
       })
       .catch((err: unknown) => {
         if (isCancelled) return;
-
-        const staticFallback = getLocationBySlug(slug);
-        if (staticFallback) {
-          setLocation(staticFallback);
-          setSimilar(getSimilarLocations(staticFallback.id, 3));
-          setStatus('success');
-          return;
-        }
 
         if (err instanceof ApiError) {
           if (err.status === 404 || err.code === 'LOCATION_NOT_FOUND') {
@@ -112,7 +88,7 @@ export function LocationDetailView({ slug, initialLocation }: LocationDetailView
     return () => {
       isCancelled = true;
     };
-  }, [slug, initialLocation, retryCounter]);
+  }, [slug, retryCounter]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -145,7 +121,7 @@ export function LocationDetailView({ slug, initialLocation }: LocationDetailView
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32 lg:pb-8">
       {/* Draft Preview Indicator Banner */}
       {isDraftPreview && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-300">

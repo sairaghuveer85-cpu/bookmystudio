@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { EquipmentDetailView } from '@/components/equipment/EquipmentDetailView';
-import { getEquipmentBySlug, INITIAL_EQUIPMENT } from '@/lib/data';
 
 export function generateStaticParams() {
-  return INITIAL_EQUIPMENT.map((e) => ({ slug: e.slug }));
+  return [{ slug: 'arri-alexa-35-production-kit' }];
 }
 
 interface EquipmentDetailPageProps {
@@ -13,13 +12,6 @@ interface EquipmentDetailPageProps {
 export async function generateMetadata({ params }: EquipmentDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const eq = getEquipmentBySlug(decodedSlug);
-  if (eq) {
-    return {
-      title: `${eq.name} — BookMyStudio`,
-      description: eq.description,
-    };
-  }
 
   const title = decodedSlug
     .replace(/-[0-9]+$/, '')
@@ -36,7 +28,10 @@ export async function generateMetadata({ params }: EquipmentDetailPageProps) {
 export default async function EquipmentDetailPage({ params }: EquipmentDetailPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const initialEquipment = getEquipmentBySlug(decodedSlug) || null;
 
-  return <EquipmentDetailView slug={decodedSlug} initialEquipment={initialEquipment} />;
+  return (
+    <Suspense fallback={<div className="py-16 text-center text-xs text-zinc-500 font-mono">Loading equipment details...</div>}>
+      <EquipmentDetailView slug={decodedSlug} initialEquipment={null} />
+    </Suspense>
+  );
 }

@@ -62,7 +62,7 @@ const userSchema = new mongoose_1.Schema({
     },
     roles: {
         type: [String],
-        enum: ['CUSTOMER', 'STUDIO_OWNER', 'PROFESSIONAL', 'ADMIN'],
+        enum: ['CUSTOMER', 'STUDIO_OWNER', 'PROFESSIONAL', 'ADMIN', 'SUPER_ADMIN', 'SUPPORT'],
         default: ['CUSTOMER'],
     },
     isVerified: {
@@ -156,6 +156,10 @@ const userSchema = new mongoose_1.Schema({
         default: null,
         trim: true,
         maxlength: [500, 'Bio cannot exceed 500 characters'],
+    },
+    lastSeenAt: {
+        type: Date,
+        default: null,
     },
 }, {
     timestamps: true,

@@ -12,7 +12,8 @@
     "server:start": "pnpm --filter bookmystudio-server start",
     "server:seed": "pnpm --filter bookmystudio-server seed",
     "server:test": "pnpm --filter bookmystudio-server test",
-    "server:verify-smtp": "pnpm --filter bookmystudio-server verify-smtp"
+    "server:verify-smtp": "pnpm --filter bookmystudio-server verify-smtp",
+    "admin:reset-password": "pnpm --filter bookmystudio-server admin:reset-password"
   },
   "dependencies": {
     "libphonenumber-js": "^1.13.15",

@@ -17,7 +17,6 @@ import {
   ZapIcon,
   TruckIcon,
 } from '@/components/ui/Icons';
-import { INITIAL_STUDIOS } from '@/lib/data';
 import { StudioCategory, StudioSpace } from '@/lib/types';
 import { useMarketplace } from '@/context/MarketplaceContext';
 import { marketplaceApi } from '@/lib/api/marketplace';
@@ -31,7 +30,8 @@ function StudiosContent() {
   const { location, isNeutral } = useLocation();
 
   // Studios dataset with live API hydration and location awareness
-  const [studios, setStudios] = useState<StudioSpace[]>(INITIAL_STUDIOS);
+  const [studios, setStudios] = useState<StudioSpace[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isCancelled = false;
@@ -48,13 +48,18 @@ function StudiosContent() {
       .getStudios(params)
       .then((res) => {
         if (isCancelled) return;
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setStudios(res.data);
-        } else if (res.success && Array.isArray(res.data) && res.data.length === 0) {
+        } else {
           setStudios([]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!isCancelled) setStudios([]);
+      })
+      .finally(() => {
+        if (!isCancelled) setLoading(false);
+      });
 
     return () => {
       isCancelled = true;
@@ -607,7 +612,7 @@ function StudiosContent() {
       {/* Results Count & Meta */}
       <div className="mt-6 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
         <span>
-          Showing <strong className="text-zinc-950 dark:text-white font-bold">{filteredStudios.length}</strong> certified production {filteredStudios.length === 1 ? 'stage' : 'stages'}
+          Showing <strong className="text-zinc-950 dark:text-white font-bold">{loading ? '...' : filteredStudios.length}</strong> certified production {filteredStudios.length === 1 ? 'stage' : 'stages'}
         </span>
         <span className="text-[11px] text-zinc-400 dark:text-zinc-500 hidden sm:inline">
           All bookings include $2M direct liability policy endorsement
@@ -616,7 +621,21 @@ function StudiosContent() {
 
       {/* Studios View: Grid or Tech Spec Matrix */}
       <div className="mt-6">
-        {filteredStudios.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] p-4 space-y-3 animate-pulse"
+              >
+                <div className="w-full h-48 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-2/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-1/2 h-3 rounded bg-zinc-150 dark:bg-zinc-850" />
+                <div className="w-1/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800 pt-2" />
+              </div>
+            ))}
+          </div>
+        ) : filteredStudios.length > 0 ? (
           viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {filteredStudios.map((studio) => (

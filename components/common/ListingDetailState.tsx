@@ -51,7 +51,7 @@ const CATEGORY_CONFIGS: Record<ListingCategoryType, CategoryConfig> = {
 };
 
 /**
- * High-fidelity Soundstage Loading Skeleton matching BookMyStudio's dark cinematic palette.
+ * High-fidelity Soundstage Loading Skeleton matching BookMyStudio's adaptive theme palette.
  */
 export function ListingDetailSkeleton({ category = 'studio' }: { category?: ListingCategoryType }) {
   const config = CATEGORY_CONFIGS[category];
@@ -60,31 +60,31 @@ export function ListingDetailSkeleton({ category = 'studio' }: { category?: List
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8 animate-pulse" role="status" aria-label={`Loading ${config.singular} specifications`}>
       {/* Breadcrumb Skeleton */}
       <div className="flex items-center gap-2 mb-4">
-        <div className="h-3 w-16 bg-zinc-800 rounded" />
-        <span className="text-zinc-700">/</span>
-        <div className="h-3 w-28 bg-zinc-800 rounded" />
-        <span className="text-zinc-700">/</span>
-        <div className="h-3 w-40 bg-zinc-800 rounded" />
+        <div className="h-3 w-16 bg-zinc-200 dark:bg-zinc-800 rounded" />
+        <span className="text-zinc-300 dark:text-zinc-700">/</span>
+        <div className="h-3 w-28 bg-zinc-200 dark:bg-zinc-800 rounded" />
+        <span className="text-zinc-300 dark:text-zinc-700">/</span>
+        <div className="h-3 w-40 bg-zinc-200 dark:bg-zinc-800 rounded" />
       </div>
 
       {/* Header Skeleton */}
-      <div className="mt-2 pb-6 border-b border-zinc-800/80 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mt-2 pb-6 border-b border-zinc-200 dark:border-zinc-800/80 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-3 flex-1">
           <div className="flex items-center gap-2">
-            <div className="h-5 w-24 bg-zinc-800 rounded-md" />
-            <div className="h-5 w-20 bg-zinc-800/60 rounded-md" />
-            <div className="h-5 w-32 bg-zinc-800/40 rounded-md" />
+            <div className="h-5 w-24 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+            <div className="h-5 w-20 bg-zinc-200/60 dark:bg-zinc-800/60 rounded-md" />
+            <div className="h-5 w-32 bg-zinc-200/40 dark:bg-zinc-800/40 rounded-md" />
           </div>
-          <div className="h-9 sm:h-11 w-3/4 max-w-xl bg-zinc-800 rounded-xl" />
+          <div className="h-9 sm:h-11 w-3/4 max-w-xl bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
           <div className="flex items-center gap-3">
-            <div className="h-4 w-32 bg-zinc-800/70 rounded" />
-            <div className="h-4 w-24 bg-zinc-800/50 rounded" />
-            <div className="h-4 w-28 bg-zinc-800/50 rounded" />
+            <div className="h-4 w-32 bg-zinc-200/70 dark:bg-zinc-800/70 rounded" />
+            <div className="h-4 w-24 bg-zinc-200/50 dark:bg-zinc-800/50 rounded" />
+            <div className="h-4 w-28 bg-zinc-200/50 dark:bg-zinc-800/50 rounded" />
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="h-9 w-44 bg-zinc-800/60 rounded-xl" />
-          <div className="h-9 w-28 bg-zinc-800/60 rounded-xl" />
+          <div className="h-9 w-44 bg-zinc-200/60 dark:bg-zinc-800/60 rounded-xl" />
+          <div className="h-9 w-28 bg-zinc-200/60 dark:bg-zinc-800/60 rounded-xl" />
         </div>
       </div>
 
@@ -93,18 +93,18 @@ export function ListingDetailSkeleton({ category = 'studio' }: { category?: List
         {/* Left Column (8 cols) */}
         <div className="lg:col-span-8 space-y-8">
           {/* Main Gallery Skeleton */}
-          <div className="w-full aspect-16/10 rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden relative">
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-zinc-800/20 to-transparent animate-shimmer" />
+          <div className="w-full aspect-16/10 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 overflow-hidden relative">
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-zinc-200/40 dark:via-zinc-800/20 to-transparent animate-shimmer" />
           </div>
 
           {/* Specs Grid Skeleton */}
-          <div className="p-6 rounded-2xl bg-[#121216] border border-zinc-800/90 space-y-4">
-            <div className="h-3 w-48 bg-zinc-800 rounded" />
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800/90 shadow-xs space-y-4">
+            <div className="h-3 w-48 bg-zinc-200 dark:bg-zinc-800 rounded" />
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="space-y-2">
-                  <div className="h-3 w-16 bg-zinc-800/60 rounded" />
-                  <div className="h-5 w-24 bg-zinc-800 rounded" />
+                  <div className="h-3 w-16 bg-zinc-200/60 dark:bg-zinc-800/60 rounded" />
+                  <div className="h-5 w-24 bg-zinc-200 dark:bg-zinc-800 rounded" />
                 </div>
               ))}
             </div>
@@ -112,27 +112,27 @@ export function ListingDetailSkeleton({ category = 'studio' }: { category?: List
 
           {/* Description Skeleton */}
           <div className="space-y-3">
-            <div className="h-5 w-40 bg-zinc-800 rounded" />
-            <div className="h-4 w-full bg-zinc-800/70 rounded" />
-            <div className="h-4 w-5/6 bg-zinc-800/60 rounded" />
-            <div className="h-4 w-4/6 bg-zinc-800/50 rounded" />
+            <div className="h-5 w-40 bg-zinc-200 dark:bg-zinc-800 rounded" />
+            <div className="h-4 w-full bg-zinc-200/70 dark:bg-zinc-800/70 rounded" />
+            <div className="h-4 w-5/6 bg-zinc-200/60 dark:bg-zinc-800/60 rounded" />
+            <div className="h-4 w-4/6 bg-zinc-200/50 dark:bg-zinc-800/50 rounded" />
           </div>
         </div>
 
         {/* Right Column (4 cols) Sticky Form Skeleton */}
         <div className="lg:col-span-4">
-          <div className="p-6 rounded-2xl bg-[#121216] border border-zinc-800/90 space-y-5">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800/90 shadow-xs space-y-5">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-200 dark:border-zinc-800">
               <div className="space-y-1">
-                <div className="h-3 w-20 bg-zinc-800 rounded" />
-                <div className="h-7 w-28 bg-zinc-800 rounded" />
+                <div className="h-3 w-20 bg-zinc-200 dark:bg-zinc-800 rounded" />
+                <div className="h-7 w-28 bg-zinc-200 dark:bg-zinc-800 rounded" />
               </div>
-              <div className="h-6 w-20 bg-zinc-800/60 rounded-full" />
+              <div className="h-6 w-20 bg-zinc-200/60 dark:bg-zinc-800/60 rounded-full" />
             </div>
             <div className="space-y-3">
-              <div className="h-10 w-full bg-zinc-800/60 rounded-xl" />
-              <div className="h-10 w-full bg-zinc-800/60 rounded-xl" />
-              <div className="h-10 w-full bg-zinc-800/60 rounded-xl" />
+              <div className="h-10 w-full bg-zinc-200/60 dark:bg-zinc-800/60 rounded-xl" />
+              <div className="h-10 w-full bg-zinc-200/60 dark:bg-zinc-800/60 rounded-xl" />
+              <div className="h-10 w-full bg-zinc-200/60 dark:bg-zinc-800/60 rounded-xl" />
               <div className="h-12 w-full bg-amber-500/40 rounded-xl mt-4" />
             </div>
           </div>
@@ -155,24 +155,24 @@ export function ListingNotFound({
   const config = CATEGORY_CONFIGS[category];
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#09090B] text-zinc-100">
-      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-[#121216] border border-zinc-800/80 shadow-2xl">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-amber-500 mx-auto">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800/80 shadow-2xl">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500 mx-auto">
           <AlertCircleIcon className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
-          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-semibold">
             404 — {config.badge} NOT FOUND
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
             This {config.singular} Does Not Exist
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto">
             {identifier ? (
               <>
                 We could not find a {config.singular.toLowerCase()} with identifier{' '}
-                <span className="font-mono text-zinc-200 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
+                <span className="font-mono text-zinc-900 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-800">
                   {identifier}
                 </span>
                 .
@@ -195,20 +195,20 @@ export function ListingNotFound({
 
           <Link
             href="/search"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 text-zinc-200 hover:text-white text-xs font-semibold transition-all active:scale-98"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500 bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white text-xs font-semibold transition-all active:scale-98"
           >
             <span>Search All Marketplace</span>
           </Link>
 
           <Link
             href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 rounded-xl border border-zinc-800 hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 text-xs font-medium transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 text-xs font-medium transition-all"
           >
             Return Home
           </Link>
         </div>
 
-        <div className="pt-4 border-t border-zinc-800/80 text-[11px] text-zinc-500">
+        <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800/80 text-[11px] text-zinc-500">
           Looking for a specific certified production stage? Our operations team can check availability for your wrap dates directly.
         </div>
       </div>
@@ -229,22 +229,22 @@ export function ListingNetworkError({
   const config = CATEGORY_CONFIGS[category];
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#09090B] text-zinc-100">
-      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-[#121216] border border-amber-500/20 shadow-2xl">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#121216] border border-amber-500/20 shadow-2xl">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 mx-auto">
           <svg className="w-8 h-8 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
 
         <div className="space-y-2">
-          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-semibold">
             CONNECTION TO PRODUCTION API FAILED
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
             Production Network Offline
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto">
             Unable to connect to the BookMyStudio backend service to verify technical specifications. Please verify your connection or retry the request.
           </p>
         </div>
@@ -263,7 +263,7 @@ export function ListingNetworkError({
 
           <Link
             href={config.exploreRoute}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 text-zinc-200 text-xs font-semibold transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500 bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition-all"
           >
             <span>Browse {config.plural}</span>
             <ArrowRightIcon className="w-3.5 h-3.5" />
@@ -285,20 +285,20 @@ export function ListingServerError({
   errorMessage?: string;
 }) {
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#09090B] text-zinc-100">
-      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-[#121216] border border-red-500/20 shadow-2xl">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 mx-auto">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#121216] border border-red-500/20 shadow-2xl">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 mx-auto">
           <AlertCircleIcon className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
-          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-red-500/10 text-red-400 border border-red-500/20">
+          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 font-semibold">
             500 — STAGE SERVICE EXCEPTION
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
             Server Processing Error
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto">
             {errorMessage || 'The BookMyStudio backend encountered an unexpected error while retrieving this listing.'}
           </p>
         </div>
@@ -314,7 +314,7 @@ export function ListingServerError({
 
           <Link
             href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl border border-zinc-800 hover:bg-zinc-800 text-zinc-300 text-xs font-medium transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition-all"
           >
             Return Home
           </Link>
@@ -337,27 +337,27 @@ export function ListingUnpublishedNotice({
   const config = CATEGORY_CONFIGS[category];
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-[#09090B] text-zinc-100">
-      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-[#121216] border border-amber-500/30 shadow-2xl">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-white dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="max-w-xl w-full text-center space-y-6 p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#121216] border border-amber-500/30 shadow-2xl">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 mx-auto">
           <LockIcon className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
-          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30">
+          <span className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-semibold">
             RESTRICTED ACCESS — {publicationStatus.toUpperCase()} LISTING
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
             This {config.singular} Is Not Publicly Active
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-md mx-auto">
             This production listing is currently saved in draft mode, undergoing verification, or has been temporarily unlisted. Only the verified owner or administrators can review its contents.
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800 text-left space-y-1.5 text-xs text-zinc-400">
-          <div className="flex items-center gap-2 text-zinc-200 font-semibold">
-            <ShieldPolicyIcon className="w-4 h-4 text-amber-500 shrink-0" />
+        <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-left space-y-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+          <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-200 font-semibold">
+            <ShieldPolicyIcon className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
             <span>Are you the owner of this stage?</span>
           </div>
           <p>
@@ -376,7 +376,7 @@ export function ListingUnpublishedNotice({
 
           <Link
             href={config.exploreRoute}
-            className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl border border-zinc-800 hover:bg-zinc-800 text-zinc-300 text-xs font-medium transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition-all"
           >
             Explore Active {config.plural}
           </Link>

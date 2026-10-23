@@ -2,13 +2,14 @@ import React from 'react';
 
 export function LogoMark({ className = "w-7 h-7" }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="28" height="28" rx="4" fill="#0F172A" />
-      {/* Geometric studio aperture lens & cyclorama cove lines */}
-      <path d="M 6 6 L 22 22 M 22 6 L 6 22" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.3" />
-      <circle cx="14" cy="14" r="5" stroke="#FFFFFF" strokeWidth="2.5" />
-      <rect x="12" y="4" width="4" height="4" fill="#10B981" rx="1" />
-    </svg>
+    <span className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/bookmystudio-mark.png"
+        alt="BookMyStudio"
+        className="w-full h-full object-contain rounded-md"
+      />
+    </span>
   );
 }
 

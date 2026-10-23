@@ -24,8 +24,10 @@ const envSchema = z.object({
   MONGODB_URI: z
     .string()
     .default('mongodb://127.0.0.1:27017/bookmystudio'),
+  MONGODB_TEST_URI: z.string().optional(),
   CLIENT_ORIGIN: z.string().default('http://localhost:3000'),
   SESSION_SECRET: z.string().default('bms_dev_session_secret_32_characters_long_min_production'),
+  ADMIN_EMAILS: z.string().optional().default('raghuveerlinkedin@gmail.com'),
   SMTP_HOST: z.string().default('smtp.gmail.com'),
   SMTP_PORT: z.coerce.number().default(465),
   SMTP_USER: z.string().optional(),
@@ -59,6 +61,32 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+/**
+ * Returns the authoritative database URI depending on execution mode.
+ * Strictly guarantees that test execution NEVER resolves to the primary development/production database.
+ */
+export function getDatabaseUri(isTest: boolean = false): string {
+  const isTestMode = isTest || process.env.NODE_ENV === 'test' || env.NODE_ENV === 'test';
+
+  if (isTestMode) {
+    if (process.env.MONGODB_TEST_URI || env.MONGODB_TEST_URI) {
+      return (process.env.MONGODB_TEST_URI || env.MONGODB_TEST_URI)!;
+    }
+    const baseUri = process.env.MONGODB_URI || env.MONGODB_URI;
+    // Replace the trailing database name with bookmystudio_test
+    if (baseUri.includes('/bookmystudio')) {
+      return baseUri.replace(/\/bookmystudio(\?|$)/, '/bookmystudio_test$1');
+    }
+    // For custom connection URIs, append _test to path
+    const [pathPart, queryPart] = baseUri.split('?');
+    const segments = pathPart.split('/');
+    segments[segments.length - 1] = 'bookmystudio_test';
+    return queryPart ? `${segments.join('/')}?${queryPart}` : segments.join('/');
+  }
+
+  return process.env.MONGODB_URI || env.MONGODB_URI;
+}
 
 if (env.NODE_ENV === 'production' && env.SESSION_SECRET.includes('dev_session_secret')) {
   console.warn('⚠️ WARNING: Using default SESSION_SECRET in production. Set a random 32+ character string in your environment.');

@@ -159,14 +159,14 @@ export function EmailOtpForm() {
   return (
     <form onSubmit={handleVerify} className="space-y-6" noValidate>
       {/* Sent Email Notice */}
-      <div className="p-4 rounded-xl bg-[#121216] border border-zinc-800 text-xs text-zinc-400 space-y-1">
-        <div className="flex items-center gap-2 font-bold text-white">
-          <CheckCircleIcon className="w-4 h-4 text-emerald-400 shrink-0" />
+      <div className="p-4 rounded-xl bg-zinc-100 dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
+        <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white">
+          <CheckCircleIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>Verification Code Sent</span>
         </div>
         <p className="text-[11px] leading-relaxed">
           We sent a 6-digit confirmation code to{' '}
-          <strong className="text-white font-mono">{email || 'your email address'}</strong>.
+          <strong className="text-zinc-900 dark:text-white font-mono">{email || 'your email address'}</strong>.
         </p>
       </div>
 
@@ -175,12 +175,12 @@ export function EmailOtpForm() {
         <div
           role="alert"
           aria-live="polite"
-          className="p-4 rounded-xl bg-red-950/40 border border-red-900/80 text-red-200 text-xs space-y-1 animate-page-enter"
+          className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-900/80 text-red-800 dark:text-red-200 text-xs space-y-1 animate-page-enter"
         >
-          <div className="font-bold flex items-center gap-1.5 text-red-400">
+          <div className="font-bold flex items-center gap-1.5 text-red-600 dark:text-red-400">
             <span>Verification Unsuccessful</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-red-300/90">
+          <p className="text-[11px] leading-relaxed text-red-700 dark:text-red-300/90">
             {errorMsg}
           </p>
         </div>
@@ -190,9 +190,9 @@ export function EmailOtpForm() {
       {resendSuccess && (
         <div
           role="status"
-          className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2"
+          className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2"
         >
-          <span className="font-bold text-emerald-400">✓</span>
+          <span className="font-bold text-emerald-600 dark:text-emerald-400">✓</span>
           <span>A fresh verification code has been dispatched to your inbox.</span>
         </div>
       )}
@@ -200,7 +200,7 @@ export function EmailOtpForm() {
       {/* Missing Email Input Prompt (if navigated without email in URL) */}
       {!emailParam && (
         <div className="space-y-1.5">
-          <label htmlFor="otp-email" className="block text-xs font-bold text-zinc-200">
+          <label htmlFor="otp-email" className="block text-xs font-bold text-zinc-800 dark:text-zinc-200">
             Confirm Your Work Email
           </label>
           <input
@@ -209,14 +209,14 @@ export function EmailOtpForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="producer@agency.com"
-            className="auth-input w-full px-4 py-2.5 bg-[#121216] border border-zinc-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="auth-input w-full px-4 py-2.5 bg-zinc-50 dark:bg-[#121216] border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
       )}
 
       {/* 6 Digit Input Group (3 - 3 formatted) */}
       <div className="space-y-2">
-        <label className="block text-xs font-bold text-zinc-200 text-center">
+        <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 text-center">
           Enter 6-Digit Verification Code
         </label>
         
@@ -224,7 +224,7 @@ export function EmailOtpForm() {
           {digits.map((digit, idx) => (
             <React.Fragment key={idx}>
               {idx === 3 && (
-                <div className="w-2 h-0.5 bg-zinc-700 mx-0.5" aria-hidden="true" />
+                <div className="w-2 h-0.5 bg-zinc-300 dark:bg-zinc-700 mx-0.5" aria-hidden="true" />
               )}
               <input
                 ref={(el) => {
@@ -238,7 +238,7 @@ export function EmailOtpForm() {
                 onChange={(e) => handleDigitChange(idx, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(idx, e)}
                 aria-label={`Digit ${idx + 1} of 6`}
-                className="auth-input w-11 sm:w-13 h-13 sm:h-14 text-center font-mono text-xl sm:text-2xl font-black rounded-xl bg-[#121216] border border-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all shadow-xs"
+                className="auth-input w-11 sm:w-13 h-13 sm:h-14 text-center font-mono text-xl sm:text-2xl font-black rounded-xl bg-zinc-50 dark:bg-[#121216] border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all shadow-xs"
               />
             </React.Fragment>
           ))}
@@ -246,13 +246,13 @@ export function EmailOtpForm() {
       </div>
 
       {/* Resend Code Trigger & Countdown */}
-      <div className="flex items-center justify-between text-xs text-zinc-400 pt-1">
+      <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 pt-1">
         <span>Didn&apos;t receive code?</span>
         <button
           type="button"
           onClick={handleResend}
           disabled={cooldown > 0 || isResending}
-          className="font-bold text-amber-400 hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          className="font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           {isResending ? (
             'Sending...'
@@ -286,11 +286,11 @@ export function EmailOtpForm() {
       </div>
 
       {/* Wrong Email Address Fallback */}
-      <div className="text-center text-xs text-zinc-400 pt-2">
+      <div className="text-center text-xs text-zinc-500 dark:text-zinc-400 pt-2">
         <span>Entered the wrong email? </span>
         <Link
           href="/create-account"
-          className="font-semibold text-white hover:text-amber-400 underline underline-offset-2 transition-colors"
+          className="font-semibold text-zinc-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 underline underline-offset-2 transition-colors"
         >
           Update registration details
         </Link>

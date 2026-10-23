@@ -129,13 +129,13 @@ export function PhoneInput({
 
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <div className="flex items-center rounded-xl bg-[#18181E] border border-zinc-800 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500/50 transition-all overflow-hidden">
+      <div className="flex items-center rounded-xl bg-zinc-50 dark:bg-[#18181E] border border-zinc-300 dark:border-zinc-800 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500/50 transition-all overflow-hidden">
         {/* Country Code Selector */}
-        <div className="relative flex items-center bg-[#121216] border-r border-zinc-800 px-3 py-2.5 min-h-[44px]">
+        <div className="relative flex items-center bg-zinc-100 dark:bg-[#121216] border-r border-zinc-300 dark:border-zinc-800 px-3 py-2.5 min-h-[44px]">
           <span className="text-base mr-1.5 select-none" aria-hidden="true">
             {currentCountryObj.flag}
           </span>
-          <span className="text-xs font-semibold text-zinc-300 mr-1 select-none">
+          <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-300 mr-1 select-none">
             {currentCountryObj.dialCode}
           </span>
           <select
@@ -146,13 +146,13 @@ export function PhoneInput({
             className="absolute inset-0 opacity-0 w-full h-full cursor-pointer disabled:cursor-not-allowed"
           >
             {SUPPORTED_COUNTRIES.map((c) => (
-              <option key={c.code} value={c.code} className="bg-zinc-900 text-white">
+              <option key={c.code} value={c.code} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
                 {c.flag} {c.label} ({c.dialCode})
               </option>
             ))}
           </select>
           <svg
-            className="w-3.5 h-3.5 text-zinc-400 pointer-events-none ml-0.5"
+            className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 pointer-events-none ml-0.5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -174,7 +174,7 @@ export function PhoneInput({
           onChange={handleInputChange}
           placeholder={placeholder || (country === 'IN' ? '98765 43210' : 'Mobile number')}
           autoComplete="tel-national"
-          className="flex-1 bg-transparent px-3.5 py-2.5 min-h-[44px] text-sm text-white placeholder:text-zinc-600 focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 bg-transparent px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
     </div>

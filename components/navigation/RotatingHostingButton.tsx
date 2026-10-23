@@ -68,7 +68,7 @@ export function RotatingHostingButton({ className = '', onClick }: RotatingHosti
     <Link
       href={destinationHref}
       onClick={onClick}
-      className={`group relative inline-flex items-center justify-center gap-1.5 px-2 min-[360px]:px-2.5 sm:px-3 py-1.5 min-h-[38px] rounded-full border border-zinc-800 hover:border-amber-500/50 bg-[#121216] hover:bg-[#18181E] text-zinc-300 hover:text-white transition-all duration-200 select-none shadow-xs active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0 ${className}`}
+      className={`group relative inline-flex items-center justify-center gap-1.5 px-2 min-[360px]:px-2.5 sm:px-3 py-1.5 min-h-[38px] rounded-full border border-zinc-300 dark:border-zinc-800 hover:border-amber-500/50 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#121216] dark:hover:bg-[#18181E] text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-all duration-200 select-none shadow-xs active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0 ${className}`}
       aria-label="List your creative assets and services on BookMyStudio"
     >
       {/* Subtle pulsating amber indicator dot */}

@@ -141,14 +141,14 @@ export function TimeSlotSelector({
   }, [selectedStartTime, selectedDuration]);
 
   return (
-    <div className="w-full bg-[#121216] border border-zinc-800 rounded-2xl p-4 sm:p-5 transition-all space-y-5">
+    <div className="w-full bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-5 transition-all space-y-5">
       {/* 1. Duration Selection */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+          <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
             Booking Duration
           </label>
-          <span className="text-[11px] text-amber-400 font-mono font-medium">
+          <span className="text-[11px] text-amber-600 dark:text-amber-400 font-mono font-medium">
             {selectedDuration}h shoot window
           </span>
         </div>
@@ -164,7 +164,7 @@ export function TimeSlotSelector({
                 className={`py-2 px-1.5 rounded-xl border text-center transition-all ${
                   isSelected
                     ? 'bg-amber-500 text-black border-amber-400 font-extrabold shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                    : 'bg-zinc-900/60 text-zinc-300 border-zinc-800 hover:border-zinc-700 hover:text-white'
+                    : 'bg-zinc-50 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 <div className="text-xs font-bold">{opt.label}</div>
@@ -180,11 +180,11 @@ export function TimeSlotSelector({
       {/* 2. Start Time Slots */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+          <label className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
             Choose Your Time Slot
           </label>
           {isLoading && (
-            <span className="text-[11px] text-zinc-400 flex items-center gap-1.5">
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
               Checking availability...
             </span>
@@ -207,8 +207,8 @@ export function TimeSlotSelector({
                   isSelected
                     ? 'bg-amber-500 text-black border-amber-400 font-extrabold shadow-[0_0_14px_rgba(245,158,11,0.35)]'
                     : isClickable
-                    ? 'bg-zinc-900/70 text-zinc-200 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80 active:scale-95'
-                    : 'bg-zinc-950/40 text-zinc-600 border-zinc-900 cursor-not-allowed opacity-50'
+                    ? 'bg-zinc-50 dark:bg-zinc-900/70 text-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 active:scale-95'
+                    : 'bg-zinc-100/60 dark:bg-zinc-950/40 text-zinc-400 dark:text-zinc-600 border-zinc-200 dark:border-zinc-900 cursor-not-allowed opacity-50'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -219,7 +219,7 @@ export function TimeSlotSelector({
                 </div>
                 <div className="text-[10px] mt-0.5 truncate">
                   {isClickable ? (
-                    <span className={isSelected ? 'text-black/80 font-medium' : 'text-emerald-400 font-medium'}>
+                    <span className={isSelected ? 'text-black/80 font-medium' : 'text-emerald-700 dark:text-emerald-400 font-medium'}>
                       Available
                     </span>
                   ) : (
@@ -236,12 +236,12 @@ export function TimeSlotSelector({
 
       {/* 3. Selected Interval Banner */}
       {selectedWindowSummary && (
-        <div className="p-3 bg-amber-950/20 border border-amber-800/40 rounded-xl flex items-center justify-between gap-3 text-xs">
+        <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-xl flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-zinc-300 font-medium">Selected Shoot Window:</span>
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
+            <span className="text-zinc-700 dark:text-zinc-300 font-medium">Selected Shoot Window:</span>
           </div>
-          <span className="font-mono font-bold text-amber-400">{selectedWindowSummary}</span>
+          <span className="font-mono font-bold text-amber-700 dark:text-amber-400">{selectedWindowSummary}</span>
         </div>
       )}
     </div>

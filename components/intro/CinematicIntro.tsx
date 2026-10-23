@@ -142,7 +142,7 @@ export function CinematicIntro() {
         </div>
 
         <p className="bms-intro-tagline">
-          Every Production. One Connected Place.
+          Discover Your Perfect Studio Space!
         </p>
       </div>
     </main>

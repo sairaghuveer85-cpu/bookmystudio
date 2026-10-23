@@ -352,7 +352,7 @@ export default function ListYourStudioPage() {
   };
 
   return (
-    <div className="py-8 bg-[#09090B] min-h-[calc(100vh-140px)] text-zinc-100 transition-colors duration-150">
+    <div className="py-8 bg-[var(--bg-page)] min-h-[calc(100vh-140px)] text-zinc-900 dark:text-zinc-100 transition-colors duration-150">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
@@ -368,25 +368,25 @@ export default function ListYourStudioPage() {
         <div className="max-w-3xl">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 font-mono">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 font-mono">
               CURATED PRODUCTION MARKETPLACE
             </span>
           </div>
 
-          <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white leading-tight">
             List Your Production Assets &amp; Services
           </h1>
 
-          <p className="mt-3 text-sm sm:text-base text-zinc-400 leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
             Submit your commercial soundstages, filming locations, cinema equipment packages, or professional crew profile for verified listing on BookMyStudio.
           </p>
 
           <div className="mt-4 flex items-center gap-3 flex-wrap text-xs">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-300 font-semibold">
-              <ShieldPolicyIcon className="w-4 h-4 text-amber-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-300 font-semibold">
+              <ShieldPolicyIcon className="w-4 h-4 text-amber-500 dark:text-amber-400" />
               <span>$2,000,000 Primary Production Liability Protection</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
               <span>Automated ACH Direct Deposits</span>
             </span>
           </div>
@@ -394,12 +394,12 @@ export default function ListYourStudioPage() {
 
         {/* Customer Auto-Upgrade Notice */}
         {user && !isVendor && (
-          <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="mt-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
               <div>
                 <p className="font-bold">Seamless Vendor Upgrade</p>
-                <p className="text-[11px] text-zinc-300 mt-0.5">
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-300 mt-0.5">
                   Publishing this listing will automatically grant you Stage Host / Supplier capabilities. All your existing bookings, customer profile, and saved shortlists remain preserved.
                 </p>
               </div>
@@ -414,10 +414,10 @@ export default function ListYourStudioPage() {
         )}
 
         {/* Listing Type Selector Tabs */}
-        <div className="mt-10 border-b border-zinc-800 pb-4">
+        <div className="mt-10 border-b border-zinc-200 dark:border-zinc-800 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 Select Listing Type
               </span>
               <div className="mt-2 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 flex-nowrap sm:flex-wrap">
@@ -430,7 +430,7 @@ export default function ListYourStudioPage() {
                   className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 select-none ${
                     listingType === 'studio'
                       ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
-                      : 'bg-[#121216] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                      : 'bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <CycloramaCategoryIcon className="w-4 h-4" />
@@ -446,7 +446,7 @@ export default function ListYourStudioPage() {
                   className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 select-none ${
                     listingType === 'location'
                       ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
-                      : 'bg-[#121216] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                      : 'bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <WarehouseIcon className="w-4 h-4" />
@@ -462,7 +462,7 @@ export default function ListYourStudioPage() {
                   className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 select-none ${
                     listingType === 'crew'
                       ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
-                      : 'bg-[#121216] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                      : 'bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <StarIcon className="w-4 h-4" />
@@ -478,7 +478,7 @@ export default function ListYourStudioPage() {
                   className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 select-none ${
                     listingType === 'equipment'
                       ? 'bg-amber-500 text-zinc-950 shadow-md font-extrabold'
-                      : 'bg-[#121216] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                      : 'bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <GearCrateIcon className="w-4 h-4" />
@@ -488,12 +488,12 @@ export default function ListYourStudioPage() {
             </div>
 
             {/* View Mode Toggle: Form vs Live Preview */}
-            <div className="flex items-center gap-1 bg-[#121216] p-1 rounded-xl border border-zinc-800 self-start sm:self-auto">
+            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-[#121216] p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 self-start sm:self-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('form')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeTab === 'form' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                  activeTab === 'form' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-2xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 Specifications Form
@@ -502,7 +502,7 @@ export default function ListYourStudioPage() {
                 type="button"
                 onClick={() => setActiveTab('preview')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeTab === 'preview' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                  activeTab === 'preview' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-2xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 Live Catalog Preview
@@ -557,26 +557,26 @@ export default function ListYourStudioPage() {
 
         {/* Successful Submission Screen */}
         {submittedData ? (
-          <div className="mt-8 max-w-2xl mx-auto p-8 rounded-3xl bg-[#121216] border border-zinc-800 shadow-xl text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
+          <div className="mt-8 max-w-2xl mx-auto p-8 rounded-3xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 shadow-xl text-center space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
               <CheckCircleIcon className="w-8 h-8" />
             </div>
 
             <div>
               <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-mono uppercase font-bold tracking-wider mb-2 ${
                 submittedData.publicationStatus === 'draft'
-                  ? 'bg-zinc-800 text-zinc-300 border border-zinc-700'
-                  : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700'
+                  : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30'
               }`}>
                 Status: {submittedData.publicationStatus === 'draft' ? 'DRAFT' : 'PUBLISHED & LIVE'}
               </span>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
                 {submittedData.publicationStatus === 'draft'
                   ? 'Listing Saved as Draft'
                   : 'Listing Published Immediately!'}
               </h2>
-              <p className="mt-2 text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
-                Your listing for <strong className="text-white">{submittedData.title}</strong> has been saved to the database.
+              <p className="mt-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+                Your listing for <strong className="text-zinc-900 dark:text-white">{submittedData.title}</strong> has been saved to the database.
                 {submittedData.publicationStatus === 'draft'
                   ? ' You can edit and publish this draft whenever you are ready.'
                   : ' It is now live and immediately discoverable in the BookMyStudio public directory.'}
@@ -609,7 +609,7 @@ export default function ListYourStudioPage() {
               <button
                 type="button"
                 onClick={() => setSubmittedData(null)}
-                className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               >
                 Create Another Listing
               </button>
@@ -618,18 +618,18 @@ export default function ListYourStudioPage() {
         ) : activeTab === 'preview' ? (
           /* LIVE PREVIEW CONTAINER */
           <div className="mt-8 max-w-2xl mx-auto">
-            <div className="p-6 rounded-3xl bg-[#121216] border border-zinc-800 space-y-6">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
+            <div className="p-6 rounded-3xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-zinc-800 space-y-6">
+              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold">
                   Card Preview in Public Directory
                 </span>
-                <span className="text-[11px] text-emerald-400/80 font-mono">Instant Live Directory Preview</span>
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400/80 font-mono">Instant Live Directory Preview</span>
               </div>
 
               {/* STUDIO CARD PREVIEW */}
               {listingType === 'studio' && (
-                <div className="rounded-2xl border border-zinc-800 bg-[#18181E] overflow-hidden shadow-lg">
-                  <div className="relative aspect-[16/10] bg-zinc-900">
+                <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] overflow-hidden shadow-lg">
+                  <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-900">
                     <Image
                       src={studioImageUrl}
                       alt={studioName || 'Studio preview'}
@@ -643,14 +643,14 @@ export default function ListYourStudioPage() {
                   </div>
                   <div className="p-5 space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-base font-bold text-zinc-900 dark:text-white">
                         {studioName || 'Untitled Commercial Stage'}
                       </h3>
-                      <span className="text-sm font-mono font-bold text-amber-400 shrink-0">
+                      <span className="text-sm font-mono font-bold text-amber-600 dark:text-amber-400 shrink-0">
                         ${studioDayRate} / 10h
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                       <LocationPinIcon className="w-3.5 h-3.5 text-amber-500" />
                       <span>{studioLocationData.location || 'Location Pending'}</span>
                       <span>·</span>
@@ -658,12 +658,12 @@ export default function ListYourStudioPage() {
                       <span>·</span>
                       <span>{studioGridHeight} Grid</span>
                     </div>
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {studioDesc || 'Commercial cyclorama space equipped for major motion and still campaigns.'}
                     </p>
-                    <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
-                      <span className="font-mono text-[11px] text-zinc-300">{studioPower}</span>
-                      <span className="text-amber-400 font-semibold">Instant Hold Ready</span>
+                    <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
+                      <span className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300">{studioPower}</span>
+                      <span className="text-amber-600 dark:text-amber-400 font-semibold">Instant Hold Ready</span>
                     </div>
                   </div>
                 </div>
@@ -671,8 +671,8 @@ export default function ListYourStudioPage() {
 
               {/* LOCATION CARD PREVIEW */}
               {listingType === 'location' && (
-                <div className="rounded-2xl border border-zinc-800 bg-[#18181E] overflow-hidden shadow-lg">
-                  <div className="relative aspect-[16/10] bg-zinc-900">
+                <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] overflow-hidden shadow-lg">
+                  <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-900">
                     <Image
                       src={locImageUrl}
                       alt={locName || 'Location preview'}
@@ -686,25 +686,25 @@ export default function ListYourStudioPage() {
                   </div>
                   <div className="p-5 space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-base font-bold text-zinc-900 dark:text-white">
                         {locName || 'Industrial Sound Stage & Location'}
                       </h3>
-                      <span className="text-sm font-mono font-bold text-amber-400 shrink-0">
+                      <span className="text-sm font-mono font-bold text-amber-600 dark:text-amber-400 shrink-0">
                         ${locDayRate} / 10h
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                       <LocationPinIcon className="w-3.5 h-3.5 text-amber-500" />
                       <span>{locLocationData.location || 'Location Pending'}</span>
                       <span>·</span>
                       <span>{locAreaSqFt} sq ft</span>
                     </div>
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {locDesc || 'Production-ready commercial location featuring natural architectural textures.'}
                     </p>
-                    <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+                    <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
                       <span className="text-[11px]">{locCurfew}</span>
-                      <span className="text-amber-400 font-semibold">Permit Friendly</span>
+                      <span className="text-amber-600 dark:text-amber-400 font-semibold">Permit Friendly</span>
                     </div>
                   </div>
                 </div>
@@ -712,9 +712,9 @@ export default function ListYourStudioPage() {
 
               {/* CREW CARD PREVIEW */}
               {listingType === 'crew' && (
-                <div className="rounded-2xl border border-zinc-800 bg-[#18181E] p-5 space-y-4 shadow-lg">
+                <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] p-5 space-y-4 shadow-lg">
                   <div className="flex items-center gap-4">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border border-zinc-700 bg-zinc-900 shrink-0">
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 shrink-0">
                       <Image
                         src={crewImageUrl}
                         alt={crewName || 'Crew preview'}
@@ -724,33 +724,33 @@ export default function ListYourStudioPage() {
                       />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30">
                         {crewUnion}
                       </span>
-                      <h3 className="text-base font-bold text-white mt-1">
+                      <h3 className="text-base font-bold text-zinc-900 dark:text-white mt-1">
                         {crewName || 'Department Head'}
                       </h3>
-                      <p className="text-xs text-zinc-400">{crewRole} · {crewLocationData.location || 'Location Pending'}</p>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">{crewRole} · {crewLocationData.location || 'Location Pending'}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-zinc-300 leading-relaxed">
+                  <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
                     {crewBio || 'Experienced department lead with credits across national commercial campaigns.'}
                   </p>
-                  <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-xs space-y-1">
+                  <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs space-y-1">
                     <span className="text-[10px] uppercase font-bold text-zinc-500 block">Recent Verified Credits</span>
-                    <span className="text-zinc-200">{crewCredits}</span>
+                    <span className="text-zinc-800 dark:text-zinc-200">{crewCredits}</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-800">
-                    <span className="font-mono font-bold text-amber-400">${crewDayRate} / 10h Commercial</span>
-                    <span className="text-emerald-400 text-[11px] font-semibold">{crewNextAvailable}</span>
+                  <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                    <span className="font-mono font-bold text-amber-600 dark:text-amber-400">${crewDayRate} / 10h Commercial</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">{crewNextAvailable}</span>
                   </div>
                 </div>
               )}
 
               {/* EQUIPMENT CARD PREVIEW */}
               {listingType === 'equipment' && (
-                <div className="rounded-2xl border border-zinc-800 bg-[#18181E] overflow-hidden shadow-lg">
-                  <div className="relative aspect-[16/10] bg-zinc-900">
+                <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181E] overflow-hidden shadow-lg">
+                  <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-900">
                     <Image
                       src={equipImageUrl}
                       alt={equipName || 'Gear preview'}
@@ -764,22 +764,22 @@ export default function ListYourStudioPage() {
                   </div>
                   <div className="p-5 space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-base font-bold text-zinc-900 dark:text-white">
                         {equipBrand} {equipName || 'Cinema Camera Package'}
                       </h3>
-                      <span className="text-sm font-mono font-bold text-amber-400 shrink-0">
+                      <span className="text-sm font-mono font-bold text-amber-600 dark:text-amber-400 shrink-0">
                         ${equipDayRate} / day
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
                       {equipDesc || 'Complete turnkey cinema kit with factory flight case and certified power accessories.'}
                     </p>
-                    <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+                    <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400">
                       <span className="font-mono text-[11px]">${equipWeeklyRate} / 3-Day Week</span>
-                      <span className="text-zinc-300 font-mono text-[11px]">COI Value: ${Number(equipReplacementValue).toLocaleString()}</span>
+                      <span className="text-zinc-700 dark:text-zinc-300 font-mono text-[11px]">COI Value: ${Number(equipReplacementValue).toLocaleString()}</span>
                     </div>
-                    <div className="text-[11px] text-zinc-400 flex items-center gap-1.5">
-                      <LocationPinIcon className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <div className="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
+                      <LocationPinIcon className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
                       <span className="truncate">{equipLocationData.location || 'Location Pending'}</span>
                     </div>
                   </div>
@@ -790,7 +790,7 @@ export default function ListYourStudioPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('form')}
-                  className="text-xs text-amber-400 hover:underline cursor-pointer font-semibold"
+                  className="text-xs text-amber-600 dark:text-amber-400 hover:underline cursor-pointer font-semibold"
                 >
                   ← Return to Form to Continue Editing
                 </button>
@@ -800,23 +800,23 @@ export default function ListYourStudioPage() {
         ) : (
           /* SPECIFICATIONS FORM CONTAINER */
           <div className="mt-8 max-w-3xl mx-auto">
-            <div className="p-6 sm:p-10 rounded-3xl border border-zinc-800 bg-[#121216] shadow-xl space-y-8">
+            <div className="p-6 sm:p-10 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] shadow-xl space-y-8">
               
               {/* Type Title Header */}
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold">
                   {listingType === 'studio' && 'STUDIO SPECIFICATION PROFILE'}
                   {listingType === 'location' && 'FILMING LOCATION MANIFEST'}
                   {listingType === 'crew' && 'CREW CALLSHEET ROSTER PROFILE'}
                   {listingType === 'equipment' && 'CINEMA GEAR & RENTAL KIT MANIFEST'}
                 </span>
-                <h2 className="mt-1 text-2xl font-bold tracking-tight text-white">
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
                   {listingType === 'studio' && 'List Commercial Studio Space'}
                   {listingType === 'location' && 'Register Filming Location'}
                   {listingType === 'crew' && 'Create Crew & Department Head Profile'}
                   {listingType === 'equipment' && 'List Cinema Equipment Package'}
                 </h2>
-                <p className="mt-1 text-xs sm:text-sm text-zinc-400">
+                <p className="mt-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
                   {listingType === 'studio' && 'Our facility team will inspect 3-phase camlock, acoustic ratings, and floor plans.'}
                   {listingType === 'location' && 'Detail logistics, ceiling clearance, vehicular loading docks, and permit guidelines.'}
                   {listingType === 'crew' && 'Highlight verified commercial credits, standard day rates, and camera/grip kit packages.'}
@@ -829,7 +829,7 @@ export default function ListYourStudioPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Stage Name / Facility Title *
                       </label>
                       <input
@@ -837,12 +837,12 @@ export default function ListYourStudioPage() {
                         value={studioName}
                         onChange={(e) => setStudioName(e.target.value)}
                         placeholder="e.g. Apex Stage C & Soundstage"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Primary Space Category *
                       </label>
                       <select
@@ -858,7 +858,7 @@ export default function ListYourStudioPage() {
                               | 'industrial'
                           )
                         }
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                       >
                         <option value="cyclorama">White Cyclorama Stage</option>
                         <option value="soundstage">Acoustically Rated Soundstage</option>
@@ -879,7 +879,7 @@ export default function ListYourStudioPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Total Square Footage (sq ft) *
                       </label>
                       <input
@@ -887,12 +887,12 @@ export default function ListYourStudioPage() {
                         value={studioSqFt}
                         onChange={(e) => setStudioSqFt(e.target.value)}
                         placeholder="3200"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Ceiling Clearance (Clear to Grid) *
                       </label>
                       <input
@@ -900,12 +900,12 @@ export default function ListYourStudioPage() {
                         value={studioGridHeight}
                         onChange={(e) => setStudioGridHeight(e.target.value)}
                         placeholder="18 ft"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Camlock Power Capacity *
                       </label>
                       <input
@@ -913,12 +913,12 @@ export default function ListYourStudioPage() {
                         value={studioPower}
                         onChange={(e) => setStudioPower(e.target.value)}
                         placeholder="600A 3-Phase Camlock"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Vehicular / Load-in Access *
                       </label>
                       <input
@@ -926,12 +926,12 @@ export default function ListYourStudioPage() {
                         value={studioAccess}
                         onChange={(e) => setStudioAccess(e.target.value)}
                         placeholder="Ground Floor 14ft Roll-up Gate"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         10-Hour Commercial Day Rate ($) *
                       </label>
                       <input
@@ -939,12 +939,12 @@ export default function ListYourStudioPage() {
                         value={studioDayRate}
                         onChange={(e) => setStudioDayRate(e.target.value)}
                         placeholder="1400"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Overtime / Hourly Rate ($) *
                       </label>
                       <input
@@ -952,12 +952,12 @@ export default function ListYourStudioPage() {
                         value={studioHourlyRate}
                         onChange={(e) => setStudioHourlyRate(e.target.value)}
                         placeholder="160"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Primary High-Resolution Image URL *
                       </label>
                       <input
@@ -965,12 +965,12 @@ export default function ListYourStudioPage() {
                         value={studioImageUrl}
                         onChange={(e) => setStudioImageUrl(e.target.value)}
                         placeholder="https://..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Detailed Description &amp; Production Accommodations *
                       </label>
                       <textarea
@@ -978,12 +978,12 @@ export default function ListYourStudioPage() {
                         value={studioDesc}
                         onChange={(e) => setStudioDesc(e.target.value)}
                         placeholder="Describe your studio space, acoustics, hair/makeup suites, power distros, and typical commercial workflows..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Amenities &amp; Facility Features (comma-separated)
                       </label>
                       <input
@@ -991,12 +991,12 @@ export default function ListYourStudioPage() {
                         value={studioAmenities}
                         onChange={(e) => setStudioAmenities(e.target.value)}
                         placeholder="HMU Stations, High-Speed Fiber, Client Lounge, Kitchen"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Equipment &amp; Distro Highlight
                       </label>
                       <input
@@ -1004,63 +1004,63 @@ export default function ListYourStudioPage() {
                         value={studioEquipmentHighlight}
                         onChange={(e) => setStudioEquipmentHighlight(e.target.value)}
                         placeholder="e.g. Pre-rigged 400A Camlock distro with motorized truss grid"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
                   </div>
 
                   {/* Feature Checkboxes */}
-                  <div className="pt-2 border-t border-zinc-800">
-                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block mb-3">
+                  <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 block mb-3">
                       Verified Technical Capabilities
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={studioCamlock}
                           onChange={(e) => setStudioCamlock(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>3-Phase Camlock Heavy Power Available</span>
                       </label>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={studioDriveIn}
                           onChange={(e) => setStudioDriveIn(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>Drive-In Vehicle / Direct Roll-up Access</span>
                       </label>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={studioStc60}
                           onChange={(e) => setStudioStc60(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>STC 60+ Certified Soundproof Acoustic Stage</span>
                       </label>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={studioNorthDaylight}
                           onChange={(e) => setStudioNorthDaylight(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>North-Facing Natural Daylight Loft Exposure</span>
                       </label>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={studioGripIncluded}
                           onChange={(e) => setStudioGripIncluded(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>Standard 5-Ton Grip Package Included in Rate</span>
                       </label>
@@ -1074,7 +1074,7 @@ export default function ListYourStudioPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Location Name / Architectural Manifest *
                       </label>
                       <input
@@ -1082,12 +1082,12 @@ export default function ListYourStudioPage() {
                         value={locName}
                         onChange={(e) => setLocName(e.target.value)}
                         placeholder="e.g. The Greenpoint Industrial Brick Loft & Rooftop"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Location Style Category *
                       </label>
                       <select
@@ -1103,7 +1103,7 @@ export default function ListYourStudioPage() {
                               | 'outdoor'
                           )
                         }
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                       >
                         <option value="warehouse">Industrial Warehouse</option>
                         <option value="loft">Historic Commercial Loft</option>
@@ -1124,7 +1124,7 @@ export default function ListYourStudioPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Usable Filming Area (sq ft) *
                       </label>
                       <input
@@ -1132,12 +1132,12 @@ export default function ListYourStudioPage() {
                         value={locAreaSqFt}
                         onChange={(e) => setLocAreaSqFt(e.target.value)}
                         placeholder="6500"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Ceiling Height *
                       </label>
                       <input
@@ -1145,12 +1145,12 @@ export default function ListYourStudioPage() {
                         value={locCeilingHeight}
                         onChange={(e) => setLocCeilingHeight(e.target.value)}
                         placeholder="22 ft"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         10-Hour Commercial Day Rate ($) *
                       </label>
                       <input
@@ -1158,12 +1158,12 @@ export default function ListYourStudioPage() {
                         value={locDayRate}
                         onChange={(e) => setLocDayRate(e.target.value)}
                         placeholder="2200"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Hourly / Overtime Rate ($) *
                       </label>
                       <input
@@ -1171,12 +1171,12 @@ export default function ListYourStudioPage() {
                         value={locHourlyRate}
                         onChange={(e) => setLocHourlyRate(e.target.value)}
                         placeholder="250"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Permit Requirements *
                       </label>
                       <input
@@ -1184,12 +1184,12 @@ export default function ListYourStudioPage() {
                         value={locPermits}
                         onChange={(e) => setLocPermits(e.target.value)}
                         placeholder="NYC MOFTB Standard Permit"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Curfew &amp; Overnight Sound Rules *
                       </label>
                       <input
@@ -1197,12 +1197,12 @@ export default function ListYourStudioPage() {
                         value={locCurfew}
                         onChange={(e) => setLocCurfew(e.target.value)}
                         placeholder="e.g. 24/7 Overnight Filming Permitted"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Power Capacity &amp; Distro *
                       </label>
                       <input
@@ -1210,12 +1210,12 @@ export default function ListYourStudioPage() {
                         value={locPowerSupply}
                         onChange={(e) => setLocPowerSupply(e.target.value)}
                         placeholder="e.g. 400A 3-Phase Camlock"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Vehicular / Loading Access *
                       </label>
                       <input
@@ -1223,12 +1223,12 @@ export default function ListYourStudioPage() {
                         value={locVehicleAccess}
                         onChange={(e) => setLocVehicleAccess(e.target.value)}
                         placeholder="e.g. Loading Dock with Freight Elevator"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Amenities &amp; Logistics (comma-separated)
                       </label>
                       <input
@@ -1236,12 +1236,12 @@ export default function ListYourStudioPage() {
                         value={locAmenities}
                         onChange={(e) => setLocAmenities(e.target.value)}
                         placeholder="Basecamp Parking, Freight Elevator, 3-Phase Camlock, Restrooms"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Primary Hero Image URL *
                       </label>
                       <input
@@ -1249,12 +1249,12 @@ export default function ListYourStudioPage() {
                         value={locImageUrl}
                         onChange={(e) => setLocImageUrl(e.target.value)}
                         placeholder="https://images.unsplash.com/..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Location Overview &amp; Curfew Conditions *
                       </label>
                       <textarea
@@ -1262,7 +1262,7 @@ export default function ListYourStudioPage() {
                         value={locDesc}
                         onChange={(e) => setLocDesc(e.target.value)}
                         placeholder="Describe the architectural visual character, natural light conditions, freight loading details, and sound environment..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
                       />
                     </div>
                   </div>
@@ -1274,7 +1274,7 @@ export default function ListYourStudioPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Full Name / Professional Alias *
                       </label>
                       <input
@@ -1282,12 +1282,12 @@ export default function ListYourStudioPage() {
                         value={crewName}
                         onChange={(e) => setCrewName(e.target.value)}
                         placeholder="e.g. Elena Rostova"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Role / Designation *
                       </label>
                       <input
@@ -1295,12 +1295,12 @@ export default function ListYourStudioPage() {
                         value={crewRole}
                         onChange={(e) => setCrewRole(e.target.value)}
                         placeholder="e.g. Director of Photography"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Department Category *
                       </label>
                       <select
@@ -1315,7 +1315,7 @@ export default function ListYourStudioPage() {
                               | 'production'
                           )
                         }
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                       >
                         <option value="camera_lighting">Camera &amp; Lighting</option>
                         <option value="grip_sound">Grip &amp; Production Sound</option>
@@ -1335,7 +1335,7 @@ export default function ListYourStudioPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         10-Hour Commercial Day Rate ($) *
                       </label>
                       <input
@@ -1343,12 +1343,12 @@ export default function ListYourStudioPage() {
                         value={crewDayRate}
                         onChange={(e) => setCrewDayRate(e.target.value)}
                         placeholder="1500"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Union Affiliation *
                       </label>
                       <input
@@ -1356,12 +1356,12 @@ export default function ListYourStudioPage() {
                         value={crewUnion}
                         onChange={(e) => setCrewUnion(e.target.value)}
                         placeholder="IATSE Local 600 / Non-Union"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Headshot / Portfolio Portrait Image URL *
                       </label>
                       <input
@@ -1369,12 +1369,12 @@ export default function ListYourStudioPage() {
                         value={crewImageUrl}
                         onChange={(e) => setCrewImageUrl(e.target.value)}
                         placeholder="https://..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Verified Production Credits *
                       </label>
                       <input
@@ -1382,12 +1382,12 @@ export default function ListYourStudioPage() {
                         value={crewCredits}
                         onChange={(e) => setCrewCredits(e.target.value)}
                         placeholder="e.g. Nike Global Commercial, HBO Feature, Apple TV+"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Professional Biography &amp; Technical Discipline *
                       </label>
                       <textarea
@@ -1395,12 +1395,12 @@ export default function ListYourStudioPage() {
                         value={crewBio}
                         onChange={(e) => setCrewBio(e.target.value)}
                         placeholder="Summarize your career, signature lighting aesthetic, camera system proficiencies, and commercial agency experience..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Working Kit Summary (Included with Hire)
                       </label>
                       <input
@@ -1408,12 +1408,12 @@ export default function ListYourStudioPage() {
                         value={crewWorkingKit}
                         onChange={(e) => setCrewWorkingKit(e.target.value)}
                         placeholder="SmallHD Cine 7 Monitor, Teradek Bolt 4K, Light Meter"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Core Technical Skills (comma-separated)
                       </label>
                       <input
@@ -1421,12 +1421,12 @@ export default function ListYourStudioPage() {
                         value={crewSkills}
                         onChange={(e) => setCrewSkills(e.target.value)}
                         placeholder="ARRI Alexa 35, Anamorphic Lensing, Motion Control, Gaffer Sync"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Next Availability Window
                       </label>
                       <input
@@ -1434,17 +1434,17 @@ export default function ListYourStudioPage() {
                         value={crewNextAvailable}
                         onChange={(e) => setCrewNextAvailable(e.target.value)}
                         placeholder="Immediate / Next Week"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="flex items-center pt-5">
-                      <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-300">
+                      <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                         <input
                           type="checkbox"
                           checked={crewStandardKitIncluded}
                           onChange={(e) => setCrewStandardKitIncluded(e.target.checked)}
-                          className="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-amber-500"
+                          className="w-4 h-4 rounded bg-zinc-100 dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500"
                         />
                         <span>Standard Operator Monitor / Light Meter Kit Included</span>
                       </label>
@@ -1458,7 +1458,7 @@ export default function ListYourStudioPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Brand / Manufacturer *
                       </label>
                       <input
@@ -1466,12 +1466,12 @@ export default function ListYourStudioPage() {
                         value={equipBrand}
                         onChange={(e) => setEquipBrand(e.target.value)}
                         placeholder="ARRI, RED, Sony, Cooke, Aputure"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Item Name / Package Title *
                       </label>
                       <input
@@ -1479,12 +1479,12 @@ export default function ListYourStudioPage() {
                         value={equipName}
                         onChange={(e) => setEquipName(e.target.value)}
                         placeholder="Alexa 35 Production Package"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Gear Category *
                       </label>
                       <select
@@ -1500,7 +1500,7 @@ export default function ListYourStudioPage() {
                               | 'packages'
                           )
                         }
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                       >
                         <option value="cameras">Cinema Camera Packages</option>
                         <option value="lighting">High-Output Cinema Lighting</option>
@@ -1512,7 +1512,7 @@ export default function ListYourStudioPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Lens Mount / Interface
                       </label>
                       <input
@@ -1520,12 +1520,12 @@ export default function ListYourStudioPage() {
                         value={equipMountType}
                         onChange={(e) => setEquipMountType(e.target.value)}
                         placeholder="LPL / PL Mount"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Daily Rental Rate ($) *
                       </label>
                       <input
@@ -1533,12 +1533,12 @@ export default function ListYourStudioPage() {
                         value={equipDayRate}
                         onChange={(e) => setEquipDayRate(e.target.value)}
                         placeholder="1250"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Weekly Rental Rate ($) *
                       </label>
                       <input
@@ -1546,12 +1546,12 @@ export default function ListYourStudioPage() {
                         value={equipWeeklyRate}
                         onChange={(e) => setEquipWeeklyRate(e.target.value)}
                         placeholder="3750"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Insured Replacement Valuation ($) *
                       </label>
                       <input
@@ -1559,12 +1559,12 @@ export default function ListYourStudioPage() {
                         value={equipReplacementValue}
                         onChange={(e) => setEquipReplacementValue(e.target.value)}
                         placeholder="78000"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Power Requirement *
                       </label>
                       <input
@@ -1572,7 +1572,7 @@ export default function ListYourStudioPage() {
                         value={equipPowerReq}
                         onChange={(e) => setEquipPowerReq(e.target.value)}
                         placeholder="B-Mount 24V / AC Adapter"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
@@ -1586,7 +1586,7 @@ export default function ListYourStudioPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Product Photo Image URL *
                       </label>
                       <input
@@ -1594,12 +1594,12 @@ export default function ListYourStudioPage() {
                         value={equipImageUrl}
                         onChange={(e) => setEquipImageUrl(e.target.value)}
                         placeholder="https://images.unsplash.com/..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Equipment Description &amp; Condition *
                       </label>
                       <textarea
@@ -1607,12 +1607,12 @@ export default function ListYourStudioPage() {
                         value={equipDesc}
                         onChange={(e) => setEquipDesc(e.target.value)}
                         placeholder="Detail firmware version, flight casing, sensor test condition, and rental protocols..."
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Included Accessories in Pelican Flight Case
                       </label>
                       <input
@@ -1620,12 +1620,12 @@ export default function ListYourStudioPage() {
                         value={equipIncludedAccessories}
                         onChange={(e) => setEquipIncludedAccessories(e.target.value)}
                         placeholder="2x 2TB Codex Drives, EVF Cable, Baseplate, Power Cable"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                      <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                         Key Specifications (comma-separated)
                       </label>
                       <input
@@ -1633,7 +1633,7 @@ export default function ListYourStudioPage() {
                         value={equipKeySpecs}
                         onChange={(e) => setEquipKeySpecs(e.target.value)}
                         placeholder="4.6K Super 35 Sensor, 17 Stops Dynamic Range, REVEAL Color Science"
-                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-base sm:text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full min-h-[44px] px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                     </div>
                   </div>
@@ -1641,10 +1641,10 @@ export default function ListYourStudioPage() {
               )}
 
               {/* Action Buttons: Save Draft vs Publish Immediately */}
-              <div className="pt-6 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-[11px] text-zinc-400">
+              <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-[11px] text-zinc-600 dark:text-zinc-400">
                   <span>Listings publish </span>
-                  <strong className="text-amber-400">immediately</strong>
+                  <strong className="text-amber-600 dark:text-amber-400">immediately</strong>
                   <span> to the marketplace without administrator review delays.</span>
                 </div>
 
@@ -1653,7 +1653,7 @@ export default function ListYourStudioPage() {
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSubmitListing(true)}
-                    className="w-full sm:w-auto px-5 py-3 rounded-xl border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-200 text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? 'Saving...' : 'Save as Draft'}
                   </button>

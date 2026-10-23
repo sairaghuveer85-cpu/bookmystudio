@@ -488,3 +488,70 @@ export async function deleteStudio(req: Request, res: Response, next: NextFuncti
   }
 }
 
+export async function getStudioCategories(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const rawCategories = await Studio.aggregate([
+      { $match: { reviewStatus: 'APPROVED' } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+
+    const categoryMetadata: Record<string, { name: string; description: string; iconName: string }> = {
+      cyclorama: {
+        name: 'Cycloramas',
+        description: '1 & 2-wall seamless infinity coves',
+        iconName: 'cyclorama',
+      },
+      soundstage: {
+        name: 'Soundstages',
+        description: 'STC 60+ certified acoustic stages',
+        iconName: 'soundstage',
+      },
+      podcast: {
+        name: 'Podcast Suites',
+        description: 'Turnkey multi-cam broadcast bays',
+        iconName: 'mic',
+      },
+      daylight: {
+        name: 'Daylight Lofts',
+        description: 'Factory sash & natural skylights',
+        iconName: 'sun',
+      },
+      kitchen: {
+        name: 'Kitchen Stages',
+        description: 'Working island ranges & culinary bays',
+        iconName: 'kitchen',
+      },
+      industrial: {
+        name: 'Industrial Silos',
+        description: 'Clear span warehouse locations',
+        iconName: 'warehouse',
+      },
+    };
+
+    const categories = rawCategories.map((item) => {
+      const key = item._id || 'general';
+      const meta = categoryMetadata[key] || {
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        description: 'Certified commercial production spaces',
+        iconName: 'soundstage',
+      };
+      return {
+        id: `cat-${key}`,
+        categoryKey: key,
+        name: meta.name,
+        count: item.count,
+        description: meta.description,
+        iconName: meta.iconName,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+

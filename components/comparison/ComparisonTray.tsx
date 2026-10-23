@@ -12,34 +12,43 @@ export function ComparisonTray() {
   const { comparedStudios, removeFromCompare, clearCompare, compareLimit } = useMarketplace();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Hide on auth pages, the comparison page itself, or if nothing is selected
-  const isAuthRoute =
+  // Hide on auth pages, admin routes, the comparison page itself, or if nothing is selected
+  const isAuthOrAdmin =
+    pathname.startsWith('/admin') ||
     pathname === '/login' ||
     pathname === '/create-account' ||
     pathname === '/forgot-password' ||
     pathname === '/reset-password' ||
     pathname === '/verify-email';
 
-  if (isAuthRoute || pathname === '/compare' || comparedStudios.length === 0) {
+  const isDetailScreen =
+    /^\/studios\/[^/]+\/?$/.test(pathname) ||
+    /^\/locations\/[^/]+\/?$/.test(pathname) ||
+    /^\/crew\/[^/]+\/?$/.test(pathname) ||
+    /^\/equipment\/[^/]+\/?$/.test(pathname);
+
+  if (isAuthOrAdmin || pathname === '/compare' || comparedStudios.length === 0) {
     return null;
   }
 
   return (
     <aside
       aria-label="Studio Comparison Dock"
-      className="fixed z-40 right-4 sm:right-6 bottom-20 lg:bottom-6 transition-all duration-200"
+      className={`fixed z-40 right-4 sm:right-6 bottom-20 lg:bottom-6 transition-all duration-200 ${
+        isDetailScreen ? 'hidden lg:block' : ''
+      }`}
     >
       {/* ========================================================
          COMPACT COLLAPSED PILL DOCK (Default Non-Intrusive State)
          ======================================================== */}
       {!isExpanded ? (
-        <div className="flex items-center gap-2 p-1.5 pl-3 rounded-full bg-zinc-950/95 dark:bg-[#121216]/95 text-white border border-zinc-800 shadow-xl backdrop-blur-md animate-scale-in">
+        <div className="flex items-center gap-2 p-1.5 pl-3 rounded-full bg-white/95 dark:bg-[#121216]/95 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 shadow-xl backdrop-blur-md animate-scale-in">
           {/* Overlapping Thumbnails Stack */}
           <div className="flex -space-x-2 shrink-0">
             {comparedStudios.map((studio) => (
               <div
                 key={studio.id}
-                className="relative w-6 h-6 rounded-full overflow-hidden border-2 border-zinc-950 bg-zinc-800 shrink-0"
+                className="relative w-6 h-6 rounded-full overflow-hidden border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 shrink-0"
               >
                 <Image
                   src={studio.imageUrl || '/images/studios/apex-stage-c.svg'}
@@ -55,11 +64,11 @@ export function ComparisonTray() {
           <button
             type="button"
             onClick={() => setIsExpanded(true)}
-            className="flex items-center gap-1.5 text-xs font-bold hover:text-amber-400 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer"
             aria-label="Expand stage comparison tray"
           >
             <span>Compare ({comparedStudios.length})</span>
-            <span className="text-[10px] text-zinc-400 font-normal hidden sm:inline">
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal hidden sm:inline">
               · Review Specs
             </span>
           </button>
@@ -77,7 +86,7 @@ export function ComparisonTray() {
           <button
             type="button"
             onClick={clearCompare}
-            className="w-5 h-5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-red-400 flex items-center justify-center text-[10px] transition-colors cursor-pointer mr-0.5"
+            className="w-5 h-5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center text-[10px] transition-colors cursor-pointer mr-0.5"
             aria-label="Clear all compared stages"
             title="Clear all"
           >
@@ -88,18 +97,18 @@ export function ComparisonTray() {
         /* ========================================================
            EXPANDED MINI-DRAWER (When user explicitly toggles details)
            ======================================================== */
-        <div className="w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl bg-zinc-950/95 dark:bg-[#121216]/95 text-white border border-zinc-800 shadow-2xl backdrop-blur-xl p-4 animate-scale-in">
+        <div className="w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl bg-white/95 dark:bg-[#121216]/95 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 shadow-2xl backdrop-blur-xl p-4 animate-scale-in">
           
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                 <CompareIcon className="w-3.5 h-3.5" />
               </div>
               <span className="text-xs font-extrabold tracking-tight">
                 Comparison Shortlist
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-zinc-800 text-zinc-300">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                 {comparedStudios.length} / {compareLimit}
               </span>
             </div>
@@ -108,14 +117,14 @@ export function ComparisonTray() {
               <button
                 type="button"
                 onClick={clearCompare}
-                className="text-[11px] text-zinc-400 hover:text-red-400 font-semibold px-1.5 py-0.5 rounded transition-colors cursor-pointer"
+                className="text-[11px] text-zinc-500 dark:text-zinc-400 hover:text-red-500 font-semibold px-1.5 py-0.5 rounded transition-colors cursor-pointer"
               >
                 Clear
               </button>
               <button
                 type="button"
                 onClick={() => setIsExpanded(false)}
-                className="text-xs text-zinc-400 hover:text-white p-1 rounded transition-colors cursor-pointer"
+                className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1 rounded transition-colors cursor-pointer"
                 aria-label="Collapse comparison dock"
               >
                 ✕ Close
@@ -128,10 +137,10 @@ export function ComparisonTray() {
             {comparedStudios.map((studio) => (
               <div
                 key={studio.id}
-                className="flex items-center justify-between gap-3 p-2 rounded-xl bg-zinc-900 border border-zinc-800/80"
+                className="flex items-center justify-between gap-3 p-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-zinc-800 shrink-0">
+                  <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-zinc-200 dark:bg-zinc-800 shrink-0">
                     <Image
                       src={studio.imageUrl || '/images/studios/apex-stage-c.svg'}
                       alt={studio.name}
@@ -140,10 +149,10 @@ export function ComparisonTray() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-zinc-100 truncate">
+                    <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                       {studio.name}
                     </p>
-                    <p className="text-[10px] text-zinc-400 font-mono">
+                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">
                       ${studio.dayRate10h.toLocaleString()}/10h · {studio.specs.sqFt.toLocaleString()} sq ft
                     </p>
                   </div>
@@ -152,7 +161,7 @@ export function ComparisonTray() {
                 <button
                   type="button"
                   onClick={() => removeFromCompare(studio.id)}
-                  className="w-5 h-5 rounded-full hover:bg-red-500/20 text-zinc-400 hover:text-red-400 flex items-center justify-center text-[10px] font-bold transition-colors cursor-pointer shrink-0"
+                  className="w-5 h-5 rounded-full hover:bg-red-500/20 text-zinc-400 hover:text-red-500 flex items-center justify-center text-[10px] font-bold transition-colors cursor-pointer shrink-0"
                   aria-label={`Remove ${studio.name}`}
                 >
                   ✕
@@ -162,11 +171,11 @@ export function ComparisonTray() {
           </div>
 
           {/* Bottom Actions */}
-          <div className="mt-3 pt-3 border-t border-zinc-800 flex items-center justify-between gap-2">
+          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="text-xs text-zinc-400 hover:text-white px-2 py-1.5 font-medium cursor-pointer"
+              className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white px-2 py-1.5 font-medium cursor-pointer"
             >
               Minimize Dock
             </button>

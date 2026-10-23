@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   getStudios,
   getStudioBySlugOrId,
+  getStudioCategories,
   createStudio,
   updateStudio,
   deleteStudio,
@@ -17,6 +18,7 @@ import {
 export const studioRouter = Router();
 
 studioRouter.get('/', validateQuery(marketplaceQuerySchema), getStudios);
+studioRouter.get('/meta/categories', getStudioCategories);
 studioRouter.get('/:slugOrId', optionalAuth, getStudioBySlugOrId);
 studioRouter.post('/', requireAuth, requireVerified, validateBody(createStudioSchema), createStudio);
 studioRouter.patch('/:slugOrId', requireAuth, validateBody(updateStudioSchema), updateStudio);

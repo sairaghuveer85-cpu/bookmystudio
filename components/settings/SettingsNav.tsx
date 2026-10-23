@@ -4,10 +4,18 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+interface NavTab {
+  label: string;
+  href: string;
+  active: boolean;
+  icon: React.ReactNode;
+  badge?: string;
+}
+
 export function SettingsNav() {
   const pathname = usePathname();
 
-  const tabs = [
+  const tabs: NavTab[] = [
     {
       label: 'Account & Security',
       href: '/account/settings',
@@ -28,31 +36,10 @@ export function SettingsNav() {
         </svg>
       ),
     },
-    {
-      label: 'Payout Settings',
-      href: '/account/settings/payouts',
-      active: pathname === '/account/settings/payouts' || pathname.startsWith('/profile/settings/payouts'),
-      badge: 'Razorpay Route',
-      icon: (
-        <svg
-          className="w-4 h-4 shrink-0"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.8}
-            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-          />
-        </svg>
-      ),
-    },
   ];
 
   return (
-    <nav className="flex items-center gap-2 border-b border-zinc-800 pb-px mb-8 overflow-x-auto scrollbar-none flex-nowrap -mx-4 px-4 sm:mx-0 sm:px-0">
+    <nav className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-px mb-8 overflow-x-auto scrollbar-none flex-nowrap -mx-4 px-4 sm:mx-0 sm:px-0">
       {tabs.map((tab) => {
         const isActive = tab.active;
         return (
@@ -61,8 +48,8 @@ export function SettingsNav() {
             href={tab.href}
             className={`flex items-center gap-2 px-4 py-3 min-h-[44px] text-xs sm:text-sm font-semibold rounded-t-xl border-b-2 transition-all shrink-0 cursor-pointer ${
               isActive
-                ? 'border-amber-500 text-amber-400 bg-amber-500/10'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40'
+                ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-500/10'
+                : 'border-transparent text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900/40'
             }`}
           >
             {tab.icon}

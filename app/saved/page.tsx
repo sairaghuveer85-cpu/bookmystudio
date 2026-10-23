@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -9,7 +9,8 @@ import { LocationCard } from '@/components/locations/LocationCard';
 import { EquipmentCard } from '@/components/equipment/EquipmentCard';
 import { ShareIcon, ArrowRightIcon } from '@/components/ui/Icons';
 import { useMarketplace } from '@/context/MarketplaceContext';
-import { INITIAL_STUDIOS, INITIAL_LOCATIONS, INITIAL_EQUIPMENT } from '@/lib/data';
+import { marketplaceApi } from '@/lib/api/marketplace';
+import { StudioSpace, FilmingLocation, EquipmentItem } from '@/lib/types';
 
 type SavedTab = 'all' | 'studios' | 'locations' | 'equipment';
 
@@ -17,18 +18,75 @@ export default function SavedPage() {
   const { bookmarkedIds, toggleBookmark } = useMarketplace();
   const [activeTab, setActiveTab] = useState<SavedTab>('all');
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Filter bookmarked items
-  const savedStudios = useMemo(() => {
-    return INITIAL_STUDIOS.filter((s) => bookmarkedIds.includes(s.id));
-  }, [bookmarkedIds]);
+  const [savedStudios, setSavedStudios] = useState<StudioSpace[]>([]);
+  const [savedLocations, setSavedLocations] = useState<FilmingLocation[]>([]);
+  const [savedEquipment, setSavedEquipment] = useState<EquipmentItem[]>([]);
+  const [dbSavedRecordIds, setDbSavedRecordIds] = useState<string[]>([]);
 
-  const savedLocations = useMemo(() => {
-    return INITIAL_LOCATIONS.filter((l) => bookmarkedIds.includes(l.id));
-  }, [bookmarkedIds]);
+  useEffect(() => {
+    let active = true;
 
-  const savedEquipment = useMemo(() => {
-    return INITIAL_EQUIPMENT.filter((e) => bookmarkedIds.includes(e.id));
+    marketplaceApi
+      .getSavedItems()
+      .then((res) => {
+        if (!active) return;
+        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+          const studios: StudioSpace[] = [];
+          const locations: FilmingLocation[] = [];
+          const equipment: EquipmentItem[] = [];
+          const recordIds: string[] = [];
+
+          res.data.forEach((item) => {
+            const recId = String(item.id || item._id || '');
+            if (recId) recordIds.push(recId);
+
+            if (item.itemType === 'studio' && item.studio) {
+              studios.push(item.studio as StudioSpace);
+            } else if (item.itemType === 'location' && item.location) {
+              locations.push(item.location as FilmingLocation);
+            } else if (item.itemType === 'equipment' && item.equipment) {
+              equipment.push(item.equipment as EquipmentItem);
+            }
+          });
+
+          setSavedStudios(studios);
+          setSavedLocations(locations);
+          setSavedEquipment(equipment);
+          setDbSavedRecordIds(recordIds);
+        } else if (bookmarkedIds.length > 0) {
+          // If guest user with localStorage bookmarks, hydrate matching active listings
+          Promise.all([
+            marketplaceApi.getStudios().catch(() => null),
+            marketplaceApi.getLocations().catch(() => null),
+            marketplaceApi.getEquipment().catch(() => null),
+          ]).then(([sRes, lRes, eRes]) => {
+            if (!active) return;
+            if (sRes?.success && Array.isArray(sRes.data)) {
+              setSavedStudios(sRes.data.filter((s) => bookmarkedIds.includes(s.id)));
+            }
+            if (lRes?.success && Array.isArray(lRes.data)) {
+              setSavedLocations(lRes.data.filter((l) => bookmarkedIds.includes(l.id)));
+            }
+            if (eRes?.success && Array.isArray(eRes.data)) {
+              setSavedEquipment(eRes.data.filter((e) => bookmarkedIds.includes(e.id)));
+            }
+          });
+        } else {
+          setSavedStudios([]);
+          setSavedLocations([]);
+          setSavedEquipment([]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [bookmarkedIds]);
 
   const totalSavedCount = savedStudios.length + savedLocations.length + savedEquipment.length;
@@ -38,8 +96,17 @@ export default function SavedPage() {
     setTimeout(() => setCopyFeedback(false), 3000);
   };
 
-  const handleClearAll = () => {
+  const handleClearAll = async () => {
+    // Delete database records
+    for (const recId of dbSavedRecordIds) {
+      await marketplaceApi.removeSavedItem(recId).catch(() => {});
+    }
+    // Clear localStorage bookmarks
     bookmarkedIds.forEach((id) => toggleBookmark(id));
+    setSavedStudios([]);
+    setSavedLocations([]);
+    setSavedEquipment([]);
+    setDbSavedRecordIds([]);
   };
 
   return (
@@ -104,7 +171,20 @@ export default function SavedPage() {
           </div>
         )}
 
-        {totalSavedCount === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121216] p-4 space-y-3 animate-pulse"
+              >
+                <div className="w-full h-48 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-2/3 h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="w-1/2 h-3 rounded bg-zinc-150 dark:bg-zinc-850" />
+              </div>
+            ))}
+          </div>
+        ) : totalSavedCount === 0 ? (
           <div className="mt-12">
             <EmptyState
               title="Your Saved Shortlist is Empty"

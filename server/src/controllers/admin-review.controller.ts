@@ -3,6 +3,7 @@ import { Studio } from '../models/studio.model';
 import { FilmingLocationModel } from '../models/location.model';
 import { ProfessionalProfile } from '../models/professional.model';
 import { Equipment } from '../models/equipment.model';
+import { AuditLog } from '../models/audit-log.model';
 import { adminReviewListingSchema } from '../validators/marketplace.validator';
 
 export interface AdminStandardizedListing {
@@ -317,6 +318,36 @@ export async function reviewListing(req: Request, res: Response, next: NextFunct
     }
 
     await listing.save();
+
+    // Record immutable audit ledger entry
+    try {
+      const actionMap = {
+        APPROVE: 'LISTING_APPROVED' as const,
+        REQUEST_CHANGES: 'LISTING_CHANGES_REQUESTED' as const,
+        REJECT: 'LISTING_REJECTED' as const,
+        SUSPEND: 'LISTING_SUSPENDED' as const,
+      };
+
+      await AuditLog.create({
+        adminId: req.user._id,
+        adminEmail: req.user.email,
+        adminName: req.user.fullName,
+        action: actionMap[action],
+        targetType: 'LISTING',
+        targetId: listing._id.toString(),
+        targetLabel: `${type.toUpperCase()}: ${listing.name || listing.title || listing.stageName || listing.slug}`,
+        details: {
+          listingType: type,
+          newStatus: listing.reviewStatus,
+          feedback: feedback || undefined,
+        },
+        status: 'SUCCESS',
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+      });
+    } catch {
+      // Non-fatal
+    }
 
     res.status(200).json({
       success: true,

@@ -83,12 +83,12 @@ export function ResetPasswordForm() {
         <div
           role="alert"
           aria-live="polite"
-          className="p-4 rounded-xl bg-red-950/40 border border-red-900/80 text-red-200 text-xs space-y-1 animate-page-enter"
+          className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-900/80 text-red-800 dark:text-red-200 text-xs space-y-1 animate-page-enter"
         >
-          <div className="font-bold flex items-center gap-1.5 text-red-400">
+          <div className="font-bold flex items-center gap-1.5 text-red-600 dark:text-red-400">
             <span>Password Update Failed</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-red-300/90">
+          <p className="text-[11px] leading-relaxed text-red-700 dark:text-red-300/90">
             {globalError}
           </p>
         </div>
@@ -98,12 +98,12 @@ export function ResetPasswordForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="new-password"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           New Password
         </label>
         <div className="relative">
-          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="new-password"
             type={showPassword ? 'text' : 'password'}
@@ -117,16 +117,16 @@ export function ResetPasswordForm() {
               }
             }}
             placeholder="At least 8 characters"
-            className={`auth-input w-full pl-10 pr-11 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-11 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.password
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
@@ -134,12 +134,12 @@ export function ResetPasswordForm() {
         </div>
 
         {/* Dynamic Criteria checklist */}
-        <div className="pt-1 flex items-center gap-3 text-[11px] text-zinc-400">
-          <span className={`inline-flex items-center gap-1 ${hasMinLength ? 'text-emerald-400 font-semibold' : ''}`}>
+        <div className="pt-1 flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className={`inline-flex items-center gap-1 ${hasMinLength ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : ''}`}>
             <span>{hasMinLength ? '✓' : '○'}</span>
             <span>8+ characters</span>
           </span>
-          <span className={`inline-flex items-center gap-1 ${hasNumberOrSymbol ? 'text-emerald-400 font-semibold' : ''}`}>
+          <span className={`inline-flex items-center gap-1 ${hasNumberOrSymbol ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : ''}`}>
             <span>{hasNumberOrSymbol ? '✓' : '○'}</span>
             <span>Number or symbol</span>
           </span>
@@ -150,12 +150,12 @@ export function ResetPasswordForm() {
       <div className="space-y-1.5">
         <label
           htmlFor="confirm-new-password"
-          className="block text-xs font-bold text-zinc-200"
+          className="block text-xs font-bold text-zinc-800 dark:text-zinc-200"
         >
           Confirm New Password
         </label>
         <div className="relative">
-          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <LockIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
           <input
             id="confirm-new-password"
             type={showConfirmPassword ? 'text' : 'password'}
@@ -169,23 +169,23 @@ export function ResetPasswordForm() {
               }
             }}
             placeholder="Re-enter your new password"
-            className={`auth-input w-full pl-10 pr-11 py-3 bg-[#121216] border ${
+            className={`auth-input w-full pl-10 pr-11 py-3 bg-zinc-50 dark:bg-[#121216] border ${
               fieldErrors.confirmPassword
                 ? 'border-red-500 ring-1 ring-red-500'
-                : 'border-zinc-800'
-            } rounded-xl text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-[#18181E] transition-all min-h-[46px]`}
+                : 'border-zinc-300 dark:border-zinc-800'
+            } rounded-xl text-base sm:text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white dark:focus:bg-[#18181E] transition-all min-h-[46px]`}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-200 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
           >
             {showConfirmPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
           </button>
         </div>
         {fieldErrors.confirmPassword && (
-          <p className="text-[11px] text-red-400 font-medium">
+          <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">
             {fieldErrors.confirmPassword}
           </p>
         )}
