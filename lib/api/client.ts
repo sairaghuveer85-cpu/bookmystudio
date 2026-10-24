@@ -12,11 +12,32 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+export const DEFAULT_DEV_API_URL = 'http://localhost:4000/api';
+export const DEFAULT_PROD_API_URL = 'https://bookmystudio-api.ricoz.in/api';
+
+/**
+ * Normalizes and resolves the authoritative BookMyStudio backend API URL.
+ * Guarantees:
+ * 1. Strips any trailing slashes.
+ * 2. Ensures the '/api' prefix is always present.
+ * 3. In production builds (NODE_ENV === 'production'), defaults to the production
+ *    backend ('https://bookmystudio-api.ricoz.in/api') if NEXT_PUBLIC_API_URL is omitted.
+ * 4. In development builds, defaults to the local Express server ('http://localhost:4000/api').
+ * 5. If NEXT_PUBLIC_API_URL is explicitly set, it takes precedence and is sanitized.
+ */
+export function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+  const raw = envUrl || (process.env.NODE_ENV === 'production' ? DEFAULT_PROD_API_URL : DEFAULT_DEV_API_URL);
+  const withoutTrailingSlashes = raw.replace(/\/+$/, '');
+  return withoutTrailingSlashes.endsWith('/api') ? withoutTrailingSlashes : `${withoutTrailingSlashes}/api`;
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+  const baseUrl = getApiBaseUrl();
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${cleanEndpoint}`;
 
   const headers = new Headers(options.headers || {});
   if (!headers.has('Content-Type') && options.body && typeof options.body === 'string') {

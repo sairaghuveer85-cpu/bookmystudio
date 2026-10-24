@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { apiClient } from '@/lib/api/client';
+import { apiClient, getApiBaseUrl } from '@/lib/api/client';
 import { ShieldPolicyIcon } from '@/components/ui/Icons';
 
 interface SmtpTestResult {
@@ -55,10 +55,10 @@ export default function AdminSettingsPage() {
           <span className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">Backend Server</span>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold text-zinc-900 dark:text-white text-sm">Express + TypeScript (Port 4000)</span>
+            <span className="font-bold text-zinc-900 dark:text-white text-sm">Express + TypeScript API</span>
           </div>
-          <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
-            CORS origin: http://localhost:3000 with credentials enabled.
+          <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-mono break-all">
+            Connected API: {getApiBaseUrl()}
           </p>
         </div>
       </div>

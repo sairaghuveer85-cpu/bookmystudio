@@ -40,16 +40,54 @@ export function createApp(): Express {
   );
 
   // Strict CORS Configuration
-  const allowedOrigins = [env.CLIENT_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'];
+  const configuredOrigins = env.CLIENT_ORIGIN
+    ? env.CLIENT_ORIGIN.split(',').map((o) => o.trim().replace(/\/+$/, '')).filter(Boolean)
+    : [];
+
+  const defaultOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://bookmystudio.ricoz.in',
+    'https://bookmystudio-api.ricoz.in',
+  ];
+
+  const allowedOrigins = Array.from(new Set([...configuredOrigins, ...defaultOrigins]));
+
   app.use(
     cors({
       origin: (origin, callback) => {
         // Allow requests with no origin (e.g., mobile apps, curl, server-to-server)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin) || env.NODE_ENV === 'development') {
+
+        // Always allow in development mode
+        if (env.NODE_ENV === 'development') {
           return callback(null, true);
         }
-        callback(new Error(`CORS blocked request from origin: ${origin}`));
+
+        const normalizedOrigin = origin.replace(/\/+$/, '');
+
+        // Check explicit allowlist
+        if (allowedOrigins.includes(normalizedOrigin)) {
+          return callback(null, true);
+        }
+
+        // Allow official domains and Vercel deployments
+        try {
+          const parsed = new URL(normalizedOrigin);
+          if (
+            parsed.hostname === 'ricoz.in' ||
+            parsed.hostname.endsWith('.ricoz.in') ||
+            parsed.hostname === 'vercel.app' ||
+            parsed.hostname.endsWith('.vercel.app')
+          ) {
+            return callback(null, true);
+          }
+        } catch {
+          // Ignore invalid URL format
+        }
+
+        // Reject cleanly according to CORS spec without crashing Express with 500
+        return callback(null, false);
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
